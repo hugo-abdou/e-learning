@@ -1,0 +1,1 @@
+const e=a=>a?a.split(" ").map(r=>r.charAt(0).toUpperCase()).join(""):"",s=a=>{const t=/\B(?=(\d{3})+(?!\d))/g;return Math.abs(a)>9999?`${Math.sign(a)*+(Math.abs(a)/1e3).toFixed(1)}k`:Math.abs(a).toFixed(0).replace(t,",")};export{e as a,s as k};

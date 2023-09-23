@@ -179,7 +179,12 @@ const resetPaymentForm = () => {
 
                                             <!-- 👉 Cvv code -->
                                             <VCol cols="6" md="3">
-                                                <VTextField v-model="cardCvv" type="password" label="CVV Code" />
+                                                <VTextField
+                                                    v-model="cardCvv"
+                                                    autocomplete="current-password"
+                                                    type="password"
+                                                    label="CVV Code"
+                                                />
                                             </VCol>
 
                                             <!-- 👉 Future Billing switch -->

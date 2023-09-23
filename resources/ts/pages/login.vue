@@ -1,49 +1,34 @@
 <script setup lang="ts">
-import { VForm } from "vuetify/components";
+import { emailValidator, requiredValidator } from "@/@core/utils/validators";
+import { useUserStore } from "@/stores/user";
 import AuthProvider from "@/views/pages/authentication/AuthProvider.vue";
-import { useGenerateImageVariant } from "@core/composable/useGenerateImageVariant";
+import authV1BottomShape from "@images/svg/auth-v1-bottom-shape.svg?raw";
+import authV1TopShape from "@images/svg/auth-v1-top-shape.svg?raw";
 import { VNodeRenderer } from "@layouts/components/VNodeRenderer";
 import { themeConfig } from "@themeConfig";
-import { emailValidator, requiredValidator } from "@validators";
+import { VForm } from "vuetify/components";
 
-import authV2LoginIllustrationBorderedDark from "@images/pages/auth-v2-login-illustration-bordered-dark.png";
-import authV2LoginIllustrationBorderedLight from "@images/pages/auth-v2-login-illustration-bordered-light.png";
-import authV2LoginIllustrationDark from "@images/pages/auth-v2-login-illustration-dark.png";
-import authV2LoginIllustrationLight from "@images/pages/auth-v2-login-illustration-light.png";
-import authV2MaskDark from "@images/pages/misc-mask-dark.png";
-import authV2MaskLight from "@images/pages/misc-mask-light.png";
-import { useUserStore } from "@/stores/user";
-
-const authThemeImg = useGenerateImageVariant(
-    authV2LoginIllustrationLight,
-    authV2LoginIllustrationDark,
-    authV2LoginIllustrationBorderedLight,
-    authV2LoginIllustrationBorderedDark,
-    true
-);
-
-const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark);
-
-const isPasswordVisible = ref(false);
-
+const form = ref({
+    email: "",
+    password: "",
+    remember: false
+});
 const errors = ref<Record<string, string | undefined>>({
     email: undefined,
     password: undefined
 });
+const isPasswordVisible = ref(false);
 
 const route = useRoute();
 const router = useRouter();
 
 const refVForm = ref<VForm>();
-const email = ref("moikinge3@gmail.com");
-const password = ref("password");
-const rememberMe = ref(false);
 const user = useUserStore();
 const onSubmit = async () => {
     if (!refVForm.value) return;
     try {
         const { valid } = await refVForm.value.validate();
-        if (valid) await user.login(email.value, password.value);
+        if (valid) await user.login(form.value.email, form.value.password);
         router.replace(route.query.to ? String(route.query.to) : "/");
     } catch (e: any) {
         if (!e.response) throw e;
@@ -55,38 +40,47 @@ const onSubmit = async () => {
 </script>
 
 <template>
-    <VRow no-gutters class="auth-wrapper">
-        <VCol lg="8" class="d-none d-lg-flex">
-            <div class="position-relative auth-bg rounded-lg w-100 ma-8 me-0">
-                <div class="d-flex align-center justify-center w-100 h-100">
-                    <VImg max-width="505" :src="authThemeImg" class="auth-illustration mt-16 mb-2" />
-                </div>
+    <div class="auth-wrapper d-flex align-center justify-center pa-4">
+        <div class="position-relative my-sm-16">
+            <!-- 👉 Top shape -->
+            <VNodeRenderer :nodes="h('div', { innerHTML: authV1TopShape })" class="text-primary auth-v1-top-shape d-none d-sm-block" />
 
-                <VImg :src="authThemeMask" class="auth-footer-mask" />
-            </div>
-        </VCol>
+            <!-- 👉 Bottom shape -->
+            <VNodeRenderer
+                :nodes="h('div', { innerHTML: authV1BottomShape })"
+                class="text-primary auth-v1-bottom-shape d-none d-sm-block"
+            />
 
-        <VCol cols="12" lg="4" class="d-flex align-center justify-center">
-            <VCard flat :max-width="500" class="mt-12 mt-sm-0 pa-4">
-                <VCardText>
-                    <VNodeRenderer :nodes="themeConfig.app.logo" class="mb-6" />
+            <!-- 👉 Auth Card -->
+            <VCard class="auth-card pa-4" max-width="448">
+                <VCardItem class="justify-center">
+                    <template #prepend>
+                        <div class="d-flex">
+                            <VNodeRenderer :nodes="themeConfig.app.logo" />
+                        </div>
+                    </template>
 
-                    <h5 class="text-h5 font-weight-semibold mb-1">Welcome to {{ themeConfig.app.title }}! 👋🏻</h5>
+                    <VCardTitle class="font-weight-bold text-capitalize text-h5 py-1">
+                        {{ themeConfig.app.title }}
+                    </VCardTitle>
+                </VCardItem>
+
+                <VCardText class="pt-1">
+                    <h5 class="text-h5 mb-1">
+                        Welcome to <span class="text-capitalize">{{ themeConfig.app.title }}</span
+                        >! 👋🏻
+                    </h5>
                     <p class="mb-0">Please sign-in to your account and start the adventure</p>
                 </VCardText>
-                <VCardText>
-                    <VAlert color="primary" variant="tonal">
-                        <p class="text-caption mb-2">Admin Email: <strong>admin@demo.com</strong> / Pass: <strong>admin</strong></p>
-                        <p class="text-caption mb-0">Client Email: <strong>client@demo.com</strong> / Pass: <strong>client</strong></p>
-                    </VAlert>
-                </VCardText>
+
                 <VCardText>
                     <VForm ref="refVForm" @submit.prevent="onSubmit">
                         <VRow>
                             <!-- email -->
                             <VCol cols="12">
-                                <VTextField
-                                    v-model="email"
+                                <AppTextField
+                                    v-model="form.email"
+                                    autofocus
                                     label="Email"
                                     type="email"
                                     :rules="[requiredValidator, emailValidator]"
@@ -96,31 +90,33 @@ const onSubmit = async () => {
 
                             <!-- password -->
                             <VCol cols="12">
-                                <VTextField
-                                    v-model="password"
+                                <AppTextField
+                                    v-model="form.password"
                                     label="Password"
-                                    :rules="[requiredValidator]"
                                     :type="isPasswordVisible ? 'text' : 'password'"
-                                    :error-messages="errors.password"
                                     :append-inner-icon="isPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'"
                                     @click:append-inner="isPasswordVisible = !isPasswordVisible"
+                                    :rules="[requiredValidator]"
+                                    :error-messages="errors.password"
                                 />
 
-                                <div class="d-flex align-center flex-wrap justify-space-between mt-2 mb-4">
-                                    <VCheckbox v-model="rememberMe" label="Remember me" />
-                                    <!-- <RouterLink class="text-primary ms-2 mb-1" :to="{ name: 'forgot-password' }">
-                                        Forgot Password?
-                                    </RouterLink> -->
+                                <!-- remember me checkbox -->
+                                <div class="d-flex align-center justify-space-between flex-wrap mt-2 mb-4">
+                                    <VCheckbox v-model="form.remember" label="Remember me" />
+
+                                    <RouterLink class="text-primary ms-2 mb-1" :to="{ name: 'index' }"> Forgot Password? </RouterLink>
                                 </div>
 
+                                <!-- login button -->
                                 <VBtn block type="submit"> Login </VBtn>
                             </VCol>
 
                             <!-- create account -->
-                            <VCol cols="12" class="text-center">
+                            <VCol cols="12" class="text-center text-base">
                                 <span>New on our platform?</span>
-                                <RouterLink class="text-primary ms-2" :to="{ name: 'register' }"> Create an account </RouterLink>
+                                <RouterLink class="text-primary ms-2" :to="{ name: 'index' }"> Create an account </RouterLink>
                             </VCol>
+
                             <VCol cols="12" class="d-flex align-center">
                                 <VDivider />
                                 <span class="mx-4">or</span>
@@ -135,8 +131,8 @@ const onSubmit = async () => {
                     </VForm>
                 </VCardText>
             </VCard>
-        </VCol>
-    </VRow>
+        </div>
+    </div>
 </template>
 
 <style lang="scss">
@@ -146,7 +142,4 @@ const onSubmit = async () => {
 <route lang="yaml">
 meta:
     layout: blank
-    action: read
-    subject: Auth
-    redirectIfLoggedIn: true
 </route>

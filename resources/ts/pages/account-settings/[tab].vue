@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { useRoute } from "vue-router";
 import AccountSettingsAccount from "@/views/pages/account-settings/AccountSettingsAccount.vue";
-// import AccountSettingsBillingAndPlans from "@/views/pages/account-settings/AccountSettingsBillingAndPlans.vue";
-// import AccountSettingsConnections from "@/views/pages/account-settings/AccountSettingsConnections.vue";
-// import AccountSettingsNotification from "@/views/pages/account-settings/AccountSettingsNotification.vue";
 import AccountSettingsSecurity from "@/views/pages/account-settings/AccountSettingsSecurity.vue";
+import UserBioPanel from "@/views/pages/account-settings/UserBioPanel.vue";
+import { useUserStore } from "@/stores/user";
+import { UserProperties } from "@/types";
 
 const route = useRoute();
 
@@ -14,52 +14,52 @@ const activeTab = ref(route.params.tab);
 const tabs = [
     { title: "Account", icon: "tabler-users", tab: "account" },
     { title: "Security", icon: "tabler-lock", tab: "security" }
-    // { title: "Billing & Plans", icon: "tabler-file-text", tab: "billing-plans" },
-    // { title: "Notifications", icon: "tabler-bell", tab: "notification" },
-    // { title: "Connections", icon: "tabler-link", tab: "connection" }
 ];
+
+const userStore = useUserStore();
+const userData = computed<UserProperties>(() => userStore.user);
 </script>
 
 <template>
-    <div>
-        <VTabs v-model="activeTab" show-arrows class="v-tabs-pill">
-            <VTab v-for="item in tabs" :key="item.icon" :value="item.tab" :to="{ name: 'account-settings-tab', params: { tab: item.tab } }">
-                <VIcon size="20" start :icon="item.icon" />
-                {{ item.title }}
-            </VTab>
-        </VTabs>
+    <VRow v-if="userData">
+        <VCol cols="12" md="5" lg="4">
+            <UserBioPanel :user-data="userData" />
+        </VCol>
+        <VCol cols="12" md="7" lg="8">
+            <VTabs v-model="activeTab" show-arrows class="v-tabs-pill">
+                <VTab
+                    v-for="item in tabs"
+                    :key="item.icon"
+                    :value="item.tab"
+                    :to="{ name: 'account-settings-tab', params: { tab: item.tab } }"
+                >
+                    <VIcon size="20" start :icon="item.icon" />
+                    {{ item.title }}
+                </VTab>
+            </VTabs>
 
-        <VWindow v-model="activeTab" class="mt-6 disable-tab-transition" :touch="false">
-            <!-- Account -->
-            <VWindowItem value="account">
-                <AccountSettingsAccount />
-            </VWindowItem>
+            <VWindow v-model="activeTab" class="mt-6 disable-tab-transition" :touch="false">
+                <!-- Account -->
+                <VWindowItem value="account">
+                    <!-- @vue-ignore -->
+                    <AccountSettingsAccount
+                        :user-data="userData"
+                        @user-updated="userStore.refreshUser"
+                        @user-deleted="userStore.refreshUser"
+                    />
+                </VWindowItem>
 
-            <!-- Security -->
-            <VWindowItem value="security">
-                <AccountSettingsSecurity />
-            </VWindowItem>
-
-            <!-- Billing -->
-            <!-- <VWindowItem value="billing-plans">
-        <AccountSettingsBillingAndPlans />
-      </VWindowItem> -->
-
-            <!-- Notification -->
-            <!-- <VWindowItem value="notification">
-        <AccountSettingsNotification />
-      </VWindowItem> -->
-
-            <!-- Connections -->
-            <!-- <VWindowItem value="connection">
-        <AccountSettingsConnections />
-      </VWindowItem> -->
-        </VWindow>
-    </div>
+                <!-- Security -->
+                <VWindowItem value="security">
+                    <AccountSettingsSecurity :user-data="userData" />
+                </VWindowItem>
+            </VWindow>
+        </VCol>
+    </VRow>
 </template>
 
 <route lang="yaml">
 meta:
     navActiveLink: account-settings-tab
-    layout: auth
+    redirectIfNotLoggedIn: true
 </route>

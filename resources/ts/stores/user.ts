@@ -1,6 +1,7 @@
 // @ts-check
 import { base642file } from "@/helpers";
 import axios from "@/plugins/axios";
+import { UserForm, UserProperties } from "@/types";
 import { defineStore, acceptHMRUpdate } from "pinia";
 export type UserDevice = {
     agent: {
@@ -12,18 +13,22 @@ export type UserDevice = {
     is_current_device: boolean;
     last_active: string;
 };
+const defaultUser: UserProperties = {
+    id: 0,
+    avatar: "",
+    email: "",
+    name: "",
+    created_at: ""
+};
+// @ts-ignore
 export const useUserStore = defineStore({
     id: "user",
-    state: () => ({
-        id: null,
-        avatar: "",
-        email: null,
-        name: null
-    }),
+    state: () => ({ user: useStorage("user", defaultUser), upgradeDialogShow: false, upgradeMessage: "" }),
+    getters: {},
     actions: {
         async logout() {
             await axios.post("/logout", {}, { baseURL: window.location.origin });
-            this.$reset();
+            this.$patch({ user: defaultUser });
             Promise.resolve();
         },
         async login(email: string, password: string) {
@@ -41,73 +46,77 @@ export const useUserStore = defineStore({
                 throw error;
             }
         },
-        async resetPassword(form: object) {
+        async resetPassword(id: number, form: object) {
             try {
-                await axios.put("/user/password", form, { baseURL: window.location.origin });
+                await axios.put(`/user/${id}/password`, form);
             } catch (error) {
                 throw error;
             }
         },
-        async getUser() {
-            if (this.id) return;
-            const { data } = await axios.get("/user");
-            this.$patch(data);
+        async getUser(): Promise<UserProperties> {
+            if (this.user.id) return Promise.resolve(this.$state.user);
+            const auth = await this.refreshUser();
+            return Promise.resolve(auth);
         },
-        async refreshUser() {
-            const { data } = await axios.get("/user");
-            this.$patch(data);
+        async refreshUser(): Promise<UserProperties> {
+            const { data } = await axios.get("/auth");
+            this.$patch({ user: data });
+            return Promise.resolve(data);
         },
-        async updateUser(data: typeof this.$state) {
+        // 👉 Update User
+        async updateUser(id: number, data: UserForm) {
             try {
                 const form = new FormData();
                 Object.keys(data)
                     .filter((key: any) => key !== "avatar")
-                    .forEach((key: any) => {
+                    .forEach(key => {
                         // @ts-ignore
-                        form.append(key, data[key] || "");
+                        const value = typeof data[key] === "object" ? JSON.stringify(data[key]) : data[key];
+                        form.append(key, value);
                     });
                 form.append("_method", "PUT");
-                if (data.avatar.includes("data:image")) {
+                if (data.avatar && data.avatar.includes("data:image")) {
                     form.append("avatar", base642file(data.avatar, "avatar"));
                 }
-                await axios.post("user/profile-information", form, { baseURL: window.location.origin });
-                await this.refreshUser();
+                await axios.post(`/user/${id}/update`, form);
             } catch (error) {
                 throw error;
             }
         },
-        async destroyAccount(password: string) {
+        async destroyAccount(id: number, password: string) {
             try {
-                await axios.post(
-                    "user",
-                    {
-                        _method: "DELETE",
-                        password: password
-                    },
-                    { baseURL: window.location.origin }
-                );
-                this.refreshUser();
+                await axios.post(`/user/${id}/destroy`, {
+                    _method: "DELETE",
+                    password: password
+                });
             } catch (error) {
                 throw error;
             }
         },
-        async otherBrowserSessions() {
+        async otherBrowserSessions(id: number) {
             try {
-                const res: { data: UserDevice } = await axios.get("/user/other-browser-sessions");
+                const res: { data: UserDevice } = await axios.get(`/user/${id}/other-browser-sessions`);
                 return Promise.resolve(res.data);
             } catch (error) {
                 throw error;
             }
         },
-        async logOutOtherBrowserSessions(password: string) {
+        async logOutOtherBrowserSessions(id: number, password: string) {
             try {
-                await axios.post("/user/other-browser-sessions", {
+                await axios.post(`/user/${id}/other-browser-sessions`, {
                     _method: "DELETE",
                     password
                 });
             } catch (error) {
                 throw error;
             }
+        },
+        forgotPassword(email: string) {
+            return axios.post("/forgot-password", { email: email }, { baseURL: window.location.origin });
+        },
+        setNewPassword(form: any) {
+            console.log(form);
+            return axios.post("/reset-password", form, { baseURL: window.location.origin });
         }
     }
 });

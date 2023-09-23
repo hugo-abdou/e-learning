@@ -9,6 +9,7 @@ import UserProfile from "@/layouts/components/UserProfile.vue";
 
 // @layouts plugin
 import { VerticalNavLayout } from "@layouts";
+import NavBarI18n from "./NavBarI18n.vue";
 
 const { appRouteTransition, isLessThanOverlayNavBreakpoint } = useThemeConfig();
 const { width: windowWidth } = useWindowSize();
@@ -27,6 +28,7 @@ const { width: windowWidth } = useWindowSize();
                 >
                     <VIcon size="26" icon="tabler-menu-2" />
                 </IconBtn>
+                <NavBarI18n class="me-1" />
 
                 <NavbarThemeSwitcher />
 

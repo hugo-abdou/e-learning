@@ -2,9 +2,13 @@
 import { useApiTokens } from "@/stores/apiToken";
 import { useUserStore, UserDevice } from "@/stores/user";
 import ApiTokens from "./ApiTokens.vue";
+import { UserForm, UserProperties } from "@/types";
 
+interface Props {
+    userData: UserProperties;
+}
+const props = defineProps<Props>();
 const userStore = useUserStore();
-const apiTokensStore = useApiTokens();
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 const isCurrentPasswordVisible = ref(false);
 const isNewPasswordVisible = ref(false);
@@ -21,7 +25,7 @@ const errors = ref<Record<string, string | undefined>>({
 });
 async function resetPassword() {
     try {
-        await userStore.resetPassword(passwordForm.value);
+        await userStore.resetPassword(props.userData.id, passwordForm.value);
         errors.value = {};
     } catch (e: any) {
         if (!e.response) throw e;
@@ -43,7 +47,7 @@ const isOneTimePasswordDialogVisible = ref(false);
 const sessions = ref<UserDevice[]>([]);
 function getSessions() {
     // @ts-ignore
-    userStore.otherBrowserSessions().then(val => (sessions.value = val));
+    userStore.otherBrowserSessions(props.userData.id).then(val => (sessions.value = val));
 }
 const isConfirmDialogOpen = ref(false);
 const logOutFromOtherBrowsersForm = ref({
@@ -53,7 +57,7 @@ const logOutFromOtherBrowsersForm = ref({
 async function logOutFromOtherBrowsers(confirm: boolean) {
     if (!confirm) return;
     try {
-        await userStore.logOutOtherBrowserSessions(logOutFromOtherBrowsersForm.value.password);
+        await userStore.logOutOtherBrowserSessions(props.userData.id, logOutFromOtherBrowsersForm.value.password);
         logOutFromOtherBrowsersForm.value = { password: "", error: undefined };
         isConfirmDialogOpen.value = false;
         getSessions();
@@ -81,6 +85,7 @@ onMounted(getSessions);
                             <VCol cols="12" md="6">
                                 <!-- 👉 current password -->
                                 <VTextField
+                                    autocomplete="current-password"
                                     v-model="passwordForm.current_password"
                                     :error-messages="errors.current_password"
                                     :type="isCurrentPasswordVisible ? 'text' : 'password'"
@@ -96,6 +101,7 @@ onMounted(getSessions);
                             <VCol cols="12" md="6">
                                 <!-- 👉 new password -->
                                 <VTextField
+                                    autocomplete="new-password"
                                     v-model="passwordForm.password"
                                     :error-messages="errors.password"
                                     :type="isNewPasswordVisible ? 'text' : 'password'"
@@ -108,6 +114,7 @@ onMounted(getSessions);
                             <VCol cols="12" md="6">
                                 <!-- 👉 confirm password -->
                                 <VTextField
+                                    autocomplete="new-password"
                                     v-model="passwordForm.password_confirmation"
                                     :type="isConfirmPasswordVisible ? 'text' : 'password'"
                                     :append-inner-icon="isConfirmPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'"
@@ -143,7 +150,8 @@ onMounted(getSessions);
         <!-- !SECTION -->
 
         <!-- SECTION Two-steps verification -->
-        <VCol cols="12">
+        <!-- TODO: this section nead some services implimentation for sms validation -->
+        <VCol v-if="false" cols="12">
             <VCard title="Two-steps verification">
                 <VCardText>
                     <h6 class="text-base font-weight-semibold mb-3">Two factor authentication is not enabled yet.</h6>
@@ -182,12 +190,12 @@ onMounted(getSessions);
                     </thead>
                     <tbody>
                         <tr v-for="device in sessions" :key="device.last_active">
-                            <!-- <td class="d-flex align-center">
+                            <td class="d-flex align-center">
                                 <VIcon start :icon="`logos:${device.agent.browser.toLowerCase()}`" />
                                 <h6 class="text-base font-weight-semibold">{{ device.agent.browser }} on {{ device.agent.platform }}</h6>
                             </td>
                             <td>{{ device.ip_address }}</td>
-                            <td>{{ device.last_active }}</td> -->
+                            <td>{{ device.last_active }}</td>
                         </tr>
                     </tbody>
                 </VTable>
@@ -208,6 +216,7 @@ onMounted(getSessions);
         <VTextField
             v-model="logOutFromOtherBrowsersForm.password"
             label="Confirm password"
+            autocomplete="current-password"
             type="password"
             :error-messages="logOutFromOtherBrowsersForm.error"
         />

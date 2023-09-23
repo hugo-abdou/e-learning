@@ -19,7 +19,7 @@ class AuthResource extends JsonResource
             "name" => $this->name,
             "email" => $this->email,
             "avatar" => $this->ProfilePhotoUrl,
-            "role" => "admin"
+            "role" => ['user'],
         ];
     }
 }

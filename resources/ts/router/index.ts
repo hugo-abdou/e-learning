@@ -2,6 +2,7 @@ import { setupLayouts } from "virtual:generated-layouts";
 import { createRouter, createWebHistory } from "vue-router";
 import routes from "~pages";
 import { useUserStore } from "@/stores/user";
+import { isUserLoggedIn } from "./utils";
 
 const router = createRouter({
     history: createWebHistory("/"),
@@ -9,9 +10,10 @@ const router = createRouter({
 });
 
 router.beforeResolve(async (to, from, next) => {
-    const user = useUserStore();
-    if (to.meta.layout === "auth") await user.getUser();
-    if (to.meta.redirectIfLoggedIn && user.id) return next({ path: "/" });
+    const auth = useUserStore();
+
+    if (to.meta.redirectIfLoggedIn && isUserLoggedIn()) return next("/");
+    if (to.meta.redirectIfNotLoggedIn && !isUserLoggedIn()) return next("/login");
 
     return next();
 });

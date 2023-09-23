@@ -2,13 +2,13 @@ import type { VerticalNavItems } from "@/@layouts/types";
 
 export default [
     {
-        title: "Dahsboard",
+        title: "Dashboard",
         to: { name: "index" },
         icon: { icon: "tabler-layout-dashboard" }
+    },
+    {
+        title: "Users",
+        to: { name: "users" },
+        icon: { icon: "tabler-users" }
     }
-    // {
-    //     title: "Users",
-    //     to: { name: "admin-users" },
-    //     icon: { icon: "tabler-users" }
-    // }
 ] as VerticalNavItems;

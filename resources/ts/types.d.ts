@@ -187,17 +187,14 @@ export interface RegisterResponse {
 // SECTION
 // App: User
 export interface UserProperties {
-    id?: number;
+    id: number;
     name: string;
     email: string;
     avatar?: string;
-    role?: string;
-    currentPlan?: string;
-    status?: string;
     created_at?: string;
 }
 // User Form
-export interface UserForm extends UserProperties {
+export interface UserForm extends Omit<UserProperties, "id"> {
     password: string;
     password_confirmation: string;
     terms: boolean;

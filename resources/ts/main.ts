@@ -9,6 +9,7 @@ import "@core-scss/template/index.scss";
 import "@styles/styles.scss";
 import { createPinia } from "pinia";
 import { createApp } from "vue";
+import i18n from "./plugins/i18n";
 
 loadFonts();
 
@@ -20,6 +21,6 @@ app.use(vuetify);
 app.use(createPinia());
 app.use(router);
 app.use(layoutsPlugin);
-
+app.use(i18n);
 // Mount vue app
 app.mount("#app");

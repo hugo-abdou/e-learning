@@ -12,4 +12,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped></style>
+<route lang="yaml">
+meta:
+    redirectIfNotLoggedIn: true
+</route>
