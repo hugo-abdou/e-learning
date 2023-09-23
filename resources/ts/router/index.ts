@@ -11,6 +11,9 @@ const router = createRouter({
 
 router.beforeResolve(async (to, from, next) => {
     const auth = useUserStore();
+    if (to.query.verified === "1") {
+        await auth.refreshUser();
+    }
 
     if (to.meta.redirectIfLoggedIn && isUserLoggedIn()) return next("/");
     if (to.meta.redirectIfNotLoggedIn && !isUserLoggedIn()) return next("/login");

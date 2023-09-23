@@ -20,7 +20,7 @@ const utils_1 = require("@iconify/utils");
 const sources = {
     svg: [
         {
-            dir: "images/iconify-svg",
+            dir: "resources/images/iconify-svg",
             monotone: false,
             prefix: "custom"
         }
@@ -31,19 +31,18 @@ const sources = {
         // },
     ],
     icons: [
-        // 'mdi:home',
-        // 'mdi:account',
-        // 'mdi:login',
-        // 'mdi:logout',
-        // 'octicon:book-24',
-        // 'octicon:code-square-24',
+    // 'mdi:home',
+    // 'mdi:account',
+    // 'mdi:login',
+    // 'mdi:logout',
+    // 'octicon:book-24',
+    // 'octicon:code-square-24',
     ],
     json: [
         // Custom JSON file
         // 'json/gg.json',
         // Iconify JSON file (@iconify/json is a package name, /json/ is directory where files are, then filename)
         require.resolve("@iconify-json/tabler/icons.json"),
-        require.resolve("@iconify-json/mdi/icons.json"),
         {
             filename: require.resolve("@iconify-json/fa/icons.json"),
             icons: ["facebook", "google", "twitter", "circle"]
@@ -80,7 +79,8 @@ const target = (0, node_path_1.join)(__dirname, "icons-bundle.js");
         await node_fs_1.promises.mkdir(dir, {
             recursive: true
         });
-    } catch (err) {
+    }
+    catch (err) {
         //
     }
     /**
@@ -110,7 +110,8 @@ const target = (0, node_path_1.join)(__dirname, "icons-bundle.js");
             // Filter icons
             if (typeof item !== "string" && item.icons?.length) {
                 const filteredContent = (0, utils_1.getIcons)(content, item.icons);
-                if (!filteredContent) throw new Error(`Cannot find required icons in ${filename}`);
+                if (!filteredContent)
+                    throw new Error(`Cannot find required icons in ${filename}`);
                 content = filteredContent;
             }
             // Remove metadata and add to bundle
@@ -138,7 +139,8 @@ const target = (0, node_path_1.join)(__dirname, "icons-bundle.js");
             });
             // Validate, clean up, fix palette and optimise
             await iconSet.forEach(async (name, type) => {
-                if (type !== "icon") return;
+                if (type !== "icon")
+                    return;
                 // Get SVG instance for parsing
                 const svg = iconSet.toSVG(name);
                 if (!svg) {
@@ -162,7 +164,8 @@ const target = (0, node_path_1.join)(__dirname, "icons-bundle.js");
                     }
                     // Optimise
                     await (0, tools_1.runSVGO)(svg);
-                } catch (err) {
+                }
+                catch (err) {
                     // Invalid icon
                     console.error(`Error parsing ${name} from ${source.dir}:`, err);
                     iconSet.remove(name);
@@ -199,11 +202,13 @@ function organizeIconsList(icons) {
     const sorted = Object.create(null);
     icons.forEach(icon => {
         const item = (0, utils_1.stringToIcon)(icon);
-        if (!item) return;
+        if (!item)
+            return;
         const prefix = item.prefix;
         const prefixList = sorted[prefix] ? sorted[prefix] : (sorted[prefix] = []);
         const name = item.name;
-        if (!prefixList.includes(name)) prefixList.push(name);
+        if (!prefixList.includes(name))
+            prefixList.push(name);
     });
     return sorted;
 }

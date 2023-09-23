@@ -67,5 +67,6 @@ function verifyEmail() {
 <route lang="yaml">
 meta:
     layout: blank
+    redirectIfNotLoggedIn: true
     redirectIfVerified: true
 </route>
