@@ -19,8 +19,8 @@ use Laravel\Jetstream\Jetstream;
 |
 */
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/auth', fn (Request $request) => AuthResource::make($request->user())->resolve());
+Route::middleware(['auth:sanctum'])->get('/auth', fn (Request $request) => AuthResource::make($request->user())->resolve());
+Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::put('/user/{user}/update', [UsersController::class, 'edit']);
     Route::put('/user/{user}/password', [UsersController::class, 'password']);
     Route::get('/user/{user}/other-browser-sessions', SessionsController::class);

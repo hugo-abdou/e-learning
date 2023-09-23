@@ -17,6 +17,7 @@ const props = withDefaults(defineProps<Props>(), {
     userData: () => ({
         id: 0,
         name: "",
+        role: [],
         email: "",
         avatar: avatar1
     })
@@ -95,7 +96,7 @@ const destroyAccount = async (confirm: boolean) => {
 <template>
     <VRow>
         <VCol cols="12">
-            <VCard title="Profile Details">
+            <VCard :title="$t('Profile Details')">
                 <VCardText class="d-flex">
                     <!-- 👉 Avatar -->
                     <VAvatar rounded size="100" class="me-6" :image="userData.avatar" />
@@ -105,14 +106,14 @@ const destroyAccount = async (confirm: boolean) => {
                         <div class="d-flex flex-wrap gap-2">
                             <VBtn color="primary" @click="refInputEl?.click()">
                                 <VIcon icon="tabler-cloud-upload" class="d-sm-none" />
-                                <span class="d-none d-sm-block">Upload new photo</span>
+                                <span class="d-none d-sm-block">{{ $t("Upload new photo") }}</span>
                             </VBtn>
 
                             <input ref="refInputEl" type="file" name="file" hidden @input="changeAvatar" />
                         </div>
 
                         <p v-if="errors.avatar" class="text-body-1 mb-0 text-error">{{ errors.avatar }}</p>
-                        <p v-else class="text-body-1 mb-0">Allowed JPG, GIF or PNG. Max size of 800K</p>
+                        <p v-else class="text-body-1 mb-0">{{ $t("Allowed-ext") }}</p>
                     </form>
                 </VCardText>
 
@@ -124,11 +125,11 @@ const destroyAccount = async (confirm: boolean) => {
                         <VRow>
                             <!-- 👉 Full Name -->
                             <VCol md="6" cols="12">
-                                <VTextField v-model="userData.name" label="First Name" :error-messages="errors.name" />
+                                <VTextField v-model="userData.name" :label="$t('First Name')" :error-messages="errors.name" />
                             </VCol>
                             <!-- 👉 Email -->
                             <VCol cols="12" md="6">
-                                <VTextField v-model="userData.email" label="E-mail" type="email" :error-messages="errors.email" />
+                                <VTextField v-model="userData.email" :label="$t('E-mail')" type="email" :error-messages="errors.email" />
                             </VCol>
 
                             <!-- 👉 Role -->
@@ -138,8 +139,8 @@ const destroyAccount = async (confirm: boolean) => {
 
                             <!-- 👉 Form Actions -->
                             <VCol cols="12" class="d-flex flex-wrap gap-4">
-                                <VBtn type="submit">Save changes</VBtn>
-                                <VBtn color="secondary" variant="tonal" type="reset" @click.prevent="onFormReset"> Reset </VBtn>
+                                <VBtn type="submit">{{ $t("Save changes") }}</VBtn>
+                                <VBtn color="secondary" variant="tonal" type="reset" @click.prevent="onFormReset">{{ $t("Reset") }}</VBtn>
                             </VCol>
                         </VRow>
                     </VForm>
@@ -149,30 +150,26 @@ const destroyAccount = async (confirm: boolean) => {
 
         <VCol cols="12">
             <!-- 👉 Delete Account -->
-            <VCard title="Delete Account">
+            <VCard :title="$t('Delete Account')">
                 <VCardText>
                     <!-- 👉 Checkbox and Button  -->
                     <VAlert color="warning" variant="tonal" class="mb-4">
-                        <VAlertTitle class="mb-1"> Are you sure you want to delete this account? </VAlertTitle>
-                        <p class="mb-0">Once you delete this account, there is no going back. Please be certain.</p>
+                        <VAlertTitle class="mb-1"> {{ $t("confirmation-msg-1") }}</VAlertTitle>
+                        <p class="mb-0">{{ $t("confirmation-msg-2") }}</p>
                     </VAlert>
 
-                    <VBtn color="error" class="mt-3" @click="isConfirmDialogOpen = true"> Deactivate Account </VBtn>
+                    <VBtn color="error" class="mt-3" @click="isConfirmDialogOpen = true">{{ $t("Deactivate Account") }}</VBtn>
                 </VCardText>
             </VCard>
         </VCol>
     </VRow>
 
     <!-- Confirm Dialog -->
-    <ConfirmDialog
-        @confirm="destroyAccount"
-        v-model:isDialogVisible="isConfirmDialogOpen"
-        confirmation-msg="Are you sure you want to deactivate your account?"
-    >
+    <ConfirmDialog @confirm="destroyAccount" v-model:isDialogVisible="isConfirmDialogOpen" :confirmation-msg="$t('confirmation-msg-1')">
         <form>
             <VTextField
                 v-model="confirmationpassword"
-                label="Confirm password"
+                :label="$t('Confirm password')"
                 autocomplete="current-password"
                 type="password"
                 :error-messages="errors.password"

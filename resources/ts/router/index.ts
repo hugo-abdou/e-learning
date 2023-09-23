@@ -14,6 +14,8 @@ router.beforeResolve(async (to, from, next) => {
 
     if (to.meta.redirectIfLoggedIn && isUserLoggedIn()) return next("/");
     if (to.meta.redirectIfNotLoggedIn && !isUserLoggedIn()) return next("/login");
+    if (to.meta.redirectIfNotVerified && !auth.user.verified) return next("/verify-email");
+    if (to.meta.redirectIfVerified && auth.user.verified) return next("/");
 
     return next();
 });

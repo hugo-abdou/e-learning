@@ -32,7 +32,7 @@
             appname: "{{ config('app.name') }}"
         }
         const loaderColor = localStorage.getItem(`${window.laravel.appname}-initial-loader-bg`) || '#FFFFFF'
-        const primaryColor = localStorage.getItem(`${window.laravel.appname}-initial-loader-color`) || '#7367F0'
+        const primaryColor = localStorage.getItem(`${window.laravel.appname}-initial-loader-color`) || '#f39e2d'
 
         if (loaderColor)
             document.documentElement.style.setProperty('--initial-loader-bg', loaderColor)

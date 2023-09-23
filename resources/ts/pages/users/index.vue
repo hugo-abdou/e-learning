@@ -28,15 +28,6 @@ const options = ref<Options>({
     search: undefined
 });
 
-// 👉 List
-const userListMeta = Array(3).fill({
-    icon: "tabler-user-exclamation",
-    color: "warning",
-    title: "Pending Users",
-    stats: "237",
-    percentage: +42,
-    subtitle: "Last week analytics"
-});
 // Headers
 const headers = [
     { title: "Name", key: "name" },
@@ -88,27 +79,6 @@ onBeforeMount(() => {
 <template>
     <section>
         <VRow>
-            <VCol v-if="false" v-for="meta in userListMeta" :key="meta.title" cols="12" sm="6" lg="3">
-                <VCard>
-                    <VCardText class="d-flex justify-space-between">
-                        <div>
-                            <span>{{ meta.title }}</span>
-                            <div class="d-flex align-center gap-2 my-1">
-                                <h6 class="text-h4">
-                                    {{ meta.stats }}
-                                </h6>
-                                <span :class="meta.percentage > 0 ? 'text-success' : 'text-error'">
-                                    ( {{ meta.percentage > 0 ? "+" : "" }} {{ meta.percentage }}%)
-                                </span>
-                            </div>
-                            <span class="text-body-2">{{ meta.subtitle }}</span>
-                        </div>
-
-                        <VAvatar rounded variant="tonal" :color="meta.color" :icon="meta.icon" />
-                    </VCardText>
-                </VCard>
-            </VCol>
-
             <VCol cols="12">
                 <VCard :title="$t('Users')">
                     <!-- 👉 Filters -->
@@ -166,7 +136,7 @@ onBeforeMount(() => {
                         v-model:page="options.page"
                         :items="users"
                         :items-length="totalUsers"
-                        :headers="headers"
+                        :headers="headers.map(i => ({ ...i, title: $t(i.title) }))"
                         class="text-no-wrap"
                         @update:options="options = $event"
                     >
@@ -282,6 +252,7 @@ onBeforeMount(() => {
 <route lang="yaml">
 meta:
     redirectIfNotLoggedIn: true
+    redirectIfNotVerified: true
 </route>
 <style lang="scss">
 .app-user-search-filter {

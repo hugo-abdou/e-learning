@@ -190,14 +190,16 @@ export interface UserProperties {
     id: number;
     name: string;
     email: string;
+    verified?: boolean;
+    role: string[];
     avatar?: string;
     created_at?: string;
 }
 // User Form
-export interface UserForm extends Omit<UserProperties, "id"> {
-    password: string;
-    password_confirmation: string;
-    terms: boolean;
+export interface UserForm extends Omit<UserProperties, "id", "verified"> {
+    password?: string;
+    password_confirmation?: string;
+    terms?: boolean;
 }
 // !SECTION
 

@@ -18,6 +18,7 @@ class AuthResource extends JsonResource
             "id" =>  $this->id,
             "name" => $this->name,
             "email" => $this->email,
+            "verified" => !!$this->email_verified_at,
             "avatar" => $this->ProfilePhotoUrl,
             "role" => ['user'],
         ];

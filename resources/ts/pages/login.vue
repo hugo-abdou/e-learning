@@ -104,7 +104,9 @@ const onSubmit = async () => {
                                 <div class="d-flex align-center justify-space-between flex-wrap mt-2 mb-4">
                                     <VCheckbox v-model="form.remember" label="Remember me" />
 
-                                    <RouterLink class="text-primary ms-2 mb-1" :to="{ name: 'index' }"> Forgot Password? </RouterLink>
+                                    <RouterLink class="text-primary ms-2 mb-1" :to="{ name: 'forgot-password' }">
+                                        Forgot Password?
+                                    </RouterLink>
                                 </div>
 
                                 <!-- login button -->
@@ -142,4 +144,5 @@ const onSubmit = async () => {
 <route lang="yaml">
 meta:
     layout: blank
+    redirectIfLoggedIn: true
 </route>

@@ -34,7 +34,7 @@ const userData = computed<UserProperties>(() => userStore.user);
                     :to="{ name: 'account-settings-tab', params: { tab: item.tab } }"
                 >
                     <VIcon size="20" start :icon="item.icon" />
-                    {{ item.title }}
+                    {{ $t(item.title) }}
                 </VTab>
             </VTabs>
 
@@ -62,4 +62,5 @@ const userData = computed<UserProperties>(() => userStore.user);
 meta:
     navActiveLink: account-settings-tab
     redirectIfNotLoggedIn: true
+    redirectIfNotVerified: true
 </route>

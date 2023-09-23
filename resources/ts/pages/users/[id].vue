@@ -55,4 +55,5 @@ getUser();
 <route lang="yaml">
 meta:
     redirectIfNotLoggedIn: true
+    redirectIfNotVerified: true
 </route>

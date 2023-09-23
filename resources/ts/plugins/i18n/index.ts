@@ -1,4 +1,5 @@
 import { createI18n } from "vue-i18n";
+import { missingHandler } from "./compilation";
 
 const messages = Object.fromEntries(
     Object.entries(
@@ -11,6 +12,7 @@ export default createI18n({
     legacy: false,
     locale: localStorage.getItem("locale") || "en",
     fallbackLocale: "en",
+    missing: import.meta.env.MODE === "development" ? missingHandler : undefined,
     messages,
     missingWarn: false,
     fallbackWarn: false

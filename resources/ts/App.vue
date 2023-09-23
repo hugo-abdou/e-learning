@@ -5,6 +5,7 @@ import { useThemeConfig } from "@core/composable/useThemeConfig";
 import { hexToRgb } from "@layouts/utils";
 import ServerErrorLogger from "./ServerErrorLogger.vue";
 import SnackBar from "@/components/SnackBar/index.vue";
+import axiosIns from "./plugins/axios";
 
 const {
     syncInitialLoaderTheme,

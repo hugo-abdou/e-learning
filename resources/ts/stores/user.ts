@@ -114,6 +114,9 @@ export const useUserStore = defineStore({
         forgotPassword(email: string) {
             return axios.post("/forgot-password", { email: email }, { baseURL: window.location.origin });
         },
+        verifyEmail() {
+            return axios.post("email/verification-notification", {}, { baseURL: window.location.origin });
+        },
         setNewPassword(form: any) {
             console.log(form);
             return axios.post("/reset-password", form, { baseURL: window.location.origin });

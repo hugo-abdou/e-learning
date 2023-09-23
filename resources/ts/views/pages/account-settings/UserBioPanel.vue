@@ -24,20 +24,6 @@
                 </VCardText>
 
                 <VCardText class="d-flex justify-center flex-wrap mt-3">
-                    <!-- 👉 Done task -->
-                    <div class="d-flex align-center me-8">
-                        <VAvatar :size="38" rounded color="primary" variant="tonal" class="me-3">
-                            <VIcon icon="tabler-checkbox" />
-                        </VAvatar>
-
-                        <div>
-                            <h6 class="text-h6">
-                                {{ kFormatter(50000) }}
-                            </h6>
-                            <span class="text-sm">Task Done</span>
-                        </div>
-                    </div>
-
                     <!-- 👉 Done Project -->
                     <div class="d-flex align-center me-4">
                         <VAvatar :size="38" rounded color="primary" variant="tonal" class="me-3">
@@ -57,14 +43,14 @@
 
                 <!-- 👉 Details -->
                 <VCardText>
-                    <p class="text-sm text-uppercase text-disabled">Details</p>
+                    <p class="text-sm text-uppercase text-disabled">{{ $t("Details") }}</p>
 
                     <!-- 👉 User Details list -->
                     <VList class="card-list mt-2">
                         <VListItem>
                             <VListItemTitle>
                                 <h6 class="text-h6">
-                                    Username:
+                                    {{ $t("Username") }}:
                                     <span class="text-body-1">
                                         {{ props.userData.name }}
                                     </span>
@@ -75,24 +61,8 @@
                         <VListItem>
                             <VListItemTitle>
                                 <h6 class="text-h6">
-                                    Email:
+                                    {{ $t("Email") }}:
                                     <span class="text-body-1">{{ props.userData.email }}</span>
-                                </h6>
-                            </VListItemTitle>
-                        </VListItem>
-
-                        <VListItem v-if="props.userData.status">
-                            <VListItemTitle>
-                                <h6 class="text-h6">
-                                    Status:
-                                    <VChip
-                                        label
-                                        size="small"
-                                        :color="resolveUserStatusVariant(props.userData.status)"
-                                        class="text-capitalize"
-                                    >
-                                        {{ props.userData.status }}
-                                    </VChip>
                                 </h6>
                             </VListItemTitle>
                         </VListItem>
@@ -100,7 +70,7 @@
                         <VListItem>
                             <VListItemTitle>
                                 <h6 class="text-h6 d-flex align-center">
-                                    Role:
+                                    {{ $t("Role") }}:
                                     <div class="d-flex gap-2 flex-wrap w-100 ml-2">
                                         <VChip
                                             v-for="(item, index) in props.userData.role"
@@ -141,7 +111,6 @@
 
 <script setup lang="ts">
 import { UserProperties } from "@/types";
-import { resolveUserStatusVariant } from "@/utils";
 import { avatarText, kFormatter } from "@core/utils/formatters";
 import FeatureProgress from "./FeatureProgress.vue";
 

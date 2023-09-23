@@ -35,11 +35,7 @@ async function resetPassword() {
         }
     }
 }
-const passwordRequirements = [
-    "Minimum 8 characters long - the more, the better",
-    "At least one lowercase character",
-    "At least one number, symbol, or whitespace character"
-];
+const passwordRequirements = ["passwordRequirements_1", "passwordRequirements_2", "passwordRequirements_3"];
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 const isOneTimePasswordDialogVisible = ref(false);
 
@@ -77,7 +73,7 @@ onMounted(getSessions);
     <VRow>
         <!-- SECTION: Change Password -->
         <VCol cols="12">
-            <VCard title="Change Password">
+            <VCard :title="$t('Change Password')">
                 <VForm @submit.prevent="resetPassword">
                     <VCardText class="pt-0">
                         <!-- 👉 Current Password -->
@@ -90,7 +86,7 @@ onMounted(getSessions);
                                     :error-messages="errors.current_password"
                                     :type="isCurrentPasswordVisible ? 'text' : 'password'"
                                     :append-inner-icon="isCurrentPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'"
-                                    label="Current Password"
+                                    :label="$t('Current Password')"
                                     @click:append-inner="isCurrentPasswordVisible = !isCurrentPasswordVisible"
                                 />
                             </VCol>
@@ -106,7 +102,7 @@ onMounted(getSessions);
                                     :error-messages="errors.password"
                                     :type="isNewPasswordVisible ? 'text' : 'password'"
                                     :append-inner-icon="isNewPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'"
-                                    label="New Password"
+                                    :label="$t('New Password')"
                                     @click:append-inner="isNewPasswordVisible = !isNewPasswordVisible"
                                 />
                             </VCol>
@@ -118,7 +114,7 @@ onMounted(getSessions);
                                     v-model="passwordForm.password_confirmation"
                                     :type="isConfirmPasswordVisible ? 'text' : 'password'"
                                     :append-inner-icon="isConfirmPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'"
-                                    label="Confirm New Password"
+                                    :label="$t('Confirm New Password')"
                                     @click:append-inner="isConfirmPasswordVisible = !isConfirmPasswordVisible"
                                 />
                             </VCol>
@@ -127,10 +123,10 @@ onMounted(getSessions);
 
                     <!-- 👉 Password Requirements -->
                     <VCardText>
-                        <h6 class="text-base font-weight-medium mb-3">Password Requirements:</h6>
+                        <h6 class="text-base font-weight-medium mb-3">{{ $t("Password Requirements") }}:</h6>
 
                         <VList class="card-list">
-                            <VListItem v-for="item in passwordRequirements" :key="item" :title="item" class="text-medium-emphasis">
+                            <VListItem v-for="item in passwordRequirements" :key="item" :title="$t(item)" class="text-medium-emphasis">
                                 <template #prepend>
                                     <VIcon size="8" icon="tabler-circle" class="me-3" />
                                 </template>
@@ -140,15 +136,14 @@ onMounted(getSessions);
 
                     <!-- 👉 Action Buttons -->
                     <VCardText class="d-flex flex-wrap gap-4">
-                        <VBtn type="submit">Save changes</VBtn>
+                        <VBtn type="submit">{{ $t("Save changes") }} </VBtn>
 
-                        <VBtn type="reset" color="secondary" variant="tonal"> Reset </VBtn>
+                        <VBtn type="reset" color="secondary" variant="tonal"> {{ $t("Reset") }} </VBtn>
                     </VCardText>
                 </VForm>
             </VCard>
         </VCol>
         <!-- !SECTION -->
-
         <!-- SECTION Two-steps verification -->
         <!-- TODO: this section nead some services implimentation for sms validation -->
         <VCol v-if="false" cols="12">
@@ -177,15 +172,15 @@ onMounted(getSessions);
         <VCol cols="12">
             <VCard title="Recent Devices">
                 <template #append>
-                    <VBtn size="small" color="warning" @click="isConfirmDialogOpen = true"> Log Out Other Browsers </VBtn>
+                    <VBtn size="small" color="warning" @click="isConfirmDialogOpen = true"> {{ $t("Log Out Other Browsers") }} </VBtn>
                 </template>
                 <VDivider />
                 <VTable class="text-no-wrap">
                     <thead>
                         <tr>
-                            <th scope="col">BROWSER</th>
-                            <th scope="col">IP</th>
-                            <th scope="col">RECENT ACTIVITIES</th>
+                            <th scope="col">{{ $t("BROWSER") }}</th>
+                            <th scope="col">{{ $t("IP") }}</th>
+                            <th scope="col">{{ $t("RECENT ACTIVITIES") }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -211,11 +206,11 @@ onMounted(getSessions);
     <ConfirmDialog
         @confirm="logOutFromOtherBrowsers"
         v-model:isDialogVisible="isConfirmDialogOpen"
-        confirmation-msg="Are you sure you want to log Out From Other Browsers?"
+        :confirmation-msg="$t('confirmation-msg-3')"
     >
         <VTextField
             v-model="logOutFromOtherBrowsersForm.password"
-            label="Confirm password"
+            :label="$t('Confirm password')"
             autocomplete="current-password"
             type="password"
             :error-messages="logOutFromOtherBrowsersForm.error"
