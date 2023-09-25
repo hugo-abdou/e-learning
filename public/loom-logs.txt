@@ -1,0 +1,7 @@
+[
+  {
+    "level": "debug",
+    "message": "webextReduxStore initializing wrapped store",
+    "context": {}
+  }
+]

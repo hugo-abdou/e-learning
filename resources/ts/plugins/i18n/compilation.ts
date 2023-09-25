@@ -10,7 +10,7 @@ const log = debounce(() => {
         ar: { ...missingLocales.ar, ...missing.ar }
     };
     localStorage.setItem("missingLocales", JSON.stringify(newValue));
-    console.error("you have some missing translation :", newValue);
+    // console.error("you have some missing translation :", newValue);
 }, 1000);
 
 export const missingHandler = (locale: string, key: string, vm: ComponentInternalInstance | undefined) => {

@@ -69,11 +69,6 @@ const deleteUser = (id: number) => {
 };
 
 watch([options, searchQuery, selectedRole, () => options.value.itemsPerPage], fetchUsers);
-
-// const router = useRouter();
-onBeforeMount(() => {
-    // router.push({ name: "not-authorized" });
-});
 </script>
 
 <template>
@@ -83,9 +78,9 @@ onBeforeMount(() => {
                 <VCard :title="$t('Users')">
                     <!-- 👉 Filters -->
                     <VCardText>
-                        <VRow>
-                            <!-- 👉 Select Role -->
+                        <VRow align="end" justify="space-between">
                             <VCol cols="12" sm="4">
+                                <!-- 👉 Select Role -->
                                 <RolesSelectBox
                                     :default-roles="roles"
                                     v-model="selectedRole"
@@ -94,9 +89,8 @@ onBeforeMount(() => {
                                     clearable
                                 />
                             </VCol>
-                            <VSpacer />
-                            <!-- 👉 Select Plan -->
                             <VCol cols="12" sm="4">
+                                <!-- 👉 Select Plan -->
                                 <AppSelect
                                     :label="$t('Items Per Page')"
                                     :model-value="options.itemsPerPage"
@@ -105,18 +99,10 @@ onBeforeMount(() => {
                                 />
                             </VCol>
                         </VRow>
-                    </VCardText>
-
-                    <VDivider />
-
-                    <VCardText class="d-flex flex-wrap justify-between py-4 gap-4">
                         <VRow>
-                            <VCol cols="12" sm="6">
+                            <VCol class="d-flex gap-5">
                                 <!-- 👉 Search  -->
                                 <AppTextField v-model="searchQuery" :placeholder="$t('Search')" density="compact" />
-                            </VCol>
-
-                            <VCol cols="12" sm="6">
                                 <div class="d-flex justify-end flex-wrap gap-4">
                                     <!-- 👉 Add user button -->
                                     <VBtn prepend-icon="tabler-plus" @click="isAddNewUserDrawerVisible = true">

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import navItems from "@/navigation/vertical";
+import useNavigation from "@/navigation";
 import { useThemeConfig } from "@core/composable/useThemeConfig";
 
 // Components
@@ -10,9 +10,12 @@ import UserProfile from "@/layouts/components/UserProfile.vue";
 // @layouts plugin
 import { VerticalNavLayout } from "@layouts";
 import NavBarI18n from "./NavBarI18n.vue";
+import NavSearchBar from "./NavSearchBar.vue";
 
 const { appRouteTransition, isLessThanOverlayNavBreakpoint } = useThemeConfig();
 const { width: windowWidth } = useWindowSize();
+
+const navItems = useNavigation();
 </script>
 
 <template>
@@ -28,11 +31,13 @@ const { width: windowWidth } = useWindowSize();
                 >
                     <VIcon size="26" icon="tabler-menu-2" />
                 </IconBtn>
-                <NavBarI18n class="me-1" />
 
                 <NavbarThemeSwitcher />
 
+                <!-- <VSpacer />
+                <NavSearchBar class="ms-lg-n3" /> -->
                 <VSpacer />
+                <NavBarI18n class="me-1" />
 
                 <UserProfile />
             </div>
