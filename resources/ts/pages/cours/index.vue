@@ -15,7 +15,7 @@
                                 <AppTextField v-model="options.search" :placeholder="$t('Search')" density="compact" />
                                 <div class="d-flex justify-end flex-wrap gap-4">
                                     <!-- 👉 Add user button -->
-                                    <VBtn prepend-icon="tabler-plus">
+                                    <VBtn prepend-icon="tabler-plus" :to="{ name: 'cours-create' }">
                                         {{ $t("Add New Cour") }}
                                     </VBtn>
                                 </div>
@@ -119,9 +119,7 @@ const headers = [
 
 watch(
     Object.keys(options.value).map(item => () => options.value[item as keyof Options]),
-    options => {
-        console.log(options[0]);
-    }
+    ([page, perPage, search]) => {}
 );
 </script>
 

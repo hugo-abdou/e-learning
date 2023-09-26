@@ -64,7 +64,7 @@ const theme: VuetifyOptions["theme"] = {
                 "shadow-key-umbra-color": "#2F2B3D"
             }
         },
-        darkold: {
+        dark: {
             dark: true,
             colors: {
                 primary: localStorage.getItem(`${themeConfig.app.title}-darkThemePrimaryColor`) || staticPrimaryColor,
@@ -121,7 +121,7 @@ const theme: VuetifyOptions["theme"] = {
                 "shadow-key-umbra-color": "#0F1422"
             }
         },
-        dark: {
+        darkold: {
             dark: true,
             colors: {
                 primary: localStorage.getItem(`${themeConfig.app.title}-darkThemePrimaryColor`) || staticPrimaryColor,
