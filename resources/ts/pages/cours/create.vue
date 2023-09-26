@@ -1,27 +1,31 @@
 <script setup lang="ts">
 import laptopGirl from "@images/illustrations/laptop-girl.png";
+import imagebg from "@images/pages/background-3.jpg";
 
 const props = defineProps<{}>();
 
 const emit = defineEmits<{}>();
 
-const currentStep = ref(0);
+const currentStep = ref(1);
 
-const createApp = [
+const steps = [
     {
         icon: "tabler-clipboard",
         title: "Details",
-        subtitle: "Enter Details"
+        subtitle: "Enter Coure Details",
+        discription: "Provide data with this form to create your Coure"
     },
     {
-        icon: "grommet-icons:chapter-next",
+        icon: "grommet-icons:chapter-add",
         title: "Chapters",
-        subtitle: "Add Chapters"
+        subtitle: "Add Chapters",
+        discription: "Add Chapters"
     },
     {
         icon: "tabler-check",
         title: "Submit",
-        subtitle: "submit"
+        subtitle: "submit",
+        discription: "submit"
     }
 ];
 
@@ -49,7 +53,7 @@ const onSubmit = () => {
                     <AppStepper
                         :current-step="currentStep"
                         direction="vertical"
-                        :items="createApp"
+                        :items="steps"
                         icon-size="24"
                         class="stepper-icon-step-bg"
                     />
@@ -58,8 +62,10 @@ const onSubmit = () => {
         </VCol>
 
         <VCol cols="12" sm="7" md="8" lg="9">
-            <h1 class="text-h1 text-center mb-2">Create Coure</h1>
-            <p class="text-sm text-center mb-8">Provide data with this form to create your Coure</p>
+            <h1 class="text-h1 text-center mb-2">
+                {{ steps[currentStep].title }}
+            </h1>
+            <p class="text-sm text-center mb-8">{{ steps[currentStep].discription }}</p>
             <VWindow v-model="currentStep" class="disable-tab-transition stepper-content">
                 <VWindowItem>
                     <VCard>
@@ -76,20 +82,29 @@ const onSubmit = () => {
                     </VCard>
                 </VWindowItem>
                 <VWindowItem>
-                    <VExpansionPanels class="no-icon-rotate" variant="accordion">
+                    <VExpansionPanels :model-value="0" class="no-icon-rotate" variant="accordion">
                         <VExpansionPanel v-for="(chapter, i) in formData.chapters" :key="i">
                             <VExpansionPanelTitle disable-icon-rotate>
-                                Item {{ i }}
+                                Chapter {{ i + 1 }}
                                 <template #actions>
                                     <VIcon @click.stop="deleteChapter(i)" size="18" icon="tabler-trash" color="error" />
                                 </template>
                             </VExpansionPanelTitle>
                             <VExpansionPanelText>
-                                <VTextField v-model="chapter.name" label="Coure Name" />
+                                <div class="align-center d-flex justify-space-between">
+                                    <h3 class="text-h3">Video</h3>
+                                    <div class="rounded overflow-hidden w-50">
+                                        <VImg :src="imagebg" height="200" cover>
+                                            <VToolbar></VToolbar>
+                                        </VImg>
+                                    </div>
+                                </div>
                             </VExpansionPanelText>
                         </VExpansionPanel>
                     </VExpansionPanels>
-                    <VBtn @click="addChapter" class="mt-5 w-100">Add Chapter</VBtn>
+                    <div class="text-center">
+                        <VBtn @click="addChapter" class="mt-5" icon="tabler-plus" size="32"></VBtn>
+                    </div>
                 </VWindowItem>
 
                 <VWindowItem class="text-center">

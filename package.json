@@ -16,6 +16,8 @@
     "@floating-ui/dom": "1.2.7",
     "@iconify-json/mdi": "^1.1.52",
     "@tabler/icons": "2.17.0",
+    "@uppy/core": "^3.5.0",
+    "@uppy/dashboard": "^3.5.3",
     "@vueuse/core": "10.1.0",
     "@vueuse/math": "10.1.0",
     "apexcharts-clevision": "3.28.5",
