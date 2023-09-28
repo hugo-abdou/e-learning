@@ -6,6 +6,7 @@ const axiosIns = axios.create({
     baseURL: "/api",
     headers: {
         Accept: "application/json",
+        // "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')?.getAttribute("content"),
         common: {
             "X-Requested-With": "XMLHttpRequest"
         }

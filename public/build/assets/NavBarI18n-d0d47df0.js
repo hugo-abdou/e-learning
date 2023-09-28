@@ -1,0 +1,1 @@
+import{_ as o}from"./NavBarI18n.vue_vue_type_script_setup_true_lang-5ad7ff38.js";import"./main-0fe8d6c4.js";import"./VMenu-04b4d8fd.js";import"./VList-df386f36.js";import"./ssrBoot-68b2305a.js";import"./VDivider-4843e98e.js";export{o as default};

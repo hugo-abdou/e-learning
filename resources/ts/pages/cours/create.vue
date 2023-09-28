@@ -11,7 +11,7 @@
                         :current-step="currentStep"
                         :direction="windowWidth > 960 ? 'vertical' : 'horizontal'"
                         :items="steps"
-                        icon-size="24"
+                        icon-size="22"
                         class="stepper-icon-step-bg"
                     />
                 </VCardItem>
@@ -20,70 +20,51 @@
             <VCol cols="12" md="8" lg="9">
                 <VWindow v-model="currentStep" class="disable-tab-transition stepper-content">
                     <VWindowItem>
-                        <VCard>
-                            <VCardItem>
-                                <VRow class="mt-0">
-                                    <VCol cols="12">
-                                        <VTextField label="Coure Title" />
-                                    </VCol>
-                                    <VCol cols="12">
-                                        <VTextarea label="Coure Description" />
-                                    </VCol>
-                                </VRow>
-                            </VCardItem>
-                        </VCard>
+                        <VForm :ref="el => (steps[0].form = el as any)">
+                            <VCard>
+                                <VCardItem>
+                                    <VRow class="mt-0">
+                                        <VCol cols="12">
+                                            <VTextField v-model="formData.title" :rules="[requiredValidator]" label="Coure Title" />
+                                        </VCol>
+                                        <VCol cols="12">
+                                            <VTextarea
+                                                v-model="formData.discription"
+                                                :rules="[requiredValidator]"
+                                                label="Coure Description"
+                                            />
+                                        </VCol>
+                                    </VRow>
+                                </VCardItem>
+                            </VCard>
+                        </VForm>
                     </VWindowItem>
                     <VWindowItem>
-                        <VExpansionPanels :model-value="0" variant="accordion">
-                            <VExpansionPanel v-for="(chapter, i) in formData.chapters" :key="i">
+                        <VExpansionPanels v-model="currentChapter" variant="accordion">
+                            <VExpansionPanel v-for="(chapter, i) in formData.chapters" :key="i + chapter.name">
                                 <VExpansionPanelTitle>
                                     <div class="d-flex justify-space-between w-100 pr-5">
                                         {{ chapter.name || `Chapter ${i + 1}` }}
-                                        <VBtn
-                                            v-if="canDeleteChapter"
-                                            @click.stop="deleteChapter(i)"
-                                            variant="tonal"
-                                            size="32"
-                                            icon="tabler-trash"
-                                            color="error"
-                                        >
-                                        </VBtn>
+                                        <div>
+                                            <ActionButton :disabled="i === 0" @click.stop="up(i)" icon="mdi-arrow-up" variant="text" />
+                                            <ActionButton
+                                                :disabled="i + 1 >= formData.chapters.length"
+                                                @click.stop="down(i)"
+                                                icon="mdi-arrow-down"
+                                                variant="text"
+                                            />
+                                            <ActionButton
+                                                v-if="canDeleteChapter"
+                                                @click.stop="deleteChapter(i)"
+                                                icon="tabler-trash"
+                                                color="error"
+                                                class="ml-2"
+                                            />
+                                        </div>
                                     </div>
                                 </VExpansionPanelTitle>
                                 <VExpansionPanelText>
-                                    <VRow>
-                                        <VCol cols="12">
-                                            <VTextField v-model="chapter.name" label="Chapter Title" />
-                                        </VCol>
-                                        <VCol cols="auto">
-                                            <VCardTitle><VIcon icon="system-uicons:video" /> Video</VCardTitle>
-                                            <VCardItem class="pt-0">
-                                                <VBtn
-                                                    style="width: 150px; height: 100px"
-                                                    class="border-md border-dashed bg-background"
-                                                    variant="plain"
-                                                    color="secondary"
-                                                    @click="openDialog('upload-video')"
-                                                >
-                                                    <VIcon icon="fluent:video-add-20-regular" size="28" />
-                                                </VBtn>
-                                            </VCardItem>
-                                        </VCol>
-                                        <VCol>
-                                            <VCardTitle> <VIcon icon="system-uicons:document" /> Documents</VCardTitle>
-                                            <VCardItem class="pt-0">
-                                                <VBtn
-                                                    style="width: 150px; height: 100px"
-                                                    class="border-md border-dashed bg-background"
-                                                    variant="plain"
-                                                    color="secondary"
-                                                    @click="openDialog('upload-document')"
-                                                >
-                                                    <VIcon icon="fluent:document-add-20-regular" size="28" />
-                                                </VBtn>
-                                            </VCardItem>
-                                        </VCol>
-                                    </VRow>
+                                    <ChapterForm :chapter="chapter" @update:name="chapter.name = $event" @upload="openDialog" />
                                 </VExpansionPanelText>
                             </VExpansionPanel>
                         </VExpansionPanels>
@@ -94,13 +75,6 @@
                             </VBtn>
                         </div>
                     </VWindowItem>
-
-                    <VWindowItem class="text-center">
-                        <h6 class="text-h6 mb-2">Submit 🥳</h6>
-                        <p class="text-sm mb-6">Submit to Save your Coure.</p>
-
-                        <VImg :src="laptopGirl" width="176" class="mx-auto" />
-                    </VWindowItem>
                 </VWindow>
 
                 <div class="d-flex justify-space-between mt-8">
@@ -109,12 +83,12 @@
                         Previous
                     </VBtn>
 
-                    <VBtn v-if="createApp.length - 1 === currentStep" color="success" @click="onSubmit">
+                    <VBtn v-if="steps.length - 1 === currentStep" color="success" @click="onSubmit">
                         submit
                         <VIcon icon="tabler-check" end class="flip-in-rtl" />
                     </VBtn>
 
-                    <VBtn v-else @click="currentStep++">
+                    <VBtn v-else @click="nextStep">
                         Next
                         <VIcon icon="tabler-arrow-right" end class="flip-in-rtl" />
                     </VBtn>
@@ -125,18 +99,43 @@
             <!-- Dialog close btn -->
             <DialogCloseBtn @click="closeDialog" />
             <VCard title="Upload Your Files">
-                <FileUploader />
+                <FileUploader @uploadSuccess="uploadSuccess" @done="closeDialog" />
             </VCard>
         </VDialog>
     </VContainer>
 </template>
 <script setup lang="ts">
-import laptopGirl from "@images/illustrations/laptop-girl.png";
+import { Chapter, Media } from "@/types";
+import ChapterForm from "./components/ChapterForm.vue";
+import type { VForm } from "vuetify/components/VForm";
+import { requiredValidator } from "@/@core/utils/validators";
 
 const props = defineProps<{}>();
 const emit = defineEmits<{}>();
-const currentStep = ref(1);
+const currentStep = ref(0);
+const currentChapter = ref(0);
 
+const steps = ref([
+    {
+        icon: "tabler-clipboard",
+        title: "Details",
+        subtitle: "Enter Coure Details",
+        discription: "Provide data with this form to create your Coure",
+        form: null as VForm | null
+    },
+    {
+        icon: "grommet-icons:chapter-add",
+        title: "Chapters",
+        subtitle: "Add Chapters",
+        discription: "Add Chapters",
+        form: null
+    }
+]);
+const formData = ref<{ title: string; discription: string; chapters: Chapter[] }>({
+    title: "",
+    discription: "",
+    chapters: [{ name: "", video: null, documents: [] }]
+});
 const dialog = reactive({
     open: false,
     type: "" as string | null
@@ -149,31 +148,14 @@ const openDialog = (type: string) => {
     dialog.open = true;
     dialog.type = type;
 };
-
-const steps = [
-    {
-        icon: "tabler-clipboard",
-        title: "Details",
-        subtitle: "Enter Coure Details",
-        discription: "Provide data with this form to create your Coure"
-    },
-    {
-        icon: "grommet-icons:chapter-add",
-        title: "Chapters",
-        subtitle: "Add Chapters",
-        discription: "Add Chapters"
-    },
-    {
-        icon: "tabler-check",
-        title: "Submit",
-        subtitle: "submit",
-        discription: "submit"
+const uploadSuccess = ({ body }: { body: Media }) => {
+    if (dialog.type === "upload-chapter-video") {
+        formData.value.chapters[currentChapter.value].video = body;
     }
-];
-
-const formData = ref({
-    chapters: [{ name: "", video: null, documents: [] }]
-});
+    if (dialog.type === "upload-chapter-document") {
+        formData.value.chapters[currentChapter.value].documents.push(body);
+    }
+};
 
 const addChapter = () => {
     formData.value.chapters.push({ name: "", video: null, documents: [] });
@@ -181,9 +163,33 @@ const addChapter = () => {
 const deleteChapter = (index: number) => {
     formData.value.chapters = formData.value.chapters.filter((item, i) => i !== index);
 };
+const up = (index: number) => {
+    const newValue = [...formData.value.chapters];
+    newValue[index] = formData.value.chapters[index - 1];
+    newValue[index - 1] = formData.value.chapters[index];
+    formData.value.chapters = newValue;
+};
 
+const down = (index: number) => {
+    const newValue = [...formData.value.chapters];
+    newValue[index] = formData.value.chapters[index + 1];
+    newValue[index + 1] = formData.value.chapters[index];
+    formData.value.chapters = newValue;
+};
+
+const nextStep = () => {
+    const form = steps.value[currentStep.value].form;
+    if (form) {
+        form.validate().then(async ({ valid }) => {
+            if (!valid) return;
+            currentStep.value++;
+        });
+        return;
+    }
+    currentStep.value++;
+};
 const onSubmit = () => {
-    // eslint-disable-next-line no-alert
+    console.log(formData.value);
 };
 const { width: windowWidth } = useWindowSize();
 const canDeleteChapter = computed(() => formData.value.chapters.length > 1);
@@ -191,6 +197,19 @@ const canDeleteChapter = computed(() => formData.value.chapters.length > 1);
 <style lang="scss">
 .stepper-content .card-list {
     --v-card-list-gap: 24px;
+}
+.list-enter,
+.list-leave-to {
+    opacity: 0;
+}
+
+.list-enter-active,
+.list-leave-active {
+    transition: opacity 0.5s ease;
+}
+
+.list-move {
+    transition: transform 0.5s ease-out;
 }
 </style>
 

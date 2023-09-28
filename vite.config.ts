@@ -74,8 +74,9 @@ export default defineConfig({
     optimizeDeps: {
         exclude: ["vuetify"],
         entries: [__dirname + "./resources/ts/**/*.vue"]
-    },
-    server: {
-        host: "e-learning.test"
     }
+    // server: {
+    //     host: "e-learning.test",
+    //     https: true
+    // }
 });

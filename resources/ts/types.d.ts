@@ -201,6 +201,22 @@ export interface UserForm extends Omit<UserProperties, "id", "verified"> {
     password_confirmation?: string;
     terms?: boolean;
 }
+
+interface Chapter {
+    name: string;
+    video: Media | null;
+    documents: Media[];
+}
+
+export interface Media {
+    id: number;
+    mime_type: string;
+    name: string;
+    sm_url: string;
+    thumb_url: string;
+    url: string;
+    driver?: string;
+}
 // !SECTION
 
 // SECTION App: Calendar

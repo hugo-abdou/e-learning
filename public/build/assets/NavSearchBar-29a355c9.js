@@ -1,0 +1,1 @@
+import{_ as r}from"./AppTextField.vue_vue_type_script_setup_true_lang-33f290d3.js";import{d as e,o as n,f as o}from"./main-0fe8d6c4.js";import"./VTextField-8e9e4f53.js";const a=e({inheritAttrs:!1}),f=e({...a,__name:"NavSearchBar",setup(_){return(c,s)=>{const t=r;return n(),o(t,{"prepend-inner-icon":"tabler-search"})}}});export{f as default};

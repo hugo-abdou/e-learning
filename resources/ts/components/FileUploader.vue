@@ -6,10 +6,10 @@
 import Uppy, { UppyOptions } from "@uppy/core";
 import Dashboard, { DashboardOptions } from "@uppy/dashboard";
 import { XHRUploadOptions } from "@uppy/xhr-upload";
-import XHR from "@/plugins/uppy/XhrUpload";
+import XhrUpload from "@/plugins/uppy/XhrUpload";
+import { useTheme } from "vuetify/lib/framework.mjs";
 import "@uppy/core/dist/style.css";
 import "@uppy/dashboard/dist/style.css";
-import { useTheme } from "vuetify/lib/framework.mjs";
 
 const props = defineProps<{
     uppyOptions?: Partial<UppyOptions<Record<string, unknown>>>;
@@ -37,13 +37,9 @@ onMounted(() => {
         },
         ...props.dashboardOptions
     });
-    uppy.use(XHR, {
+    uppy.use(XhrUpload, {
         endpoint: "/media/upload",
-        withCredentials: true,
-        ...props.xhrOptions,
-        headers: {
-            ...props.xhrOptions?.headers
-        }
+        ...props.xhrOptions
     });
 
     uppy.on("complete", res => emit("complete", res));

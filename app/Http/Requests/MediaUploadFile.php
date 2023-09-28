@@ -15,22 +15,22 @@ class MediaUploadFile extends FormRequest
 {
     public function rules(): array
     {
-        if ($this->has('isUrl')) {
-            return [
-                'type' => 'required|string',
-                'url' => 'required|string',
-                'meta.name' => 'required|string',
-            ];
-        }
+        // if ($this->has('isUrl')) {
+        //     return [
+        //         'type' => 'required|string',
+        //         'url' => 'required|string',
+        //         'meta.name' => 'required|string',
+        //     ];
+        // }
 
-        $mimes = collect(Media::$types)->map(function ($mime) {
-            return Str::after($mime, '/');
-        })->implode(',');
+        // $mimes = collect(Media::$types)->map(function ($mime) {
+        //     return Str::after($mime, '/');
+        // })->implode(',');
 
-        $maxFileSize = 1024 * 1024 * 200; // 200MB
+        // $maxFileSize = 1024 * 1024 * 200; // 200MB
 
         return [
-            'file' => ['required', 'file', "mimes:$mimes", "max:$maxFileSize"],
+            // 'file' => ['required', 'file', "mimes:$mimes", "max:$maxFileSize"],
         ];
     }
 

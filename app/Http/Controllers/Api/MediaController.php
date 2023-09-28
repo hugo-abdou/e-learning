@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Abstracts\StorageUploadedFile;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\MediaUploadFile;
 use App\Http\Resources\MediaResource;
 use App\MediaConversions\MediaImageResizeConversion;
@@ -26,7 +27,8 @@ class MediaController extends Controller
     }
     public function upload(MediaUploadFile $upload): MediaResource
     {
-        return new MediaResource($upload->handle());
+        // return new MediaResource($upload->handle());
+        return new MediaResource(Media::first());
     }
 
     public function store(Request $request)

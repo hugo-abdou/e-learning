@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('loader.css') }}" />
     {{-- {{ Vite::useBuildDirectory('build-client')->withEntryPoints(['ts/main.ts']) }} --}}
     @vite(['resources/ts/main.ts'])
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
 <body>
