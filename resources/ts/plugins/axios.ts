@@ -4,8 +4,13 @@ import { useUserStore } from "@/stores/user";
 
 const axiosIns = axios.create({
     baseURL: "/api",
-    withCredentials: true,
-    headers: { common: { "X-Requested-With": "XMLHttpRequest" } }
+    headers: {
+        Accept: "application/json",
+        common: {
+            "X-Requested-With": "XMLHttpRequest"
+        }
+    },
+    withCredentials: true
 });
 
 // ℹ️ Add response interceptor to handle 401 response

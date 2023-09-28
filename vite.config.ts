@@ -21,19 +21,12 @@ export default defineConfig({
             refresh: true
         }),
         vue({
-            template: {
-                transformAssetUrls: {
-                    base: null,
-                    includeAbsolute: false
-                }
-            }
+            template: { transformAssetUrls: { base: null, includeAbsolute: false } }
         }),
         vueJsx(),
         // https://github.com/vuetifyjs/vuetify-loader/tree/next/packages/vite-plugin
         vuetify({
-            styles: {
-                configFile: "./resources/styles/variables/_vuetify.scss"
-            }
+            styles: { configFile: "./resources/styles/variables/_vuetify.scss" }
         }),
         Pages({
             dirs: ["./resources/ts/pages"],
@@ -81,5 +74,8 @@ export default defineConfig({
     optimizeDeps: {
         exclude: ["vuetify"],
         entries: [__dirname + "./resources/ts/**/*.vue"]
+    },
+    server: {
+        host: "e-learning.test"
     }
 });

@@ -5,7 +5,8 @@
 <script setup lang="ts">
 import Uppy, { UppyOptions } from "@uppy/core";
 import Dashboard, { DashboardOptions } from "@uppy/dashboard";
-import XHR, { XHRUploadOptions } from "@uppy/xhr-upload";
+import { XHRUploadOptions } from "@uppy/xhr-upload";
+import XHR from "@/plugins/uppy/XhrUpload";
 import "@uppy/core/dist/style.css";
 import "@uppy/dashboard/dist/style.css";
 import { useTheme } from "vuetify/lib/framework.mjs";
@@ -37,12 +38,10 @@ onMounted(() => {
         ...props.dashboardOptions
     });
     uppy.use(XHR, {
-        endpoint: "/api/media",
+        endpoint: "/media/upload",
         withCredentials: true,
         ...props.xhrOptions,
         headers: {
-            //@ts-ignore
-            // "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
             ...props.xhrOptions?.headers
         }
     });
@@ -53,7 +52,7 @@ onMounted(() => {
 </script>
 <style>
 .uppy-Dashboard-inner {
-    width: 100%;
+    width: 100% !important;
 }
 .uppy-Dashboard-browse:hover,
 .uppy-Dashboard-browse:focus {

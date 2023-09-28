@@ -1,7 +1,7 @@
 /** @jsx h */
 import XhrUploadParent from "@uppy/xhr-upload";
-import axios from "@axios";
 import EventTracker from "@uppy/utils/lib/EventTracker";
+import axiosIns from "@/plugins/axios";
 // import BunnyStreem from "@/plugins/bunny";
 /**
  * XhrUpload
@@ -33,8 +33,29 @@ export default class XhrUpload extends XhrUploadParent {
         });
     }
     upload(file, current, total) {
+        if (file.type.includes("image/")) return this.uploadImage(file, current, total);
+        if (file.type.includes("application/pdf")) return this.uploadPdf(file, current, total);
         // if (file.type.includes("video/")) return this.uploadVideo(file, current, total);
-        // if (file.type.includes("application/pdf")) return this.uploadPdf(file, current, total);
+    }
+
+    uploadImage(file, current, total) {
+        return new Promise(async (resolve, reject) => {
+            const opts = this.getOptions(file);
+
+            this.uppy.log(`uploading ${current} of ${total}`);
+            this.uppy.emit("upload-started", file);
+            this.uploaderEvents[file.id] = new EventTracker(this.uppy);
+            try {
+                const data = opts.formData ? this.createFormDataUpload(file, opts) : file.data;
+                const res = await axiosIns.post("/media/upload", data);
+                const uploadResp = { status: 200, body: res.data };
+                this.uppy.emit("upload-success", file, uploadResp);
+                return resolve(res);
+            } catch (error) {
+                this.uppy.emit("upload-error", file, error);
+                return reject(error);
+            }
+        });
     }
 
     uploadVideo(file, current, total) {
@@ -66,7 +87,7 @@ export default class XhrUpload extends XhrUploadParent {
         this.uppy.log(`uploading ${current} of ${total}`);
         return new Promise(async (resolve, reject) => {
             this.uppy.emit("upload-started", file);
-            const data = opts.formData ? this.createFormDataUpload(file, opts) : file.data;
+
             this.uploaderEvents[file.id] = new EventTracker(this.uppy);
             let queuedRequest;
 
