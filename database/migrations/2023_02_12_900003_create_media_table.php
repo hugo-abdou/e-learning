@@ -19,11 +19,10 @@ return new class extends Migration
             $table->string('mime_type');
             $table->string('disk');
             $table->string('path');
-            $table->float('duration')->nullable();
             $table->unsignedBigInteger('size');
             $table->unsignedBigInteger('size_total');
             $table->json('conversions')->nullable();
-            $table->string('uuid')->nullable();
+            $table->json('data')->nullable();
             $table->smallInteger('status')->default(0);
             $table->timestamps();
         });

@@ -3,20 +3,34 @@
 namespace App\Http\Controllers\Api;
 
 use App\Abstracts\StorageUploadedFile;
+use App\Enums\MediaResolutions;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MediaUploadFile;
 use App\Http\Resources\MediaResource;
+use App\Jobs\ProcessImageMediaJob;
+use App\Jobs\ProcessVideoMediaJob;
 use App\MediaConversions\MediaImageResizeConversion;
 use App\MediaConversions\MediaVideoThumbConversion;
 use App\Models\Media;
+use App\Services\VideoProcesseurService;
 use App\Support\MediaUploader;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Process;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
 class MediaController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(Request $request)
+    {
+        $query = Media::query()->orderByDesc('created_at');
+        return MediaResource::collection($query->paginate($request->get('perPage', 20)))->resolve();
+    }
     public function search(Request $request)
     {
         $records = Media::latest('created_at')
@@ -27,8 +41,17 @@ class MediaController extends Controller
     }
     public function upload(MediaUploadFile $upload): MediaResource
     {
-        // return new MediaResource($upload->handle());
-        return new MediaResource(Media::first());
+        $media = $upload->handle();
+        $type = Str::before($media->mime_type, '/');
+
+        // process Image and extract thumbnails and large images
+        ProcessImageMediaJob::dispatchIf($type === 'image', $media->id, ["thumb" => 500, "large" => 800], ['disk' => 'public', 'path' => 'media/' . auth()->id()]);
+
+        // convert  Video to HLS format and extract thumbnails and qualities [360,720,1080]
+        ProcessVideoMediaJob::dispatchIf($type === 'video', $media->id, [MediaResolutions::RESOLUTION_240P->value], ['disk' => 'public', 'path' => 'media/' . auth()->id()]);
+
+        // wee query the media agan becose inside the imageJob i update the media table but the changes dos not effect on $media object so i get new data from db 
+        return new MediaResource(Media::find($media->id));
     }
 
     public function store(Request $request)
@@ -112,37 +135,9 @@ class MediaController extends Controller
             ->uploadAndInsert();
     }
 
-    public function bunny_webhook(Request $request)
+    function destroy(Media $media)
     {
-
-        $data = $request->validate([
-            "VideoLibraryId" => 'required|integer',
-            "VideoGuid" => 'required|string',
-            "Status" => 'required|integer',
-        ]);
-
-        if ($media = Media::where('uuid', $data['VideoLibraryId'] . '-' . $data['VideoGuid'])->first()) {
-            $url = env('VITE_BUNNY_BASE_URL') . '/library/' . $data['VideoLibraryId'] . '/videos/' . $data['VideoGuid'];
-
-            $response = Http::withHeaders([
-                'accessKey' => env('VITE_BUNNY_KEY'),
-                "accept" => "application/json"
-            ])->get($url);
-
-            $path = "https://" . env("VITE_PULL_ZONE") . ".b-cdn.net/" . $data['VideoGuid'] . "/play_480p.mp4";
-            $themb = "https://" . env("VITE_PULL_ZONE") . ".b-cdn.net/" . $data['VideoGuid'] . "/thumbnail.jpg";
-            $low = "https://" . env("VITE_PULL_ZONE") . ".b-cdn.net/" . $data['VideoGuid'] . "/playlist.m3u8";
-            $media->update([
-                "name" => $response->json('title'),
-                "duration" => $response->json('length') / 60,
-                "status" => $response->json('status'),
-                "path" => $path,
-                "conversions" => [
-                    ["engine" => "ImageResize", "path" => $themb, "disk" => "bunny", "name" => "thumb"],
-                    ["engine" => "VideoResize", "path" => $low, "disk" => "bunny", "name" => "low"],
-                ]
-            ]);
-        }
-        return response('ok');
+        $media->delete();
+        return response()->json(['message' => 'Media deleted successfully']);
     }
 }

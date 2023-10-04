@@ -14,16 +14,12 @@ export default [
     {
         title: "Courses",
         icon: { icon: "fluent:flash-play-20-regular" },
-        children: [
-            {
-                title: "List",
-                to: { name: "cours" }
-            },
-            {
-                title: "Add Cours",
-                to: { name: "cours-create" }
-            }
-        ]
+        to: { name: "course" }
+    },
+    {
+        title: "Storage",
+        icon: { icon: "mdi-image-multiple-outline" },
+        to: { name: "gallery" }
     },
     {
         title: "Browse",

@@ -10,10 +10,11 @@ class MediaImageResizeConversion extends MediaConversion
 {
     protected float|null $width;
     protected float|null $height = null;
+    protected float $size = 0;
 
     public function getEngineName(): string
     {
-        return 'ImageResize';
+        return get_class($this);
     }
 
     public function canPerform(): bool
@@ -40,6 +41,11 @@ class MediaImageResizeConversion extends MediaConversion
         return $this;
     }
 
+    public function getSize(): float
+    {
+        return $this->size;
+    }
+
     public function handle(): MediaConversionData|null
     {
         $image = Image::make($this->filesystem($this->getFromDisk())->url($this->getFilepath()));
@@ -50,6 +56,8 @@ class MediaImageResizeConversion extends MediaConversion
         })->encode();
 
         $this->filesystem()->put($this->getPath(), $convert->getEncoded(), 'public');
+        $sizeInBytes = filesize(storage_path('app/public/') . $this->getPath());
+        $this->size = $sizeInBytes;
 
         return MediaConversionData::conversion($this);
     }

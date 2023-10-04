@@ -196,26 +196,71 @@ export interface UserProperties {
     created_at?: string;
 }
 // User Form
-export interface UserForm extends Omit<UserProperties, "id", "verified"> {
+export interface UserForm extends Omit<UserProperties, "id" | "verified"> {
     password?: string;
     password_confirmation?: string;
     terms?: boolean;
 }
 
-interface Chapter {
-    name: string;
+export interface Course {
+    id: number;
+    title: string;
+    description: string;
+    author_id: number;
+    prerequisite_id?: number | null;
+    status: "draft" | "published";
+    is_visible: boolean;
+    thumbnail?: string | null;
+    duration: number;
+    difficulty: "beginner" | "intermediate" | "advanced";
+    chapters: Chapter[];
+    chaptersCount?: number;
+    media?: string[];
+}
+export interface Chapter {
+    id: number;
+    order: number;
+    is_main: boolean;
+    title: string;
     video: Media | null;
     documents: Media[];
+}
+export interface CourseForm extends Omit<Course, "id" | "duration" | "author_id" | "chapters"> {}
+export interface ChapterForm extends Omit<Chapter, "id"> {
+    video: number | null;
+    documents: numbers[];
 }
 
 export interface Media {
     id: number;
     mime_type: string;
+    type: "image" | "video";
     name: string;
-    sm_url: string;
+    status: number;
     thumb_url: string;
     url: string;
     driver?: string;
+}
+
+export interface PaginationResponse<T> {
+    data: T[];
+    meta: PaginationMeta;
+}
+interface PaginationMeta {
+    current_page: number;
+    from: number;
+    last_page: number;
+    links: PaginationLink[];
+    path: string;
+    per_page: number;
+    to: number;
+    total: number;
+}
+
+interface PaginationLink {
+    url: string | null;
+    label: string;
+    active: boolean;
 }
 // !SECTION
 

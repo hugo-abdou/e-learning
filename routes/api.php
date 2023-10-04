@@ -1,10 +1,15 @@
 <?php
 
+use App\Http\Controllers\Api\AnalyticController;
 use App\Http\Controllers\Api\ApiTokenController;
+use App\Http\Controllers\Api\ChapterController;
+use App\Http\Controllers\Api\CoursesController;
+use App\Http\Controllers\Api\MediaController;
+use App\Http\Controllers\Api\MediaRetryController;
+use App\Http\Controllers\Api\PublishCourseController;
+use App\Http\Controllers\Api\ScheduleCourseController;
 use App\Http\Controllers\Api\SessionsController;
 use App\Http\Controllers\Api\UsersController;
-use App\Http\Controllers\CoursesController;
-use App\Http\Controllers\Api\MediaController;
 use App\Http\Resources\AuthResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -29,10 +34,13 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::delete('/user/{user}/other-browser-sessions', [SessionsController::class, 'destroy']);
     /////////////////////////////////////////////////////////////////////////////////////////////////////
     Route::name('media.')->prefix('media')->group(function () {
+        Route::get('/', [MediaController::class, 'index'])->name('list');
         Route::get('/search', [MediaController::class, 'search'])->name('fetch');
         Route::post('/upload', [MediaController::class, 'upload'])->name('upload');
         Route::post('/store', [MediaController::class, 'store'])->name('store');
         Route::get('/{media}', [MediaController::class, 'show'])->name('show');
+        Route::delete('/{media}', [MediaController::class, 'destroy'])->name('destroy');
+        Route::post('/{media}/retry', MediaRetryController::class)->name('retry');
     });
     Route::post('/upload_chunk',  [MediaController::class, 'uploadChunk'])->name('upload_chunk');
     Route::post('/merge_video',  [MediaController::class, 'mergeVideo'])->name('merge_video');
@@ -50,4 +58,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::delete('users/{user}', [UsersController::class, 'destroy']);
     /////////////////////////////////////////////////////////////////////////////////////////////////////
     Route::apiResource('courses', CoursesController::class);
+    Route::patch('courses/{course}/publish', PublishCourseController::class);
+    Route::patch('courses/{course}/schedule', ScheduleCourseController::class);
+    Route::apiResource('chapters', ChapterController::class);
+    Route::apiResource('analytics', AnalyticController::class);
 });

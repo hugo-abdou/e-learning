@@ -2,14 +2,14 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Str;
+use App\Enums\MediaStatus;
 use App\MediaConversions\MediaImageResizeConversion;
-use App\MediaConversions\MediaVideoResizeConversion;
-use App\MediaConversions\MediaVideoThumbConversion;
+use Illuminate\Foundation\Http\FormRequest;
 use App\Models\Media;
 use App\Support\MediaUploader;
+use Illuminate\Support\Str;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 class MediaUploadFile extends FormRequest
 {
@@ -22,20 +22,15 @@ class MediaUploadFile extends FormRequest
         //         'meta.name' => 'required|string',
         //     ];
         // }
-
-        // $mimes = collect(Media::$types)->map(function ($mime) {
-        //     return Str::after($mime, '/');
-        // })->implode(',');
-
-        // $maxFileSize = 1024 * 1024 * 200; // 200MB
-
+        $mimes = collect(Media::$types)->map(fn ($mime) => Str::after($mime, '/'))->implode(',');
+        $maxFileSize = 1024 * 1024 * 200; // 200MB
         return [
-            // 'file' => ['required', 'file', "mimes:$mimes", "max:$maxFileSize"],
+            'file' => ['required', 'file', "mimes:$mimes", "max:$maxFileSize"],
         ];
     }
 
 
-    public function handle()
+    public function handleOld()
     {
         if ($this->has('isUrl')) {
             return [
@@ -56,21 +51,31 @@ class MediaUploadFile extends FormRequest
         return $this->handleFile($this->file('file'));
     }
 
+    public function handle()
+    {
+        $file = $this->validated('file');
+        $uniqueFileFolder = Str::random(20) . '_' . uniqid();
+        $path = Storage::disk('public')->putFileAs("media/" . auth()->id() . "/$uniqueFileFolder", $file, 'original.' . $file->getClientOriginalExtension());
+        return Media::create([
+            'name' => pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
+            'mime_type' => $file->getMimeType(),
+            'size' => $file->getSize(),
+            'size_total' => 0,
+            'disk' => 'public',
+            'path' => $path,
+            'status' => MediaStatus::Pending->value,
+            'conversions' => []
+        ]);
+    }
+
     protected function handleFile(UploadedFile $file): Media
     {
-        $now = now()->timestamp;
-        $fileType = Media::checkFileType($file->getMimeType());
-        $disk = $fileType === 'video' ? 'uploads' : 'public';
-
         return MediaUploader::fromFile($file)
-            ->disk($disk)
-            ->path("media/" . $now)
+            ->disk('public')
+            ->path("media/" . auth()->id())
             ->conversions([
-                MediaImageResizeConversion::name('sm')->width(150),
                 MediaImageResizeConversion::name('thumb')->width(430),
                 MediaImageResizeConversion::name('large')->width(2000),
-                MediaVideoThumbConversion::name('thumb')->atSecond(5),
-                MediaVideoResizeConversion::name('low')->setKiloBitrate(500),
             ])
             ->uploadAndInsert();
     }

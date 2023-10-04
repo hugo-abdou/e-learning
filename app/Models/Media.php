@@ -24,7 +24,8 @@ class Media extends Model
     ];
 
     protected $casts = [
-        'conversions' => 'array'
+        'conversions' => 'array',
+        'data' => 'array',
     ];
 
     public function getFullPath(): string
@@ -34,19 +35,13 @@ class Media extends Model
 
     public function getUrl(): string
     {
-        if ($this->disk === 'remote' || $this->disk === 'bunny') {
-            return $this->path;
-        }
+        if ($this->disk === 'remote') return $this->path;
         return $this->filesystem()->url($this->path);
     }
 
-    public function getSmUrl(): ?string
+    public function getMasterUrl(): ?string
     {
-        return $this->getConversionUrl('sm');
-    }
-    public function getLowUrl(): ?string
-    {
-        return $this->getConversionUrl('low');
+        return $this->getConversionUrl('master');
     }
     public function getThumbUrl(): ?string
     {
@@ -66,13 +61,9 @@ class Media extends Model
     public function getConversionUrl(string $name): ?string
     {
         if ($conversion = $this->getConversion($name)) {
-            if ($conversion['disk'] === 'remote' || $this->disk === 'bunny') {
-                return $conversion['path'];
-            }
+            if ($conversion['disk'] === 'remote')  return $conversion['path'];
             return $this->filesystem($conversion['disk'])->url($conversion['path']);
         }
-        if (self::checkFileType($this->mime_type) === 'video') return url('https://vz-d0a25974-5f6.b-cdn.net/f2fe4185-d392-4ef7-820c-f93ecccd7d89/playlist.m3u8');
-        if (self::checkFileType($this->mime_type)) return url('/assets/images/pdf-1.png');
         return null;
     }
 
@@ -81,7 +72,6 @@ class Media extends Model
         if ($conversion = $this->getConversion($name)) {
             return $this->filesystem($conversion['disk'])->path($conversion['path']);
         }
-
         return null;
     }
 

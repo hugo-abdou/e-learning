@@ -15,8 +15,9 @@ class MediaResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'mime_type' => $this->mime_type,
+            'type' => Media::checkFileType($this->mime_type),
             'path' => $this->path,
-            'thumb_url' => $this->getThumbUrl()
+            'status' => $this->status,
         ]);
     }
 
@@ -26,16 +27,14 @@ class MediaResource extends JsonResource
             case 'video':
                 return [
                     'duration' => $this->duration ?? 0,
-                    'status' => $this->status,
-                    'low_url' => $this->getLowUrl(),
-                ];
-            case 'image':
-                return [
-                    'sm_url' => $this->getSmUrl(),
-                    'url' => $this->getUrl(),
+                    'url' => $this->getMasterUrl(),
+                    'thumb_url' => $this->getThumbUrl()
                 ];
             default:
-                return ['url' => $this->getUrl()];
+                return [
+                    'url' => $this->getUrl(),
+                    'thumb_url' => $this->getThumbUrl()
+                ];
         }
     }
 }

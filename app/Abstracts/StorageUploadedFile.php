@@ -15,11 +15,12 @@ class StorageUploadedFile extends UploadedFile
 
         $mimeType =  Storage::mimeType($path);
 
-        $name = basename($path);
-
         // Pass the parameters to the parent constructor
         parent::__construct($this->storagePath, basename($path), $mimeType);
     }
 
-    // Add more methods as needed to mimic the UploadedFile class
+    static function createFromPath(string $path, string $disk = 'public')
+    {
+        return new static("$disk/$path");
+    }
 }

@@ -2,12 +2,15 @@
 
 namespace App\Support;
 
+use App\Abstracts\StorageUploadedFile;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Media;
 use App\Contracts\MediaConversion;
-use ProtoneMedia\LaravelFFMpeg\FFMpeg\FFProbe;
+use App\Services\VideoProcesseurService;
+use Illuminate\Support\Str;
+use SplFileInfo;
 
 class MediaUploader
 {
@@ -25,6 +28,10 @@ class MediaUploader
     public static function fromFile(UploadedFile $file): static
     {
         return new static($file);
+    }
+    public static function fromPath(string $path): static
+    {
+        return new static(StorageUploadedFile::createFromPath($path));
     }
 
     public function setFile(UploadedFile $file): static
@@ -57,32 +64,25 @@ class MediaUploader
 
     public function upload(): array
     {
-        $path = $this->filesystem()->putFile($this->path, $this->file);
+        $uniqueFileFolder = Str::random(20) . '_' . uniqid();
+        $path = $this->file->getExtension() === 'tmp'
+            ? $this->filesystem()->putFileAs($this->path . "/$uniqueFileFolder", $this->file, 'original.' . $this->file->getClientOriginalExtension())
+            :   str_replace(storage_path('app/public'), '', $this->file->getFileInfo());
 
-        if (!$path) {
-            throw new \Exception("The file was not uploaded. Check your $this->disk driver configuration.");
-        }
-        $duration = 0;
-        if (Media::checkFileType($this->file->getMimeType()) === 'video') {
-            $duration = FFProbe::create(
-                [
-                    'ffmpeg.binaries' => config('laravel-ffmpeg.ffmpeg.binaries'),
-                    'ffprobe.binaries' => config('laravel-ffmpeg.ffprobe.binaries'),
-                ]
-            )
-                ->format(Storage::disk('uploads')->path($path))
-                ->get('duration');
-        }
+        if (!$path)  throw new \Exception("The file was not uploaded. Check your $this->disk driver configuration.");
+
+        $fileSize = $this->file->getSize();
+        $conversions = $this->performConversions($path);
+        $totalSize = collect($conversions)->sum('size');
 
         return [
             'name' => $this->file->getClientOriginalName(),
             'mime_type' => $this->file->getMimeType(),
-            'size' => $this->file->getSize(),
-            'duration' => $duration,
-            'size_total' => $this->file->getSize() + 0,
+            'size' => $fileSize,
+            'size_total' => $fileSize  + $totalSize,
             'disk' => $this->disk,
             'path' => $path,
-            'conversions' => $this->performConversions($path)
+            'conversions' => $conversions
         ];
     }
 
@@ -93,9 +93,7 @@ class MediaUploader
 
     protected function performConversions(string $filepath): array
     {
-        if (empty($this->conversions)) {
-            return [];
-        }
+        if (empty($this->conversions)) return [];
 
         return collect($this->conversions)->map(function ($conversion) use ($filepath) {
             if (!$conversion instanceof MediaConversion) {
@@ -103,9 +101,7 @@ class MediaUploader
             }
             $perform = $conversion->filepath($filepath)->fromDisk($this->disk)->perform();
 
-            if (!$perform) {
-                return null;
-            }
+            if (!$perform) return null;
 
             return $perform->get();
         })->filter()->values()->toArray();

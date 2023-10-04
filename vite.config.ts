@@ -18,7 +18,7 @@ export default defineConfig({
     plugins: [
         laravel({
             input: ["./resources/ts/main.ts"],
-            refresh: true
+            refresh: false
         }),
         vue({
             template: { transformAssetUrls: { base: null, includeAbsolute: false } }
@@ -74,9 +74,11 @@ export default defineConfig({
     optimizeDeps: {
         exclude: ["vuetify"],
         entries: [__dirname + "./resources/ts/**/*.vue"]
+    },
+    server: {
+        hmr: { overlay: false },
+        watch: {
+            ignored: [`${__dirname}/storage/**/*.*`, `${__dirname}/public/**/*.*`]
+        }
     }
-    // server: {
-    //     host: "e-learning.test",
-    //     https: true
-    // }
 });

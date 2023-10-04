@@ -81,7 +81,7 @@ abstract class MediaConversion implements MediaConversionContract
     {
         $extension = $extension ?: $this->getFileExtension();
 
-        return str_replace('.' . $this->getFileExtension(), '', $filepath ?: $this->getFilePath()) . "-$this->name.$extension";
+        return str_replace('original.' . $this->getFileExtension(), '', $filepath ?: $this->getFilePath()) . "$this->name.$extension";
     }
 
     public function isImage(): bool

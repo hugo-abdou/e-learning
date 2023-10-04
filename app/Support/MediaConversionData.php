@@ -26,6 +26,7 @@ class MediaConversionData
             'engine' => $this->conversion->getEngineName(),
             'path' => $this->conversion->getPath(),
             'disk' => $this->conversion->getToDisk(),
+            'size' => $this->conversion->getSize(),
             'name' => $reflection->getProperty('name')->getValue($this->conversion),
         ];
     }

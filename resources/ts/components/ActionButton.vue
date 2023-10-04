@@ -1,3 +1,3 @@
 <template>
-    <VBtn variant="tonal" size="32"> </VBtn>
+    <VBtn variant="tonal" size="26"> </VBtn>
 </template>

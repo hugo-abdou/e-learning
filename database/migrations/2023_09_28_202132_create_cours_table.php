@@ -18,7 +18,7 @@ return new class  extends Migration
             $table->string('title');
             $table->text('description');
             $table->foreignId('author_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('prerequisite_id')->constrained('courses')->onDelete('cascade');
+            $table->foreignId('prerequisite_id')->nullable()->constrained('courses')->onDelete('cascade');
             $table->enum('status', ['draft', 'published'])->default('draft');
             $table->boolean('is_visible')->default(true);
             $table->string('thumbnail')->nullable();
@@ -31,7 +31,8 @@ return new class  extends Migration
             $table->id();
             $table->foreignId('course_id')->constrained('courses')->onDelete('cascade');
             $table->string('title');
-            $table->integer('order')->default(1);
+            $table->integer('order')->default(0);
+            $table->boolean('is_main')->default(false);
             $table->timestamps();
         });
 
@@ -40,7 +41,6 @@ return new class  extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('chapter_id')->constrained('chapters')->onDelete('cascade');
             $table->integer('progress_percent')->default(0);
-            $table->timestamps();
         });
 
         Schema::create('course_reviews', function (Blueprint $table) {

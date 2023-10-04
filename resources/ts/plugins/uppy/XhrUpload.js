@@ -33,8 +33,9 @@ export default class XhrUpload extends XhrUploadParent {
         });
     }
     upload(file, current, total) {
-        if (file.type.includes("image/")) return this.uploadImage(file, current, total);
-        if (file.type.includes("application/pdf")) return this.uploadPdf(file, current, total);
+        return this.uploadImage(file, current, total);
+        // if (file.type.includes("image/")) return this.uploadImage(file, current, total);
+        // if (file.type.includes("application/pdf")) return this.uploadPdf(file, current, total);
         // if (file.type.includes("video/")) return this.uploadVideo(file, current, total);
     }
 

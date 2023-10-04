@@ -21,8 +21,8 @@
             "@layouts": ["resources/ts/@layouts"],
             "@core/*": ["resources/ts/@core/*"],
             "@core": ["resources/ts/@core"],
-            "@images/*": ["resources/images/*"],
-            "@styles/*": ["resources/styles/*"],
+            "@images/*": ["images/*"],
+            "@styles/*": ["styles/*"],
             "@axios": ["resources/ts/plugins/axios"],
             "@validators": ["resources/ts/@core/utils/validators"],
             "@core-scss/*": ["resources/styles/@core"]
@@ -31,6 +31,7 @@
         "skipLibCheck": true,
         "types": ["vite/client", "vite-plugin-pages/client", "vite-plugin-vue-layouts/client", "unplugin-vue-define-options/macros-global"]
     },
+    "exclude": ["dist", "node_modules", "resources/ts/@iconify/*"],
     "include": [
         "vite.config.*",
         "env.d.ts",
@@ -40,6 +41,5 @@
         "themeConfig.ts",
         "auto-imports.d.ts",
         "components.d.ts"
-    ],
-    "exclude": ["dist", "node_modules", "resources/ts/@iconify/*"]
+    ]
 }

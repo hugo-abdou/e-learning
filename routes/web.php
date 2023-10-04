@@ -1,6 +1,8 @@
 <?php
 
+use App\Services\VideoProcesseurService;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Process;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,5 +14,10 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+// Route::get('/', function () {
+//     return view('video');
+// });
+
 
 Route::get('/{any}', fn () => view('app'))->where('any', '^(?!api\/).*');
