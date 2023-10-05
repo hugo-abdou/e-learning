@@ -231,7 +231,7 @@ export interface ChapterForm extends Omit<Chapter, "id"> {
     documents: numbers[];
 }
 
-export interface Media {
+export interface BaseMedia {
     id: number;
     mime_type: string;
     type: "image" | "video";
@@ -240,7 +240,17 @@ export interface Media {
     thumb_url: string;
     url: string;
     driver?: string;
+    data: any;
 }
+interface VideoMedia extends BaseMedia {
+    type: "video";
+    duration: number;
+}
+interface ImageMedia extends BaseMedia {
+    type: "image";
+}
+
+export type Media = VideoMedia | ImageMedia;
 
 export interface PaginationResponse<T> {
     data: T[];

@@ -3,21 +3,26 @@
 </template>
 
 <script setup lang="ts">
-import Uppy, { UppyOptions } from "@uppy/core";
+import Uppy, { UppyOptions, SuccessResponse, UppyFile, UploadResult } from "@uppy/core";
 import Dashboard, { DashboardOptions } from "@uppy/dashboard";
 import { XHRUploadOptions } from "@uppy/xhr-upload";
 import XhrUpload from "@/plugins/uppy/XhrUpload";
 import { useTheme } from "vuetify/lib/framework.mjs";
 import "@uppy/core/dist/style.css";
 import "@uppy/dashboard/dist/style.css";
+import { Media } from "@/types";
 
 const props = defineProps<{
     uppyOptions?: Partial<UppyOptions<Record<string, unknown>>>;
     dashboardOptions?: Partial<DashboardOptions>;
     xhrOptions?: Partial<XHRUploadOptions>;
 }>();
-
-const emit = defineEmits(["upload-success", "complete", "done"]);
+interface Emit {
+    (e: "uploadSuccess", file: UppyFile<any, Record<string, unknown>>, res: SuccessResponse): void;
+    (e: "complete", result: UploadResult<any, Record<string, unknown>>): void;
+    (e: "done"): void;
+}
+const emit = defineEmits<Emit>();
 
 const theme = useTheme();
 const uppyEl = ref<HTMLElement>();
@@ -41,9 +46,8 @@ onMounted(() => {
         endpoint: "/media/upload",
         ...props.xhrOptions
     });
-
     uppy.on("complete", res => emit("complete", res));
-    uppy.on("upload-success", (file, res) => emit("upload-success", res, file));
+    uppy.on("upload-success", (file, response) => emit("uploadSuccess", file, response));
 });
 </script>
 <style>

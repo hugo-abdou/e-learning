@@ -29,7 +29,10 @@ class MediaController extends Controller
     public function index(Request $request)
     {
         $query = Media::query()->orderByDesc('created_at');
-        return MediaResource::collection($query->paginate($request->get('perPage', 20)))->resolve();
+        if ($request->has('search')) {
+            $query->where('name', 'like', '%' . $request->get('search') . '%');
+        }
+        return MediaResource::collection($query->paginate($request->get('itemsPerPage', 10)));
     }
     public function search(Request $request)
     {

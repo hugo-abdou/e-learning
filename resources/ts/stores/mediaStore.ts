@@ -1,5 +1,5 @@
 import { defineStore, acceptHMRUpdate } from "pinia";
-import { Media } from "@/types";
+import { Media, ResourceResponse } from "@/types";
 import axiosIns from "@/plugins/axios";
 import { AxiosResponse } from "axios";
 
@@ -7,13 +7,11 @@ export const useMediaStore = defineStore({
     id: "media",
     state: () => ({}),
     actions: {
-        get(params: any): Promise<Media[]> {
+        get(params: any): Promise<ResourceResponse<Media[]>> {
             return new Promise((resolve, reject) => {
                 axiosIns
                     .get(`/media`, { params })
-                    .then((res: AxiosResponse<Media[]>) => {
-                        resolve(res.data);
-                    })
+                    .then(res => resolve(res.data))
                     .catch(err => reject(err));
             });
         },

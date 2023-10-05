@@ -13,19 +13,9 @@
                 <VCardTitle class="mb-1"> <VIcon icon="system-uicons:video" />Video</VCardTitle>
                 <VRow class="me-0">
                     <VCol cols="12" lg="4" md="6" sm="4">
-                        <Media v-if="chapter.video" :media="chapter.video" hasTitle>
-                            <template #toolbar>
-                                <VSpacer />
-                                <ActionButton
-                                    @click="chapter.video = null"
-                                    color="error"
-                                    icon="tabler-trash"
-                                    class="chapter-media-action"
-                                />
-                            </template>
-                        </Media>
+                        <Media v-if="chapter.video" :media="chapter.video" hasTitle @on-delete="chapter.video = null"></Media>
                         <!-- @vue-ignore -->
-                        <VBtn v-else v-bind="UploadBunAttrs" @click="emit('upload', 'upload-chapter-video')">
+                        <VBtn v-else @click="emit('upload', 'upload-chapter-video')" v-bind="UploadBunAttrs">
                             <VIcon icon="fluent:video-add-20-regular" size="28" />
                         </VBtn>
                     </VCol>
@@ -49,16 +39,7 @@
                         v-for="doc in chapter.documents"
                         :key="doc.id"
                     >
-                        <Media :media="doc" hasTitle>
-                            <template #toolbar>
-                                <VSpacer />
-                                <ActionButton
-                                    @click="chapter.documents = chapter.documents.filter(({ id }) => id !== doc.id)"
-                                    color="error"
-                                    icon="tabler-trash"
-                                    class="chapter-media-action"
-                                />
-                            </template>
+                        <Media :media="doc" hasTitle @on-delete="chapter.documents = chapter.documents.filter(({ id }) => id !== doc.id)">
                         </Media>
                     </VCol>
                 </VRow>

@@ -1,7 +1,10 @@
 <template>
     <div class="relative w-100 h-100">
-        <VImg v-bind="$attrs" :src="thumb" style="aspect-ratio: 16/9" cover class="rounded w-100 border">
-            <VToolbar color="#00000000" density="compact">
+        <VImg v-bind="$attrs" :src="thumb" style="aspect-ratio: 16/9" cover class="rounded w-100 border relative">
+            <VToolbar color="#7e7e7e00" density="compact">
+                <VAvatar size="26" variant="tonal" class="ml-1 blurred-background" color="blur">
+                    <VIcon size="20" :icon="resource.type === 'video' ? 'tabler:video' : 'mdi-panorama-variant-outline'" color="blur" />
+                </VAvatar>
                 <VChip v-if="resource.status !== MediaStatus.Completed" size="small" class="ma-1" :color="status.color">
                     <VIcon start size="16" :icon="status.icon" />
                     {{ status.lable }}
@@ -10,6 +13,16 @@
                     <VIcon icon="tabler:refresh" />
                 </VBtn>
                 <slot name="toolbar" />
+                <VSpacer />
+                <ActionButton @click.stop="deleteMedia(resource)" icon="tabler-trash" color="error" class="ml-2" />
+            </VToolbar>
+            <VToolbar color="#7e7e7e00" density="compact" absolute style="bottom: 0">
+                <VChip v-if="resource.type === 'video'" size="small" class="ma-1 blurred-background" color="blur">
+                    <VIcon start size="16" icon="mdi-clock-fast" color="blur" />
+                    <span class="text-blur">
+                        {{ secondsToMinutes(resource.duration) }}
+                    </span>
+                </VChip>
             </VToolbar>
         </VImg>
         <p class="truncate mt-2" v-if="hasTitle" :title="resource.name">{{ resource.name }}</p>
@@ -19,6 +32,7 @@
 
 <script setup lang="ts">
 import { MediaStatus } from "@/@core/enums";
+import { secondsToMinutes } from "@/helpers";
 import { useMediaStore } from "@/stores/mediaStore";
 import { Media } from "@/types";
 import { resolveMediaStatusVariant } from "@/utils";
@@ -31,7 +45,9 @@ interface Props {
 }
 const props = defineProps<Props>();
 
-interface Emits {}
+interface Emits {
+    (e: "onDelete", value: number): void;
+}
 const emit = defineEmits<Emits>();
 
 const resource = ref<Media>(props.media);
@@ -59,7 +75,14 @@ const retry = async () => {
         resource.value = res;
     } catch (error) {}
 };
-
+const deleteMedia = async (media: Media) => {
+    try {
+        await mediaStore.delete(media.id);
+        emit("onDelete", media.id);
+    } catch (error) {
+        console.error(error);
+    }
+};
 onMounted(() => {
     if (resource.value.status === MediaStatus.Pending || resource.value.status === MediaStatus.Processing) {
         interval = setInterval(refreshMedia, 5000);
@@ -70,4 +93,10 @@ onUnmounted(() => {
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.blurred-background {
+    backdrop-filter: blur(10px); /* Adjust the blur value as needed */
+    border-radius: 10px; /* Optional: Add border-radius for rounded corners */
+    overflow: hidden; /* Ensure the blurred effect is contained within the element */
+}
+</style>

@@ -84,3 +84,11 @@ export function formatBytes(bytes: number, decimals = 2) {
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 }
+export function secondsToMinutes(seconds: number) {
+    var minutes = Math.floor(seconds / 60);
+    var remainingSeconds = (seconds % 60).toFixed(0);
+    if (remainingSeconds < 10) {
+        remainingSeconds = "0" + remainingSeconds;
+    }
+    return minutes + ":" + remainingSeconds;
+}

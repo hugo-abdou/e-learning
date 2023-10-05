@@ -43,7 +43,7 @@ export const resolveUserStatusVariant = (stat: string) => {
     return "primary";
 };
 export const resolveMediaStatusVariant = (stat: number) => {
-    if (stat === MediaStatus.Pending) return { lable: "Pending", color: "secondary", icon: "basil:lock-time-outline" };
+    if (stat === MediaStatus.Pending) return { lable: "Pending", color: "default", icon: "basil:lock-time-outline" };
     if (stat === MediaStatus.Processing) return { lable: "Processing", color: "info", icon: "healthicons:i-schedule-school-date-time" };
     if (stat === MediaStatus.Completed)
         return { lable: "Completed", color: "success", icon: "material-symbols:published-with-changes-rounded" };

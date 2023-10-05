@@ -26,7 +26,7 @@ class MediaResource extends JsonResource
         switch (Media::checkFileType($this->mime_type)) {
             case 'video':
                 return [
-                    'duration' => $this->duration ?? 0,
+                    'duration' => $this->data['duration'] ?? 0,
                     'url' => $this->getMasterUrl(),
                     'thumb_url' => $this->getThumbUrl()
                 ];

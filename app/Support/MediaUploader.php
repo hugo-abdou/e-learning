@@ -76,12 +76,7 @@ class MediaUploader
         $totalSize = collect($conversions)->sum('size');
 
         return [
-            'name' => $this->file->getClientOriginalName(),
-            'mime_type' => $this->file->getMimeType(),
-            'size' => $fileSize,
             'size_total' => $fileSize  + $totalSize,
-            'disk' => $this->disk,
-            'path' => $path,
             'conversions' => $conversions
         ];
     }
