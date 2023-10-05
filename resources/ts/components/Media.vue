@@ -1,6 +1,13 @@
 <template>
     <div class="relative w-100 h-100">
-        <VImg v-bind="$attrs" :src="thumb" style="aspect-ratio: 16/9" cover class="rounded w-100 border relative">
+        <VImg
+            v-if="media.type === 'image'"
+            v-bind="$attrs"
+            :src="thumb"
+            style="aspect-ratio: 16/9"
+            cover
+            class="rounded w-100 border relative"
+        >
             <VToolbar color="#7e7e7e00" density="compact">
                 <VAvatar size="26" variant="tonal" class="ml-1 blurred-background" color="blur">
                     <VIcon size="20" :icon="resource.type === 'video' ? 'tabler:video' : 'mdi-panorama-variant-outline'" color="blur" />
@@ -17,15 +24,20 @@
                 <ActionButton @click.stop="deleteMedia(resource)" icon="tabler-trash" color="error" class="ml-2" />
             </VToolbar>
             <VToolbar color="#7e7e7e00" density="compact" absolute style="bottom: 0">
-                <VChip v-if="resource.type === 'video'" size="small" class="ma-1 blurred-background" color="blur">
-                    <VIcon start size="16" icon="mdi-clock-fast" color="blur" />
-                    <span class="text-blur">
-                        {{ secondsToMinutes(resource.duration) }}
-                    </span>
-                </VChip>
+                <template v-if="resource.type === 'video'">
+                    <VChip size="small" class="ma-1 blurred-background" color="blur">
+                        <VIcon start size="16" icon="mdi-clock-fast" color="blur" />
+                        <span class="text-blur">
+                            {{ secondsToMinutes(resource.duration) }}
+                        </span>
+                    </VChip>
+                    <ActionButton icon="tabler-play" color="blur" class="ml-1 blurred-background" />
+                </template>
             </VToolbar>
         </VImg>
-        <p class="truncate mt-2" v-if="hasTitle" :title="resource.name">{{ resource.name }}</p>
+        <Player v-else :src="media.url" :poster="thumb" :title="resource.name" class="border" />
+        <!-- <VuePlyr :poster="thumb" :src="media.url" v-else> </VuePlyr> -->
+        <!-- <p class="truncate mt-2" v-if="hasTitle" :title="resource.name">{{ resource.name }}</p> -->
         <slot />
     </div>
 </template>

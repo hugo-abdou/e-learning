@@ -53,6 +53,7 @@ declare module '@vue/runtime-core' {
     Media: typeof import('./resources/ts/components/Media.vue')['default']
     MoreBtn: typeof import('./resources/ts/@core/components/MoreBtn.vue')['default']
     Notifications: typeof import('./resources/ts/@core/components/Notifications.vue')['default']
+    Player: typeof import('./resources/ts/components/Player.vue')['default']
     PricingPlanDialog: typeof import('./resources/ts/components/dialogs/PricingPlanDialog.vue')['default']
     ReferAndEarnDialog: typeof import('./resources/ts/components/dialogs/ReferAndEarnDialog.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
@@ -66,5 +67,8 @@ declare module '@vue/runtime-core' {
     TwoFactorAuthDialog: typeof import('./resources/ts/components/dialogs/TwoFactorAuthDialog.vue')['default']
     UserInfoEditDialog: typeof import('./resources/ts/components/dialogs/UserInfoEditDialog.vue')['default']
     UserUpgradePlanDialog: typeof import('./resources/ts/components/dialogs/UserUpgradePlanDialog.vue')['default']
+    VideoMedia: typeof import('./resources/ts/components/VideoMedia.vue')['default']
+    VideoPlayer: typeof import('./resources/ts/components/VideoPlayer.vue')['default']
+    VuePlyr: typeof import('./resources/ts/components/vue-plyr.vue')['default']
   }
 }

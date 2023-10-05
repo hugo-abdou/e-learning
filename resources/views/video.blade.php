@@ -3,7 +3,7 @@
 
 <head>
     <title>HLS Video Player</title>
-    <link href="https://unpkg.com/video.js@7/dist/video-js.min.css" rel="stylesheet" />
+    <link href="https://unpkg.com/@videojs/themes@1/dist/city/index.css" rel="stylesheet" />
     <link href="https://unpkg.com/silvermine-videojs-quality-selector@1.1.2/dist/css/quality-selector.css"
         rel="stylesheet" />
 

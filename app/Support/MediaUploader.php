@@ -65,15 +65,24 @@ class MediaUploader
     public function upload(): array
     {
         $uniqueFileFolder = Str::random(20) . '_' . uniqid();
+        $name = 'original.' . $this->file->getClientOriginalExtension();
         $path = $this->file->getExtension() === 'tmp'
-            ? $this->filesystem()->putFileAs($this->path . "/$uniqueFileFolder", $this->file, 'original.' . $this->file->getClientOriginalExtension())
+            ? $this->filesystem()->putFileAs($this->path . "/$uniqueFileFolder", $this->file, $name)
             :   str_replace(storage_path('app/public'), '', $this->file->getFileInfo());
 
         if (!$path)  throw new \Exception("The file was not uploaded. Check your $this->disk driver configuration.");
 
         $fileSize = $this->file->getSize();
         $conversions = $this->performConversions($path);
+        $conversions[] = [
+            'engine' => '',
+            'path' => str_replace($name, 'master.m3u8', $path),
+            'disk' => $this->disk,
+            'size' => 0,
+            'name' => 'master',
+        ];
         $totalSize = collect($conversions)->sum('size');
+
 
         return [
             'size_total' => $fileSize  + $totalSize,

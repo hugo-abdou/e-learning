@@ -21,7 +21,12 @@ export default defineConfig({
             refresh: false
         }),
         vue({
-            template: { transformAssetUrls: { base: null, includeAbsolute: false } }
+            template: {
+                transformAssetUrls: { base: null, includeAbsolute: false },
+                compilerOptions: {
+                    isCustomElement: tag => tag.startsWith("media-")
+                }
+            }
         }),
         vueJsx(),
         // https://github.com/vuetifyjs/vuetify-loader/tree/next/packages/vite-plugin
