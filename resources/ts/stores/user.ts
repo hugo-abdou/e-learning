@@ -18,6 +18,7 @@ const defaultUser: UserProperties = {
     avatar: "",
     email: "",
     name: "",
+    role: ["user"],
     created_at: ""
 };
 // @ts-ignore

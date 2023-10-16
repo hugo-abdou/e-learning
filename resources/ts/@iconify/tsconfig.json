@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "allowJs": true,
         "target": "ESNext",
         "module": "CommonJS",
         "declaration": false,
@@ -11,7 +12,5 @@
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true
     },
-    "exclude": [
-        "./*.js"
-    ]
+    "exclude": ["./*.js"]
 }

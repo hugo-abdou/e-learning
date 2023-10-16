@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
 import type { JsonResponse, ResourceResponse, UserForm, UserProperties } from "@/types";
-import type { UserParams } from "@/views/pages/users/types";
 import axiosIns from "@/plugins/axios";
 
 export const useUserListStore = defineStore("UserListStore", {

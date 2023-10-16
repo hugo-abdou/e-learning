@@ -14,7 +14,7 @@ const logout = async () => {
 
 <template>
     <VAvatar class="cursor-pointer" color="primary" variant="tonal">
-        <VImg :src="auth.user.avatar || avatar1" />
+        <VImg :src="auth.user.avatar || avatar1" cover />
 
         <!-- SECTION Menu -->
         <VMenu activator="parent" width="230" location="bottom end" offset="14px">
@@ -24,7 +24,7 @@ const logout = async () => {
                     <template #prepend>
                         <VListItemAction start>
                             <VAvatar>
-                                <VImg :src="auth.user.avatar || avatar1" />
+                                <VImg :src="auth.user.avatar || avatar1" cover />
                             </VAvatar>
                         </VListItemAction>
                     </template>

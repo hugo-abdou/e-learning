@@ -34,9 +34,6 @@ class UsersController extends Controller
 
         $query = $isSuperAdmin  ? User::query() : auth()->user()->users();
 
-        if ($request->has('brand')) {
-            $query->where('whitelabel_id', $request->brand);
-        }
 
         $records = Pipeline::send($query)->through([
             Sort::class,

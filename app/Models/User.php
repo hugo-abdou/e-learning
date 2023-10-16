@@ -74,4 +74,14 @@ class User extends Authenticatable implements MustVerifyEmail
         return '/profile.png';
         // return 'https://ui-avatars.com/api/?name='.urlencode($name).'&color=7F9CF5&background=EBF4FF';
     }
+
+    /**
+     * Get all of the courses for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function courses(): HasMany
+    {
+        return $this->hasMany(Course::class, 'author_id');
+    }
 }

@@ -9,8 +9,6 @@ import Pages from "vite-plugin-pages";
 import Layouts from "vite-plugin-vue-layouts";
 import vuetify from "vite-plugin-vuetify";
 import VueI18nPlugin from "@intlify/unplugin-vue-i18n/vite";
-
-// @ts-expect-error Known error: https://github.com/sxzz/unplugin-vue-macros/issues/257#issuecomment-1410752890
 import DefineOptions from "unplugin-vue-define-options/vite";
 
 // https://vitejs.dev/config/
@@ -18,22 +16,20 @@ export default defineConfig({
     plugins: [
         laravel({
             input: ["./resources/ts/main.ts"],
-            refresh: true
+            refresh: false
         }),
         vue({
             template: {
-                transformAssetUrls: {
-                    base: null,
-                    includeAbsolute: false
+                transformAssetUrls: { base: null, includeAbsolute: false },
+                compilerOptions: {
+                    isCustomElement: tag => tag.startsWith("media-")
                 }
             }
         }),
         vueJsx(),
         // https://github.com/vuetifyjs/vuetify-loader/tree/next/packages/vite-plugin
         vuetify({
-            styles: {
-                configFile: "./resources/styles/variables/_vuetify.scss"
-            }
+            styles: { configFile: "./resources/styles/variables/_vuetify.scss" }
         }),
         Pages({
             dirs: ["./resources/ts/pages"],
@@ -44,7 +40,7 @@ export default defineConfig({
             layoutsDirs: "./resources/ts/layouts/"
         }),
         Components({
-            dirs: ["./resources/ts/@core/components", "./resources/ts/views/demos", "./resources/ts/components"],
+            dirs: ["./resources/ts/**/components", "./resources/ts/views"],
             dts: true
         }),
         AutoImport({
@@ -81,5 +77,11 @@ export default defineConfig({
     optimizeDeps: {
         exclude: ["vuetify"],
         entries: [__dirname + "./resources/ts/**/*.vue"]
+    },
+    server: {
+        hmr: { overlay: false },
+        watch: {
+            ignored: [`${__dirname}/storage/**/*.*`, `${__dirname}/public/**/*.*`]
+        }
     }
 });

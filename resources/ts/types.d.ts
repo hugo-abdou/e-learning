@@ -196,10 +196,100 @@ export interface UserProperties {
     created_at?: string;
 }
 // User Form
-export interface UserForm extends Omit<UserProperties, "id", "verified"> {
+export interface UserForm extends Omit<UserProperties, "id" | "verified"> {
     password?: string;
     password_confirmation?: string;
     terms?: boolean;
+}
+export type DataTableHeader = {
+    key: string;
+    value?: SelectItemKey;
+    title: string;
+    colspan?: number;
+    rowspan?: number;
+    fixed?: boolean;
+    align?: "start" | "end" | "center";
+    width?: number;
+    minWidth?: string;
+    maxWidth?: string;
+    sortable?: boolean;
+    sort?: DataTableCompareFunction;
+};
+
+export interface BaseMedia {
+    id: number;
+    mime_type: string;
+    type: "image" | "video";
+    name: string;
+    status: number;
+    thumb_url: string;
+    url: string;
+    driver?: string;
+    data: any;
+}
+interface VideoMedia extends BaseMedia {
+    type: "video";
+    duration: number;
+}
+interface ImageMedia extends BaseMedia {
+    type: "image";
+}
+
+export type Media = VideoMedia | ImageMedia;
+type Author = {
+    id: number;
+    name: string;
+    profile_photo_url: string;
+};
+export interface Course {
+    id: number;
+    title: string;
+    description: string;
+    author: Author;
+    prerequisite_id?: number | null;
+    status: "draft" | "published";
+    is_visible: boolean;
+    thumbnail?: string | null;
+    duration: number;
+    difficulty: "beginner" | "intermediate" | "advanced";
+    chapters: Chapter[];
+    chaptersCount?: number;
+    media?: string[];
+}
+export interface Chapter {
+    id: number;
+    order: number;
+    course_id?: number;
+    title: string;
+    is_main: boolean;
+    video: Media | null;
+    documents: Media[];
+}
+export interface CourseForm extends Omit<Course, "id" | "duration" | "author" | "chapters"> {}
+export interface ChapterForm extends Omit<Chapter, "id"> {
+    video: number | null;
+    documents: numbers[];
+}
+
+export interface PaginationResponse<T> {
+    data: T[];
+    meta: PaginationMeta;
+}
+interface PaginationMeta {
+    current_page: number;
+    from: number;
+    last_page: number;
+    links: PaginationLink[];
+    path: string;
+    per_page: number;
+    to: number;
+    total: number;
+}
+
+interface PaginationLink {
+    url: string | null;
+    label: string;
+    active: boolean;
 }
 // !SECTION
 

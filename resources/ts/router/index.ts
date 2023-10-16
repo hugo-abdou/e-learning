@@ -9,7 +9,7 @@ const router = createRouter({
     routes: [...setupLayouts(routes)]
 });
 
-router.beforeResolve(async (to, from, next) => {
+router.beforeResolve(async function (to, from, next) {
     const auth = useUserStore();
     if (to.query.verified === "1") await auth.refreshUser();
 

@@ -2,7 +2,7 @@ import type { VuetifyOptions } from "vuetify";
 import { resolveVuetifyTheme } from "@core/utils/vuetify";
 import { themeConfig } from "@themeConfig";
 
-export const staticPrimaryColor = "#f39e2d";
+export const staticPrimaryColor = "#7367F0";
 
 const theme: VuetifyOptions["theme"] = {
     defaultTheme: resolveVuetifyTheme(),
@@ -23,6 +23,8 @@ const theme: VuetifyOptions["theme"] = {
                 error: "#EA5455",
                 background: "#F8F7FA",
                 "on-background": "#2F2B3D",
+                blur: "#e4e4e4",
+                "on-blur": "#2F2B3D",
                 "on-surface": "#2F2B3D",
                 "grey-50": "#FAFAFA",
                 "grey-100": "#F5F5F5",
@@ -64,7 +66,7 @@ const theme: VuetifyOptions["theme"] = {
                 "shadow-key-umbra-color": "#2F2B3D"
             }
         },
-        darkold: {
+        dark: {
             dark: true,
             colors: {
                 primary: localStorage.getItem(`${themeConfig.app.title}-darkThemePrimaryColor`) || staticPrimaryColor,
@@ -82,6 +84,8 @@ const theme: VuetifyOptions["theme"] = {
                 "on-background": "#D0D4F1",
                 surface: "#2F3349",
                 "on-surface": "#D0D4F1",
+                blur: "#25293C",
+                "on-blur": "#D0D4F1",
                 "grey-50": "#26293A",
                 "grey-100": "#2F3349",
                 "grey-200": "#26293A",
@@ -121,7 +125,7 @@ const theme: VuetifyOptions["theme"] = {
                 "shadow-key-umbra-color": "#0F1422"
             }
         },
-        dark: {
+        darkold: {
             dark: true,
             colors: {
                 primary: localStorage.getItem(`${themeConfig.app.title}-darkThemePrimaryColor`) || staticPrimaryColor,

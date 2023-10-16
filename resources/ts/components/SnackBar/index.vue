@@ -47,7 +47,7 @@ axiosIns.interceptors.response.use(
     },
     error => {
         const status = error.response.status;
-        if (status >= 400 && status < 500) {
+        if (status >= 400 && status < 500 && status !== 404) {
             snackbarStore.add({
                 text: error.response.data.errors || error.response.data.message || error.message || "",
                 color: "error",
