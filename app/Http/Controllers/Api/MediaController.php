@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Abstracts\StorageUploadedFile;
 use App\Enums\MediaResolutions;
+use App\Enums\MediaStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MediaUploadFile;
 use App\Http\Resources\MediaResource;
@@ -29,6 +30,13 @@ class MediaController extends Controller
     public function index(Request $request)
     {
         $query = Media::query()->orderByDesc('created_at');
+
+        if ($types = $request->get('types')) {
+            foreach ($types as $type) {
+                $type = rtrim($type, '*') . '%';
+                $query->orWhere('mime_type', 'like', $type);
+            }
+        }
         if ($request->has('search')) {
             $query->where('name', 'like', '%' . $request->get('search') . '%');
         }
@@ -47,8 +55,26 @@ class MediaController extends Controller
         $media = $upload->handle();
         $type = Str::before($media->mime_type, '/');
 
+        if ($type === 'application') {
+            $media->update([
+                'status' => MediaStatus::Completed->value,
+                'conversions' => [
+                    'engine' => 'pdf',
+                    'path' => '/assets/pdf-placeholder.png',
+                    'disk' => 'public',
+                    'size' => $media->size,
+                    'name' => 'thumb',
+                ]
+            ]);
+        }
+
         // process Image and extract thumbnails and large images
-        ProcessImageMediaJob::dispatchIf($type === 'image', $media->id, ["thumb" => 500, "large" => 800], ['disk' => 'public', 'path' => 'media/' . auth()->id()]);
+        ProcessImageMediaJob::dispatchIf(
+            $type === 'image',
+            $media->id,
+            ["thumb" => 500, "large" => 800],
+            ['disk' => 'public', 'path' => 'media/' . auth()->id()]
+        );
 
         // convert  Video to HLS format and extract thumbnails and qualities [360,720,1080]
         ProcessVideoMediaJob::dispatchIf(

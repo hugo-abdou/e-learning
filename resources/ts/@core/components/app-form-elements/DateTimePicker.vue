@@ -117,7 +117,7 @@ const elementId = computed(() => {
 </script>
 
 <template>
-    <div class="border rounded">
+    <div class="border rounded overflow-hidden bg-surface">
         <!-- v-input -->
         <VLabel v-if="fieldProps.label" class="mb-1 text-body-2 text-high-emphasis" :for="elementId" :text="fieldProps.label" />
         <!-- flat picker for inline props -->
@@ -130,6 +130,7 @@ const elementId = computed(() => {
             @on-open="isCalendarOpen = true"
             @on-close="isCalendarOpen = false"
         />
+        <slot />
     </div>
 </template>
 
@@ -309,7 +310,7 @@ input[altinputclass="inlinePicker"] {
 }
 
 .v-theme--dark .flatpickr-calendar {
-    box-shadow: 0 3px 14px 0 rgb(15 20 34 / 38%);
+    box-shadow: none;
 }
 
 // Time picker hover & focus bg color

@@ -3,9 +3,23 @@ import { Media, ResourceResponse } from "@/types";
 import axiosIns from "@/plugins/axios";
 import { AxiosResponse } from "axios";
 
+interface MediaDialog {
+    open: boolean;
+    title: string | null;
+    type: "play-video" | null;
+    data: any;
+}
+
 export const useMediaStore = defineStore({
     id: "media",
-    state: () => ({}),
+    state: () => ({
+        dialog: {
+            open: false,
+            title: null,
+            data: {},
+            type: null
+        } as MediaDialog
+    }),
     actions: {
         get(params: any): Promise<ResourceResponse<Media[]>> {
             return new Promise((resolve, reject) => {
@@ -30,6 +44,16 @@ export const useMediaStore = defineStore({
                     })
                     .catch(err => reject(err));
             });
+        },
+        openPlayer(data?: any) {
+            this.dialog.open = true;
+            this.dialog.type = "play-video";
+            this.dialog.data = data;
+        },
+        closePlayer() {
+            this.dialog.open = false;
+            this.dialog.type = null;
+            this.dialog.data = {};
         }
     }
 });

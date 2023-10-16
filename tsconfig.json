@@ -1,19 +1,20 @@
 {
     "compilerOptions": {
-        "allowJs": true,
-        "baseUrl": "./",
         "target": "esnext",
-        "useDefineForClassFields": true,
         "module": "esnext",
         "moduleResolution": "node",
+        "jsx": "preserve",
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "allowJs": true,
+        "baseUrl": "./",
+        "useDefineForClassFields": true,
         "isolatedModules": true,
         "strict": true,
-        "jsx": "preserve",
         "jsxFactory": "h",
         "jsxFragmentFactory": "Fragment",
         "sourceMap": true,
         "resolveJsonModule": true,
-        "esModuleInterop": true,
         "paths": {
             "@/*": ["resources/ts/*"],
             "@themeConfig": ["themeConfig.ts"],
@@ -31,7 +32,7 @@
         "skipLibCheck": true,
         "types": ["vite/client", "vite-plugin-pages/client", "vite-plugin-vue-layouts/client", "unplugin-vue-define-options/macros-global"]
     },
-    "exclude": ["dist", "node_modules", "resources/ts/@iconify/*"],
+    "exclude": ["dist", "node_modules", "resources/ts/@iconify/*.js"],
     "include": [
         "vite.config.*",
         "env.d.ts",

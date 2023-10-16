@@ -10,7 +10,6 @@ import XhrUpload from "@/plugins/uppy/XhrUpload";
 import { useTheme } from "vuetify/lib/framework.mjs";
 import "@uppy/core/dist/style.css";
 import "@uppy/dashboard/dist/style.css";
-import { Media } from "@/types";
 
 const props = defineProps<{
     uppyOptions?: Partial<UppyOptions<Record<string, unknown>>>;

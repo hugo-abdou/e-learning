@@ -20,11 +20,10 @@ class CourseResource extends JsonResource
             "id" => $this->id,
             "title" => $this->title,
             "description" => $this->description,
-            "author_id" => $this->author->only(["id", "name", 'profile_photo_url']),
+            "author" => $this->author->only(["id", "name", 'profile_photo_url']),
             "prerequisite_id" =>  $this->prerequisite_id,
             "status" => $this->status,
             "is_visible" => $this->is_visible,
-            "is_main" => $this->is_main,
             "thumbnail" =>  $this->thumbnail_url,
             "duration" => $this->duration,
             "difficulty" => $this->difficulty,
@@ -33,6 +32,9 @@ class CourseResource extends JsonResource
         if ($additional = $request->get('additional')) {
             if (isset($additional["chaptersCount"])) {
                 $data["chaptersCount"] = $this->chapters()->count();
+            }
+            if (isset($additional["chapters"])) {
+                $data["chapters"] = ChapterResource::collection($this->whenLoaded("chapters"));
             }
             if (isset($additional["hasMedia"]) && $chapters = $this->whenLoaded("chapters")) {
                 $data["media"] = $chapters->reduce(function ($carry, $chapter) {

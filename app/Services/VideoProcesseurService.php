@@ -43,7 +43,7 @@ class VideoProcesseurService
             $format->setAudioChannels(2);
             $format->setAudioKiloBitrate($this->resolution['audioBitrate']);
             $format->setKiloBitrate($this->resolution['videoBitrate']);
-            $format->setAdditionalParameters(['-hls_time', '10', '-hls_list_size', '0']);
+            $format->setAdditionalParameters(['-hls_time', '60', '-hls_list_size', '0']);
             $video->filters()->resize(new Dimension(...$this->resolution['resolution']))->synchronize();
             $video->save($format, $this->store_path . '/' . $outputFileName);
         } catch (\Exception $ex) {

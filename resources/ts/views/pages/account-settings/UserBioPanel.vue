@@ -11,7 +11,7 @@
                         :color="!props.userData.avatar ? 'primary' : undefined"
                         :variant="!props.userData.avatar ? 'tonal' : undefined"
                     >
-                        <VImg v-if="props.userData.avatar" :src="props.userData.avatar" />
+                        <VImg v-if="props.userData.avatar" :src="props.userData.avatar" cover />
                         <span v-else class="text-5xl font-weight-medium">
                             {{ avatarText(props.userData.name) }}
                         </span>

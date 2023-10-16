@@ -1,4 +1,4 @@
-import { CourseDifficulty, CourseStatus, MediaStatus } from "./@core/enums";
+import { CourseDifficulty, CourseStatus, CourseVisibility, MediaStatus } from "./@core/enums";
 
 export const paginateArray = (array: unknown[], perPage: number, page: number) => array.slice((page - 1) * perPage, page * perPage);
 
@@ -64,4 +64,15 @@ export const resolveCourseDifficultyVariant = (stat: string) => {
     if (statLowerCase === CourseDifficulty.Intermediate) return { color: "primary", icon: "fluent-mdl2:learning-tools" };
     if (statLowerCase === CourseDifficulty.Advanced) return { color: "success", icon: "carbon:machine-learning-model" };
     return { color: "default", icon: "clarity:unknown-status-line" };
+};
+export const resolveCourseVisibilityVariant = (stat: number) => {
+    if (stat === CourseVisibility.Visibil) return { color: "success", icon: "fluent:eye-12-regular" };
+    if (stat === CourseVisibility.Hidden) return { color: "default", icon: "fluent:eye-hide-20-regular" };
+    return { color: "default", icon: "clarity:unknown-status-line" };
+};
+export const UploadBunAttrs: Partial<{}> = {
+    class: "border-md border-dashed bg-background w-100 h-100",
+    style: "min-height: 100px;aspect-ratio: 16/9",
+    variant: "plain",
+    color: "secondary"
 };

@@ -201,35 +201,20 @@ export interface UserForm extends Omit<UserProperties, "id" | "verified"> {
     password_confirmation?: string;
     terms?: boolean;
 }
-
-export interface Course {
-    id: number;
+export type DataTableHeader = {
+    key: string;
+    value?: SelectItemKey;
     title: string;
-    description: string;
-    author_id: number;
-    prerequisite_id?: number | null;
-    status: "draft" | "published";
-    is_visible: boolean;
-    thumbnail?: string | null;
-    duration: number;
-    difficulty: "beginner" | "intermediate" | "advanced";
-    chapters: Chapter[];
-    chaptersCount?: number;
-    media?: string[];
-}
-export interface Chapter {
-    id: number;
-    order: number;
-    is_main: boolean;
-    title: string;
-    video: Media | null;
-    documents: Media[];
-}
-export interface CourseForm extends Omit<Course, "id" | "duration" | "author_id" | "chapters"> {}
-export interface ChapterForm extends Omit<Chapter, "id"> {
-    video: number | null;
-    documents: numbers[];
-}
+    colspan?: number;
+    rowspan?: number;
+    fixed?: boolean;
+    align?: "start" | "end" | "center";
+    width?: number;
+    minWidth?: string;
+    maxWidth?: string;
+    sortable?: boolean;
+    sort?: DataTableCompareFunction;
+};
 
 export interface BaseMedia {
     id: number;
@@ -251,6 +236,40 @@ interface ImageMedia extends BaseMedia {
 }
 
 export type Media = VideoMedia | ImageMedia;
+type Author = {
+    id: number;
+    name: string;
+    profile_photo_url: string;
+};
+export interface Course {
+    id: number;
+    title: string;
+    description: string;
+    author: Author;
+    prerequisite_id?: number | null;
+    status: "draft" | "published";
+    is_visible: boolean;
+    thumbnail?: string | null;
+    duration: number;
+    difficulty: "beginner" | "intermediate" | "advanced";
+    chapters: Chapter[];
+    chaptersCount?: number;
+    media?: string[];
+}
+export interface Chapter {
+    id: number;
+    order: number;
+    course_id?: number;
+    title: string;
+    is_main: boolean;
+    video: Media | null;
+    documents: Media[];
+}
+export interface CourseForm extends Omit<Course, "id" | "duration" | "author" | "chapters"> {}
+export interface ChapterForm extends Omit<Chapter, "id"> {
+    video: number | null;
+    documents: numbers[];
+}
 
 export interface PaginationResponse<T> {
     data: T[];

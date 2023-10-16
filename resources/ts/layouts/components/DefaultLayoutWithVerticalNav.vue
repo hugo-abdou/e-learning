@@ -56,6 +56,6 @@ const navItems = useNavigation();
         </template>
 
         <!-- 👉 Customizer -->
-        <!-- <TheCustomizer /> -->
+        <TheCustomizer />
     </VerticalNavLayout>
 </template>

@@ -35,7 +35,26 @@
                         :headers="headers.map(i => ({ ...i, title: $t(i.title) }))"
                         class="text-no-wrap"
                         @update:options="options = $event"
+                        :loading="loading"
                     >
+                        <template #loading>
+                            <VSkeletonLoader class="pt-2" :type="['table-tbody']"></VSkeletonLoader>
+                        </template>
+
+                        <template #item.title="{ item }">
+                            <div class="d-flex align-center gap-2 py-2 text-capitalize">
+                                <div class="d-flex flex-column">
+                                    <h6 class="text-base">
+                                        <RouterLink
+                                            :to="{ name: 'course-id', params: { id: item.raw.id } }"
+                                            class="font-weight-medium user-list-name"
+                                        >
+                                            {{ item.raw.title }}
+                                        </RouterLink>
+                                    </h6>
+                                </div>
+                            </div>
+                        </template>
                         <!-- Status -->
                         <template #item.status="{ item }">
                             <VChip :color="resolveCourseStatusVariant(item.raw.status).color">
@@ -58,7 +77,15 @@
                         <template #item.media="{ item }">
                             <div class="v-avatar-group pa-2 staked-images">
                                 <template v-for="(image, index) in item.raw.media" :key="index">
-                                    <VAvatar v-if="index < 4" variant="text" rounded="lg" style="width: 70px" size="52">
+                                    <VAvatar
+                                        v-if="index < 4"
+                                        variant="outlined"
+                                        rounded="lg"
+                                        style="width: 70px"
+                                        size="52"
+                                        class="relative"
+                                    >
+                                        <VImg :src="image" style="top: 0" class="w-100 h-100 position-absolute blurred-background" cover />
                                         <VImg cover :src="image" />
                                     </VAvatar>
                                 </template>
@@ -68,12 +95,11 @@
                         <template #item.actions="{ item }">
                             <VBtn icon variant="text" size="small" color="medium-emphasis">
                                 <VIcon size="24" icon="tabler-dots-vertical" />
-
                                 <VMenu activator="parent">
                                     <VList>
-                                        <VListItem>
-                                            <template #prepend><VIcon icon="tabler-eye" /></template>
-                                            <VListItemTitle>{{ $t("View") }}</VListItemTitle>
+                                        <VListItem :to="{ name: 'course-id-edit', params: { id: item.raw.id } }">
+                                            <template #prepend><VIcon icon="tabler-edit" /></template>
+                                            <VListItemTitle>{{ $t("Edit") }}</VListItemTitle>
                                         </VListItem>
                                         <VListItem
                                             v-if="item.raw.status === CourseStatus.Draft || item.raw.status === CourseStatus.Error"
@@ -97,7 +123,6 @@
                                 </VMenu>
                             </VBtn>
                         </template>
-
                         <!-- pagination -->
                         <template #bottom>
                             <VDivider />
@@ -117,8 +142,7 @@
                     </VDataTableServer>
                     <!-- SECTION -->
                 </VCard>
-                <ScheduleCourse @done="(scheduledCourseCours = null), getCourses()" :course-id="scheduledCourseCours" />
-                <!-- 👉 Add New User -->
+                <CourseScheduleDialog @done="(scheduledCourseCours = null), getCourses()" :course-id="scheduledCourseCours" />
             </VCol>
         </VRow>
     </section>
@@ -126,17 +150,19 @@
 
 <script setup lang="ts">
 import { VDataTableServer } from "vuetify/labs/VDataTable";
-import { paginationMeta, resolveCourseDifficultyVariant, resolveCourseStatusVariant } from "@/utils";
+import { paginationMeta, resolveCourseDifficultyVariant, resolveCourseStatusVariant, resolveCourseVisibilityVariant } from "@/utils";
 import { Options } from "@/@core/types";
-import { Course } from "@/types";
+import { Course, DataTableHeader } from "@/types";
 import { CourseStatus } from "@core/enums";
 import { useCourseStore } from "@/stores/useCourseStore";
 import { debounce } from "lodash";
-import ScheduleCourse from "./components/ScheduleCourse.vue";
+import { avatarText } from "@/@core/utils/formatters";
+import { VSkeletonLoader } from "vuetify/labs/VSkeletonLoader";
 
 const scheduledCourseCours = ref<number | null>(null);
 const totalCours = ref(0);
 const courses = ref<Course[]>([]);
+const loading = ref<boolean>(false);
 
 const options = ref<Options>({
     page: 1,
@@ -149,18 +175,22 @@ const courseStore = useCourseStore();
 const deleteCourse = (id: number) => courseStore.deleteCourse(id).then(getCourses);
 const publishCourse = (id: number) => courseStore.publishCourse(id).then(getCourses);
 const getCourses = debounce(() => {
-    courseStore.getCourses({ ...options.value, additional: { hasMedia: true } }).then(({ data, meta }) => {
-        courses.value = data;
-        totalCours.value = meta.total;
-    });
+    loading.value = true;
+    courseStore
+        .getCourses({ ...options.value, additional: { hasMedia: true } })
+        .then(({ data, meta }) => {
+            courses.value = data;
+            totalCours.value = meta.total;
+        })
+        .finally(() => (loading.value = false));
 }, 500);
 // Headers
-const headers = [
+const headers: DataTableHeader[] = [
     { title: "Title", key: "title" },
-    { title: "Media", key: "media", width: "70", sortable: false },
-    { title: "Status", key: "status", width: "70" },
-    { title: "Difficulty", key: "difficulty", width: "70" },
-    { title: "", key: "actions", sortable: false, width: "70" }
+    { title: "Media", key: "media", sortable: false },
+    { title: "Status", key: "status", width: 70, align: "center" },
+    { title: "Difficulty", key: "difficulty", width: 70, align: "center" },
+    { title: "", key: "actions", sortable: false, width: 70 }
 ];
 
 watch(
@@ -188,7 +218,7 @@ meta:
 .user-list-name:not(:hover) {
     color: rgba(var(--v-theme-on-background), var(--v-medium-emphasis-opacity));
 }
-.staked-images > *:not(:first-child) {
+.staked-images > * {
     margin-inline-start: -2.8rem !important;
 }
 </style>

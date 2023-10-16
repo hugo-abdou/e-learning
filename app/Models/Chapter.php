@@ -12,6 +12,9 @@ class Chapter extends Model
     use HasFactory;
 
     protected $guarded = [];
+    protected $casts = [
+        'is_main' => 'boolean',
+    ];
 
     /**
      * Get the user that owns the Chapter
@@ -31,5 +34,13 @@ class Chapter extends Model
     public function media(): BelongsToMany
     {
         return $this->belongsToMany(Media::class);
+    }
+    public function video(): BelongsToMany
+    {
+        return $this->belongsToMany(Media::class)->wherePivot('type', 'video');
+    }
+    public function documents(): BelongsToMany
+    {
+        return $this->belongsToMany(Media::class)->wherePivot('type', 'document');
     }
 }

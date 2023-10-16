@@ -1,8 +1,6 @@
 <script lang="ts" setup>
 import { useRoute } from "vue-router";
-import AccountSettingsAccount from "@/views/pages/account-settings/AccountSettingsAccount.vue";
-import AccountSettingsSecurity from "@/views/pages/account-settings/AccountSettingsSecurity.vue";
-import UserBioPanel from "@/views/pages/account-settings/UserBioPanel.vue";
+
 import { useUserStore } from "@/stores/user";
 import { UserProperties } from "@/types";
 

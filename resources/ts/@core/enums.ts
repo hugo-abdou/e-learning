@@ -8,6 +8,10 @@ export const CourseStatus = {
     Published: "published",
     Error: "error"
 } as const;
+export const CourseVisibility = {
+    Visibil: 1,
+    Hidden: 0
+} as const;
 export const MediaStatus = {
     Pending: 0,
     Processing: 1,

@@ -6,7 +6,7 @@
                 :key="item.id + '_' + index"
                 v-masonry-tile
                 class="item"
-                v-bind="{ cols: 12, md: 4, sm: 6, ...grid, xl: 3 }"
+                v-bind="grid || { cols: 12, md: 4, sm: 6, xl: 3 }"
             >
                 <!-- @vue-expect-error -->
                 <slot :item="item" :index="index" :redrawVueMasonry="$redrawVueMasonry">{{ item }}</slot>

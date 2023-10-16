@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\CourseStatus;
 use App\Filters\Search;
 use App\Filters\Sort;
 use App\Http\Controllers\Controller;
@@ -39,24 +40,25 @@ class CoursesController extends Controller
      */
     public function store(CourseRequest $request)
     {
-        $course = auth()->user()->courses()->create($request->validated());
+        $course = auth()->user()->courses()->create([...$request->validated(), 'status' => CourseStatus::Draft->value]);
         return CourseResource::make($course);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Course $course)
+    public function show($course)
     {
-        //
+        return CourseResource::make(Course::with(['chapters', 'chapters.media'])->findOrFail($course));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Course $course)
+    public function update(CourseRequest $request, Course $course)
     {
-        //
+        $course->update($request->validated());
+        return response()->json(['message' => 'Course updated successfully']);
     }
 
     /**

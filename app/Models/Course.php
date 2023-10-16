@@ -29,11 +29,7 @@ class Course extends Model
      */
     protected function getThumbnailUrlAttribute()
     {
-        if ($this->thumbnail) return $this->thumbnail;
-        $name = trim(collect(explode(' ', $this->title))->map(function ($segment) {
-            return mb_substr($segment, 0, 1);
-        })->join(' '));
-        return '\course-placeholder.png';
+        return $this->thumbnail;
     }
 
     /**
@@ -64,6 +60,6 @@ class Course extends Model
      */
     public function chapters(): HasMany
     {
-        return $this->hasMany(Chapter::class);
+        return $this->hasMany(Chapter::class)->orderBy('order', 'asc');
     }
 }

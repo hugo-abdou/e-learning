@@ -1,43 +1,48 @@
 <template>
-    <div class="relative w-100 h-100">
-        <VImg
-            v-if="media.type === 'image'"
-            v-bind="$attrs"
-            :src="thumb"
-            style="aspect-ratio: 16/9"
-            cover
-            class="rounded w-100 border relative"
-        >
-            <VToolbar color="#7e7e7e00" density="compact">
-                <VAvatar size="26" variant="tonal" class="ml-1 blurred-background" color="blur">
-                    <VIcon size="20" :icon="resource.type === 'video' ? 'tabler:video' : 'mdi-panorama-variant-outline'" color="blur" />
+    <div class="w-100 h-100 rounded bg-surface border media-card overflow-hidden">
+        <VCard color="surface" style="aspect-ratio: 16/9" :class="hasTitle ? 'rounded-b-0' : 'rounded'" class="h-100 w-100">
+            <VImg :src="thumb" class="w-100 h-100" cover />
+            <VImg :src="thumb" style="top: 0" class="w-100 h-100 position-absolute blurred-background rounded" />
+
+            <VToolbar color="#c9c9c900" density="compact" absolute style="top: 0">
+                <VAvatar size="26" class="ml-1" color="#fff" variant="text">
+                    <VIcon size="18" :icon="resource.type === 'video' ? 'tabler:video' : 'mdi-image-outline'" />
                 </VAvatar>
+
                 <VChip v-if="resource.status !== MediaStatus.Completed" size="small" class="ma-1" :color="status.color">
                     <VIcon start size="16" :icon="status.icon" />
                     {{ status.lable }}
                 </VChip>
-                <VBtn v-if="resource.status === MediaStatus.Error" @click="retry" icon size="26" variant="tonal" color="error">
-                    <VIcon icon="tabler:refresh" />
-                </VBtn>
+                <ActionButton
+                    v-if="resource.status === MediaStatus.Error"
+                    @click="retry"
+                    icon="tabler:refresh"
+                    color="error"
+                    class="ml-1"
+                />
                 <slot name="toolbar" />
                 <VSpacer />
-                <ActionButton @click.stop="deleteMedia(resource)" icon="tabler-trash" color="error" class="ml-2" />
+                <ActionButton
+                    v-if="deletable"
+                    @click.stop="deleteMedia(resource)"
+                    icon="tabler-trash"
+                    color="error"
+                    class="mr-1 text-error"
+                />
             </VToolbar>
-            <VToolbar color="#7e7e7e00" density="compact" absolute style="bottom: 0">
-                <template v-if="resource.type === 'video'">
-                    <VChip size="small" class="ma-1 blurred-background" color="blur">
-                        <VIcon start size="16" icon="mdi-clock-fast" color="blur" />
-                        <span class="text-blur">
+            <VToolbar v-if="!play" color="#7e7e7e00" density="compact" absolute style="bottom: 0">
+                <template v-if="resource.type === 'video' && resource.status === MediaStatus.Completed">
+                    <VChip size="small" class="ml-1" color="#fff" variant="tonal">
+                        <VIcon start size="16" icon="mdi-clock-fast" />
+                        <span>
                             {{ secondsToMinutes(resource.duration) }}
                         </span>
                     </VChip>
-                    <ActionButton icon="tabler-play" color="blur" class="ml-1 blurred-background" />
+                    <ActionButton @click="playPreview" icon="mdi-play-circle" color="#fff" variant="text" />
                 </template>
             </VToolbar>
-        </VImg>
-        <Player v-else :src="media.url" :poster="thumb" :title="resource.name" class="border" />
-        <!-- <VuePlyr :poster="thumb" :src="media.url" v-else> </VuePlyr> -->
-        <!-- <p class="truncate mt-2" v-if="hasTitle" :title="resource.name">{{ resource.name }}</p> -->
+        </VCard>
+        <p class="truncate px-2 py-2 ma-0" v-if="hasTitle" :title="resource.name">{{ resource.name }}</p>
         <slot />
     </div>
 </template>
@@ -53,15 +58,19 @@ defineOptions({ inheritAttrs: false });
 
 interface Props {
     hasTitle?: boolean;
-    media: Media;
+    isPreview?: boolean;
+    deletable?: boolean;
+    media: Media | any;
 }
-const props = defineProps<Props>();
+
+const props = withDefaults(defineProps<Props>(), { isPreview: false, hasTitle: false, deletable: false });
 
 interface Emits {
     (e: "onDelete", value: number): void;
 }
 const emit = defineEmits<Emits>();
 
+const play = ref(props.isPreview);
 const resource = ref<Media>(props.media);
 const status = computed(() => resolveMediaStatusVariant(resource.value.status));
 const defaultThumbnal = {
@@ -69,7 +78,15 @@ const defaultThumbnal = {
     image: "/image-placeholder.jpg"
 };
 const thumb = computed(() => resource.value.thumb_url || defaultThumbnal[resource.value.type]);
+
+const plyr = ref();
 const mediaStore = useMediaStore();
+const playPreview = () => {
+    mediaStore.openPlayer({
+        thumb,
+        url: resource.value.url
+    });
+};
 let interval: NodeJS.Timer;
 const refreshMedia = async () => {
     try {
@@ -87,13 +104,8 @@ const retry = async () => {
         resource.value = res;
     } catch (error) {}
 };
-const deleteMedia = async (media: Media) => {
-    try {
-        await mediaStore.delete(media.id);
-        emit("onDelete", media.id);
-    } catch (error) {
-        console.error(error);
-    }
+const deleteMedia = (media: Media) => {
+    emit("onDelete", media.id);
 };
 onMounted(() => {
     if (resource.value.status === MediaStatus.Pending || resource.value.status === MediaStatus.Processing) {
@@ -106,9 +118,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.blurred-background {
-    backdrop-filter: blur(10px); /* Adjust the blur value as needed */
-    border-radius: 10px; /* Optional: Add border-radius for rounded corners */
-    overflow: hidden; /* Ensure the blurred effect is contained within the element */
+.active .media-card {
+    background-color: rgb(var(--v-theme-primary)) !important;
 }
 </style>

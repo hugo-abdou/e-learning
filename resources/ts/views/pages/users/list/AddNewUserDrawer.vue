@@ -67,6 +67,7 @@ const onSubmit = () => {
             const res = await userListStore.addUser({
                 name: name.value,
                 email: email.value,
+                role: [],
                 password: password.value,
                 password_confirmation: password.value,
                 terms: true

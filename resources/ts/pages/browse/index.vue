@@ -1,7 +1,7 @@
 <template>
     <div>
         <VSlideGroup v-model="activeTab" class="pa-4" selected-class="bg-primary" show-arrows>
-            <VSlideGroupItem v-for="tab in tabs" :key="tab.tab" v-slot="{ isSelected, toggle, selectedClass }">
+            <VSlideGroupItem v-for="tab in tabs" :key="tab.tab" v-slot="{ isSelected, toggle }">
                 <VChip size="large" :color="isSelected ? 'primary' : 'secondary'" class="ma-1" @click="toggle">
                     <VIcon start size="16" :icon="tab.icon" />
                     {{ tab.title }}
