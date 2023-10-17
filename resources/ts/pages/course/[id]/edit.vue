@@ -85,7 +85,11 @@ const save = async () => {
             const data: Chapter[] = await step.component?.validate();
             const course_id = course.value.id;
             const chaptersForm: ChapterForm[] = data.map((item, i) => {
-                return { ...item, course_id, video: item.video?.id || null, documents: item.documents.map(({ id }) => id), order: i };
+                const attachments: { [key: number]: any } = {};
+                item.attachments.forEach(({ id }) => {
+                    attachments[id] = { type: "media" };
+                });
+                return { ...item, course_id, video: item.video?.id || null, attachments, order: i };
             });
             // @ts-ignore
             await Promise.all(chaptersForm.map(form => courseStore.updateChapter(form.id, form)));

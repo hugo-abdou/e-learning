@@ -12,9 +12,7 @@ class Chapter extends Model
     use HasFactory;
 
     protected $guarded = [];
-    protected $casts = [
-        'is_main' => 'boolean',
-    ];
+    protected $casts = [];
 
     /**
      * Get the user that owns the Chapter
@@ -26,21 +24,18 @@ class Chapter extends Model
         return $this->belongsTo(Course::class);
     }
 
-    /**
-     * The media that belong to the Chapter
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function media(): BelongsToMany
+    // /**
+    //  * The media that belong to the Chapter
+    //  *
+    //  * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    //  */
+    // public function media(): BelongsToMany
+    // {
+    //     return $this->belongsToMany(Media::class, relatedPivotKey: 'attachment_id', foreignPivotKey: 'chapter_id');
+    // }
+
+    public function attachments(): BelongsToMany
     {
-        return $this->belongsToMany(Media::class);
-    }
-    public function video(): BelongsToMany
-    {
-        return $this->belongsToMany(Media::class)->wherePivot('type', 'video');
-    }
-    public function documents(): BelongsToMany
-    {
-        return $this->belongsToMany(Media::class)->wherePivot('type', 'document');
+        return $this->belongsToMany(Media::class, relatedPivotKey: 'attachment_id', foreignPivotKey: 'chapter_id');
     }
 }

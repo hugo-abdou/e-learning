@@ -17,6 +17,7 @@
     "@floating-ui/dom": "1.2.7",
     "@iconify-json/mdi": "^1.1.52",
     "@tabler/icons": "2.17.0",
+    "@tato30/vue-pdf": "^1.7.4",
     "@uppy/xhr-upload": "^2.1.0",
     "@vueuse/core": "10.1.0",
     "@vueuse/math": "10.1.0",

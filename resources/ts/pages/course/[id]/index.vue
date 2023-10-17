@@ -4,31 +4,44 @@
             <VCol cols="12" md="8">
                 <VCard>
                     <VCardText class="py-0 px-0">
-                        <div v-if="player && isReady">
-                            <div class="position-relative">
+                        <div v-if="isReady && activeAttachment" class="position-relative">
+                            <div v-if="activeAttachment.type === MediaTypes.video">
                                 <VuePlyr
                                     ref="plyr"
                                     @ended="finished = true"
-                                    :src="player.url"
-                                    :poster="player.thumb_url"
+                                    :src="activeAttachment.url"
+                                    :poster="activeAttachment.thumb_url"
                                     :title="course?.title"
-                                >
-                                </VuePlyr>
+                                />
                                 <div
                                     v-if="finished"
                                     class="position-absolute w-100 h-100 d-flex gap-1 align-center justify-center"
                                     style="inset: 0; background-color: rgba(0, 0, 0, 0.568)"
                                 >
                                     <v-btn @click="replay" color="default" prepend-icon="mdi-rotate-left"> Start Over </v-btn>
-                                    <v-btn
-                                        v-if="selectedVideo < playlist.length - 1"
-                                        @click="nextEpisod"
-                                        color="default"
-                                        append-icon="mdi-skip-forward"
-                                    >
+                                    <v-btn v-if="nextIsavailable" @click="nextEpisod" color="default" append-icon="mdi-skip-forward">
                                         Continue
                                     </v-btn>
                                 </div>
+                            </div>
+                            <div v-if="activeAttachment.type === MediaTypes.pdf">
+                                <PdfViewer
+                                    :key="activeAttachment.url"
+                                    :author="course?.author.name"
+                                    :src="activeAttachment.url"
+                                    v-slot="{ page, pages, reset }"
+                                >
+                                    <div
+                                        v-if="page === pages"
+                                        class="position-absolute py-2 w-100 d-flex gap-1 align-center justify-center"
+                                        style="background-color: rgba(0, 0, 0, 0.151); bottom: 75px"
+                                    >
+                                        <v-btn @click="reset" color="default" prepend-icon="mdi-rotate-left"> Start Over </v-btn>
+                                        <v-btn v-if="nextIsavailable" @click="nextEpisod" color="default" append-icon="mdi-skip-forward">
+                                            Continue
+                                        </v-btn>
+                                    </div>
+                                </PdfViewer>
                             </div>
                         </div>
                         <v-skeleton-loader v-else :type="['image', 'image']"></v-skeleton-loader>
@@ -92,35 +105,56 @@
             </VCol>
             <VCol cols="12" md="4">
                 <div class="position-sticky" style="top: 90px">
-                    <VExpansionPanels variant="accordion">
-                        <VExpansionPanel v-for="(item, i) in course?.chapters" :key="item.id">
+                    <VExpansionPanels v-model="selectedChapter" v-if="isReady" variant="accordion">
+                        <VExpansionPanel v-for="(item, ch_i) in course?.chapters" :value="ch_i" :key="item.id">
                             <VExpansionPanelTitle> {{ item.title }} </VExpansionPanelTitle>
                             <VExpansionPanelText>
-                                <!-- @vue-ignore -->
-                                <VList :multiple="false" v-model:selected="selectedVideo">
+                                <VList
+                                    :selected="[selectedAttachment]"
+                                    @update:selected="([e]:any[]) => ((e >=0) && (selectedAttachment = e))"
+                                    lines="two"
+                                >
                                     <VListItem
-                                        prepend-icon="tabler-play"
-                                        v-if="item.video && item.video.type === 'video'"
-                                        :value="i"
-                                        :active="selectedVideo === i"
+                                        class="mt-1"
+                                        v-for="(doc, at_i) in item.attachments"
+                                        :key="doc.id"
+                                        :active="selectedAttachment === at_i && activeChapter?.id === item.id"
+                                        @click="activateAttachment(at_i, item)"
                                         rounded="lg"
-                                        variant="tonal"
-                                        :title="item.video.name"
-                                        :subtitle="secondsToMinutes(item.video.duration)"
-                                    />
-                                    <VListItem
-                                        prepend-icon="fluent:document-16-regular"
-                                        v-for="media in item.documents"
-                                        :key="media.id"
-                                        :value="media.id"
-                                        disabled
-                                        rounded="shaped"
-                                        :title="media.name"
-                                    />
+                                        border
+                                        variant="flat"
+                                    >
+                                        <template #prepend="{ isActive }">
+                                            <VAvatar v-if="doc.type === MediaTypes.video" icon="mdi-play-speed" variant="tonal" />
+                                            <VAvatar v-else-if="doc.type === MediaTypes.image" icon="mdi-image-outline" variant="tonal" />
+                                            <VAvatar
+                                                v-else-if="doc.type === MediaTypes.pdf"
+                                                icon="mdi-file-document-outline"
+                                                variant="tonal"
+                                            />
+                                        </template>
+                                        <VListItemTitle>
+                                            {{ doc.name }}
+                                        </VListItemTitle>
+                                        <VChip
+                                            v-if="doc.type == 'video'"
+                                            rounded="sm"
+                                            size="x-small"
+                                            class="text-caption"
+                                            color="#fff"
+                                            variant="tonal"
+                                        >
+                                            <VIcon start size="16" icon="mdi-clock-fast" />
+                                            <span>
+                                                {{ secondsToMinutes(doc.duration) }}
+                                            </span>
+                                        </VChip>
+                                    </VListItem>
                                 </VList>
                             </VExpansionPanelText>
                         </VExpansionPanel>
                     </VExpansionPanels>
+                    <v-skeleton-loader :type="Array(5).fill('list-item-avatar-three-line')" class="py-2" v-else></v-skeleton-loader>
                 </div>
             </VCol>
         </VRow>
@@ -130,43 +164,61 @@
 <script setup lang="ts">
 import { VSkeletonLoader } from "vuetify/labs/VSkeletonLoader";
 import { useCourseStore } from "@/stores/useCourseStore";
-import { Course, Media } from "@/types";
+import { Chapter, Course } from "@/types";
 import { avatarText } from "@/@core/utils/formatters";
 import { secondsToMinutes } from "@/helpers";
-
+import { MediaTypes } from "@/@core/enums";
 const route = useRoute();
 const router = useRouter();
 const courseStore = useCourseStore();
 const course = ref<Course>();
-const playlist = ref<Media[]>([]);
-const selectedVideo = ref<number>(0);
 const isReady = computed<boolean>(() => !!course.value);
 const finished = ref<boolean>(false);
+const selectedChapter = ref<number>(0);
+const selectedAttachment = ref<number>(0);
+const activeChapter = ref<Chapter>();
+const activeAttachment = computed(() => activeChapter.value?.attachments[selectedAttachment.value]);
+const nextIsavailable = computed(() => {
+    if (!course.value || !activeChapter.value) return false;
+    return (
+        activeChapter.value.attachments.length - 1 > selectedAttachment.value || course.value.chapters.length - 1 > selectedChapter.value
+    );
+});
 const plyr = ref();
-const player = computed(() => playlist.value[selectedVideo.value]);
 
 const nextEpisod = () => {
+    if (!activeChapter.value || !course.value) return;
+    // check if the active chapter has more attachments then play next attachment
+    if (activeChapter?.value.attachments.length - 1 > selectedAttachment.value) {
+        selectedAttachment.value++;
+    } else if (course.value?.chapters.length - 1 > selectedChapter.value) {
+        selectedChapter.value++;
+        activeChapter.value = course.value?.chapters[selectedChapter.value];
+        selectedAttachment.value = 0;
+    }
+    if (activeAttachment.value?.type === MediaTypes.video) {
+        setTimeout(() => plyr.value && plyr.value.player.play(), 50);
+    }
     finished.value = false;
-    selectedVideo.value++;
-    setTimeout(() => plyr.value.player.play(), 50);
 };
 const replay = () => {
+    if (activeAttachment.value?.type === MediaTypes.video) {
+        setTimeout(() => plyr.value && plyr.value.player.play(), 50);
+    }
     finished.value = false;
-    setTimeout(() => plyr.value.player.play(), 50);
+};
+const activateAttachment = (att_i: number, chapter: Chapter) => {
+    selectedAttachment.value = att_i;
+    activeChapter.value = chapter;
 };
 
 onBeforeMount(async () => {
     try {
         course.value = await courseStore.getCourse(Number(route.params.id), { additional: { chapters: true } });
-        if (course.value) {
-            playlist.value = course.value.chapters.reduce((result, { video }) => {
-                if (video) result.push(video);
-                return result;
-            }, [] as Media[]);
-            // selectedVideo.value = playlist.value[0].id;
-        }
+        activeChapter.value = course.value?.chapters[selectedChapter.value];
+        if (!course.value) return;
     } catch (error) {
-        router.push({ name: "course" });
+        // router.push({ name: "course" });
     }
 });
 </script>

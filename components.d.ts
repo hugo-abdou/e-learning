@@ -83,6 +83,7 @@ declare module '@vue/runtime-core' {
     NavSearchBar: typeof import('./resources/ts/layouts/components/NavSearchBar.vue')['default']
     NavSearchBarOld: typeof import('./resources/ts/layouts/components/NavSearchBarOld.vue')['default']
     Notifications: typeof import('./resources/ts/@core/components/Notifications.vue')['default']
+    PdfViewer: typeof import('./resources/ts/components/PdfViewer.vue')['default']
     PricingPlanDialog: typeof import('./resources/ts/components/dialogs/PricingPlanDialog.vue')['default']
     ReferAndEarnDialog: typeof import('./resources/ts/components/dialogs/ReferAndEarnDialog.vue')['default']
     RolesSelectBox: typeof import('./resources/ts/pages/users/components/RolesSelectBox.vue')['default']

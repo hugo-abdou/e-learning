@@ -23,11 +23,10 @@ class ChapterRequest extends FormRequest
     {
         $rules = [
             "course_id" => 'nullable|integer',
-            "documents.*" => 'nullable|integer',
+            "attachments.*" => 'nullable|array',
             "video" =>  'nullable|integer',
             "title" => 'required|string',
             "order" => 'required|integer',
-            "is_main" => 'required|boolean',
         ];
         if ($this->method() == 'POST') {
             $rules['course_id'] = 'required|integer';

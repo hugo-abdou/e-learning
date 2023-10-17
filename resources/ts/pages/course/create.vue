@@ -70,8 +70,12 @@ const nextStep = async () => {
         }
         if (step.title.toLocaleLowerCase() === "chapters" && course.value) {
             const data: Chapter[] = await step.component?.validate();
-            const chaptersForm: ChapterForm[] = data.map(({ title, documents, video, is_main }, i) => {
-                return { title, is_main, video: video?.id || null, documents: documents.map(({ id }) => id), order: i };
+            const chaptersForm: ChapterForm[] = data.map((item, i) => {
+                const attachments: { [key: number]: any } = {};
+                item.attachments.forEach(({ id }) => {
+                    attachments[id] = { type: "media" };
+                });
+                return { ...item, video: item.video?.id || null, attachments, order: i };
             });
             const courseId = course.value.id;
             await Promise.all(chaptersForm.map(form => courseStore.createChapter(courseId, form)));

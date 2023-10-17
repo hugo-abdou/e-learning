@@ -1,0 +1,1 @@
+import{M as s,O as n,S as o,aa as i,y as m}from"./main-d3200a92.js";const c=s()({name:"VListItemAction",props:{start:Boolean,end:Boolean,...n(),...o()},setup(t,e){let{slots:a}=e;return i(()=>m(t.tag,{class:["v-list-item-action",{"v-list-item-action--start":t.start,"v-list-item-action--end":t.end},t.class],style:t.style},a)),{}}});export{c as V};

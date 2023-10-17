@@ -4,8 +4,10 @@ import Hls from "hls.js";
 import "plyr/dist/plyr.css";
 export default {
     name: "VuePlyr",
+    inheritAttrs: false,
     props: {
         src: String,
+        poster: String,
         isPreview: { type: Boolean, default: false }
     },
     data() {
@@ -87,12 +89,18 @@ export default {
     },
     updated() {
         this.init();
+    },
+    beforeUnmount() {
+        this.player.destroy();
     }
-    // beforeUnmount() {
-    //     this.player.destroy();
-    // }
 };
 </script>
 <template>
-    <video ref="video" controls class="w-100 h-100" style="aspect-ratio: 16/9; --plyr-color-main: rgb(var(--v-theme-primary))"></video>
+    <video
+        ref="video"
+        v-bind="$attrs"
+        controls
+        class="w-100 h-100"
+        style="aspect-ratio: 16/9; --plyr-color-main: rgb(var(--v-theme-primary))"
+    ></video>
 </template>

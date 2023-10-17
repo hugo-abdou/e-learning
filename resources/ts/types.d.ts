@@ -1,4 +1,5 @@
 import type { UserAbility } from "@/plugins/casl/AppAbility";
+import { MediaTypes } from "@core/enums";
 
 // 👉 Help center
 export type HelpCenterSubcategoryArticlesType = {
@@ -229,13 +230,17 @@ export interface BaseMedia {
 }
 interface VideoMedia extends BaseMedia {
     type: "video";
+    plyr?: Plyr;
     duration: number;
 }
 interface ImageMedia extends BaseMedia {
     type: "image";
 }
+interface DocumentMedia extends BaseMedia {
+    type: "pdf";
+}
 
-export type Media = VideoMedia | ImageMedia;
+export type Media = VideoMedia | ImageMedia | DocumentMedia;
 type Author = {
     id: number;
     name: string;
@@ -261,14 +266,13 @@ export interface Chapter {
     order: number;
     course_id?: number;
     title: string;
-    is_main: boolean;
     video: Media | null;
-    documents: Media[];
+    attachments: Media[];
 }
 export interface CourseForm extends Omit<Course, "id" | "duration" | "author" | "chapters"> {}
 export interface ChapterForm extends Omit<Chapter, "id"> {
     video: number | null;
-    documents: numbers[];
+    attachments: any;
 }
 
 export interface PaginationResponse<T> {

@@ -73,24 +73,6 @@
                                 </span>
                             </VChip>
                         </template>
-                        <!-- Media -->
-                        <template #item.media="{ item }">
-                            <div class="v-avatar-group pa-2 staked-images">
-                                <template v-for="(image, index) in item.raw.media" :key="index">
-                                    <VAvatar
-                                        v-if="index < 4"
-                                        variant="outlined"
-                                        rounded="lg"
-                                        style="width: 70px"
-                                        size="52"
-                                        class="relative"
-                                    >
-                                        <VImg :src="image" style="top: 0" class="w-100 h-100 position-absolute blurred-background" cover />
-                                        <VImg cover :src="image" />
-                                    </VAvatar>
-                                </template>
-                            </div>
-                        </template>
                         <!-- Actions -->
                         <template #item.actions="{ item }">
                             <VBtn icon variant="text" size="small" color="medium-emphasis">
@@ -177,7 +159,7 @@ const publishCourse = (id: number) => courseStore.publishCourse(id).then(getCour
 const getCourses = debounce(() => {
     loading.value = true;
     courseStore
-        .getCourses({ ...options.value, additional: { hasMedia: true } })
+        .getCourses(options.value)
         .then(({ data, meta }) => {
             courses.value = data;
             totalCours.value = meta.total;
@@ -187,7 +169,6 @@ const getCourses = debounce(() => {
 // Headers
 const headers: DataTableHeader[] = [
     { title: "Title", key: "title" },
-    { title: "Media", key: "media", sortable: false },
     { title: "Status", key: "status", width: 70, align: "center" },
     { title: "Difficulty", key: "difficulty", width: 70, align: "center" },
     { title: "", key: "actions", sortable: false, width: 70 }

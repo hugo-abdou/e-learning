@@ -18,6 +18,14 @@ export const MediaStatus = {
     Completed: 2,
     Error: 3
 } as const;
+export const MediaTypes = {
+    video: "video",
+    image: "image",
+    audio: "audio",
+    pdf: "pdf",
+    document: "document",
+    youtube: "youtube"
+} as const;
 export const CourseDifficulty = {
     Beginner: "beginner",
     Intermediate: "intermediate",

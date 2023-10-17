@@ -25,7 +25,7 @@ class CoursesController extends Controller
                 'chapters' => function ($query) {
                     $query->select('id', 'course_id');
                 },
-                'chapters.media'
+                'chapters.attachments'
             ])
         )->through([
             Sort::class,
@@ -49,7 +49,7 @@ class CoursesController extends Controller
      */
     public function show($course)
     {
-        return CourseResource::make(Course::with(['chapters', 'chapters.media'])->findOrFail($course));
+        return CourseResource::make(Course::with(['chapters', 'chapters.attachments'])->findOrFail($course));
     }
 
     /**

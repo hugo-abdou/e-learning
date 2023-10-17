@@ -1,15 +1,14 @@
 <template>
-    <div class="w-100 h-100 rounded bg-surface border media-card overflow-hidden">
+    <div class="w-100 h-100 rounded bg-surface border media-card overflow-hidden position-relative">
         <VCard color="surface" style="aspect-ratio: 16/9" :class="hasTitle ? 'rounded-b-0' : 'rounded'" class="h-100 w-100">
             <VImg :src="thumb" class="w-100 h-100" cover />
             <VImg :src="thumb" style="top: 0" class="w-100 h-100 position-absolute blurred-background rounded" />
 
-            <VToolbar color="#c9c9c900" density="compact" absolute style="top: 0">
+            <div class="position-absolute w-100 d-flex align-center" style="top: 0; padding-block: 2px">
                 <VAvatar size="26" class="ml-1" color="#fff" variant="text">
                     <VIcon size="18" :icon="resource.type === 'video' ? 'tabler:video' : 'mdi-image-outline'" />
                 </VAvatar>
-
-                <VChip v-if="resource.status !== MediaStatus.Completed" size="small" class="ma-1" :color="status.color">
+                <VChip v-if="resource.status !== MediaStatus.Completed" size="x-small" class="ma-1" :color="status.color">
                     <VIcon start size="16" :icon="status.icon" />
                     {{ status.lable }}
                 </VChip>
@@ -29,18 +28,18 @@
                     color="error"
                     class="mr-1 text-error"
                 />
-            </VToolbar>
-            <VToolbar v-if="!play" color="#7e7e7e00" density="compact" absolute style="bottom: 0">
+            </div>
+            <div class="position-absolute w-100 d-flex align-center" style="bottom: 0; padding-block: 2px">
                 <template v-if="resource.type === 'video' && resource.status === MediaStatus.Completed">
-                    <VChip size="small" class="ml-1" color="#fff" variant="tonal">
+                    <VChip rounded="sm" size="x-small" class="ml-1" color="#fff" variant="tonal">
                         <VIcon start size="16" icon="mdi-clock-fast" />
                         <span>
                             {{ secondsToMinutes(resource.duration) }}
                         </span>
                     </VChip>
-                    <ActionButton @click="playPreview" icon="mdi-play-circle" color="#fff" variant="text" />
+                    <ActionButton @click="playPreview" icon="mdi-play-circle" color="#fff" class="text-" variant="text" />
                 </template>
-            </VToolbar>
+            </div>
         </VCard>
         <p class="truncate px-2 py-2 ma-0" v-if="hasTitle" :title="resource.name">{{ resource.name }}</p>
         <slot />
@@ -60,10 +59,12 @@ interface Props {
     hasTitle?: boolean;
     isPreview?: boolean;
     deletable?: boolean;
+    heading?: boolean;
+    footer?: boolean;
     media: Media | any;
 }
 
-const props = withDefaults(defineProps<Props>(), { isPreview: false, hasTitle: false, deletable: false });
+const props = withDefaults(defineProps<Props>(), { isPreview: false, hasTitle: false, deletable: false, heading: true });
 
 interface Emits {
     (e: "onDelete", value: number): void;
@@ -74,12 +75,12 @@ const play = ref(props.isPreview);
 const resource = ref<Media>(props.media);
 const status = computed(() => resolveMediaStatusVariant(resource.value.status));
 const defaultThumbnal = {
-    video: "/video_placeholder.gif",
-    image: "/image-placeholder.jpg"
+    video: "/assets/video_placeholder.gif",
+    image: "/assets/image-placeholder.jpg",
+    pdf: "/assets/pdf_placeholder.jpg"
 };
 const thumb = computed(() => resource.value.thumb_url || defaultThumbnal[resource.value.type]);
 
-const plyr = ref();
 const mediaStore = useMediaStore();
 const playPreview = () => {
     mediaStore.openPlayer({

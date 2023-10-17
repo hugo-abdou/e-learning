@@ -4,21 +4,11 @@
             <VExpansionPanel v-for="(chapter, i) in chaptersForm" :key="i">
                 <VExpansionPanelTitle>
                     <div class="d-flex justify-space-between w-100 pr-5">
-                        <span class="text-h4 text-capitalize">
+                        <VCardTitle class="text-capitalize">
                             {{ chapter.title || `Chapter ${i + 1}` }}
-                        </span>
+                        </VCardTitle>
                         <div @click.stop="" class="d-flex justify-center align-center">
-                            <VCheckbox
-                                :model-value="chapter.is_main"
-                                @update:model-value="makeChapterAsMain(i)"
-                                true-icon="ooui:image-layout-thumbnail"
-                                false-icon="ooui:image-layout-thumbnail"
-                            >
-                                <VTooltip open-on-focus max-width="200" location="start" activator="parent">
-                                    Click to make this chapter as the main chapter for your course
-                                </VTooltip>
-                            </VCheckbox>
-                            <template v-if="hasOne">
+                            <template v-if="chaptersForm.length > 1">
                                 <ActionButton :disabled="i === 0" @click.stop="up(i)" icon="mdi-arrow-up" variant="text" />
                                 <ActionButton
                                     :disabled="i + 1 >= chapters.length"
@@ -26,36 +16,24 @@
                                     icon="mdi-arrow-down"
                                     variant="text"
                                 />
+                                <ActionButton @click.stop="deleteChapter(i)" icon="tabler-trash" color="error" class="ml-2" />
                             </template>
-                            <ActionButton @click.stop="deleteChapter(i)" icon="tabler-trash" color="error" class="ml-2" />
                         </div>
                     </div>
                 </VExpansionPanelTitle>
                 <VExpansionPanelText class="border-t">
                     <VCardText class="mb-5">
-                        <VRow class="gap-5">
+                        <VRow>
                             <VCol cols="12">
                                 <VTextField :rules="[requiredValidator]" v-model="chapter.title" label="Chapter Title" />
                             </VCol>
-                            <VCol cols="12" sm="6" md="4" lg="3">
-                                <div v-if="chapter.video">
-                                    <Media :media="chapter.video" hasTitle deletable @on-delete="chapter.video = null"></Media>
-                                </div>
-                                <VBtn v-else @click="openDialog('upload-chapter-video')" v-bind="UploadBunAttrs">
-                                    <div class="d-flex flex-column align-center">
-                                        <VIcon icon="fluent:video-add-20-regular" size="32" />
-                                        <VLabel class="mt-2">Video</VLabel>
-                                    </div>
-                                </VBtn>
-                            </VCol>
-                            <VDivider vertical class="my-5"></VDivider>
-                            <VCol cols="12" sm="6" md="4" lg="3" v-for="doc in chapter.documents" :key="doc.id" class="">
+                            <VCol cols="12" sm="6" md="4" lg="3" v-for="doc in chapter.attachments" :key="doc.id" class="">
                                 <div class="">
                                     <Media
                                         :media="doc"
                                         hasTitle
                                         deletable
-                                        @on-delete="chapter.documents = chapter.documents.filter(({ id }) => id !== doc.id)"
+                                        @on-delete="chapter.attachments = chapter.attachments.filter(({ id }) => id !== doc.id)"
                                     >
                                     </Media>
                                 </div>
@@ -64,7 +42,7 @@
                                 <VBtn v-bind="UploadBunAttrs" @click="openDialog('upload-chapter-document')">
                                     <div class="d-flex flex-column align-center">
                                         <VIcon icon="fluent:document-add-16-regular" size="32" />
-                                        <VLabel class="mt-2">Documents</VLabel>
+                                        <VLabel class="mt-2">attachments</VLabel>
                                     </div>
                                 </VBtn>
                             </VCol>
@@ -99,9 +77,10 @@ interface Props {
     chapters?: Chapter[];
 }
 const props = withDefaults(defineProps<Props>(), {
-    chapters: () => [{ title: "", video: null, documents: [], order: 0, id: 0, is_main: true }]
+    chapters: () => []
 });
 
+const courseStore = useCourseStore();
 const currentChapter = ref(0);
 const chaptersForm = ref<Chapter[]>(props.chapters);
 // @ts-ignore
@@ -109,15 +88,10 @@ const formEl = ref<VForm>({});
 const dialog = reactive({ open: false, type: "" as string | null });
 const uploaderRules = computed(() => {
     switch (dialog.type) {
-        case "upload-chapter-video":
-            return {
-                allowedFileTypes: ["video/*"],
-                maxNumberOfFiles: 1
-            };
         case "upload-chapter-document":
             return {
-                allowedFileTypes: ["image/*", "application/pdf"],
-                maxNumberOfFiles: 10
+                allowedFileTypes: ["image/*", "application/pdf", "video/*"],
+                maxNumberOfFiles: 3
             };
         default:
             return {
@@ -126,6 +100,13 @@ const uploaderRules = computed(() => {
             };
     }
 });
+
+onMounted(() => {
+    if (chaptersForm.value.length === 0) {
+        chaptersForm.value.push({ title: "", video: null, attachments: [], order: 0, id: 0 });
+    }
+});
+
 const closeDialog = () => {
     dialog.open = false;
     dialog.type = null;
@@ -139,20 +120,16 @@ const setMediaFromUploader = (media: MediaType[]) => {
         chaptersForm.value[currentChapter.value].video = media[0];
     }
     if (dialog.type === "upload-chapter-document") {
-        chaptersForm.value[currentChapter.value].documents.push(...media);
+        chaptersForm.value[currentChapter.value].attachments.push(...media);
     }
     closeDialog();
 };
-const courseStore = useCourseStore();
 const deleteChapter = async (index: number) => {
     const chapter = chaptersForm.value[index];
     if (chapter.id) {
         await courseStore.deleteChapter(chapter.id);
     }
     chaptersForm.value = chaptersForm.value.filter((item, i) => i !== index);
-};
-const makeChapterAsMain = (index: number) => {
-    chaptersForm.value = chaptersForm.value.map((item, i) => ({ ...item, is_main: i === index }));
 };
 const validateChapters = () => {
     return new Promise(async (resolve, reject) => {
@@ -170,7 +147,7 @@ const validateChapters = () => {
 const addChapter = async () => {
     try {
         await validateChapters();
-        chaptersForm.value.push({ title: "", video: null, documents: [], order: chaptersForm.value.length, id: 0, is_main: false });
+        chaptersForm.value.push({ title: "", video: null, attachments: [], order: chaptersForm.value.length, id: 0 });
         currentChapter.value++;
     } catch (error) {}
 };
@@ -186,8 +163,6 @@ const down = (index: number) => {
     newValue[index + 1] = chaptersForm.value[index];
     chaptersForm.value = newValue;
 };
-const hasOne = computed(() => chaptersForm.value.length > 1);
-
 const validate = async () => {
     try {
         await validateChapters();

@@ -11,7 +11,7 @@
             :selected="selectedMedia.includes(item.id)"
             :value="item.id"
         >
-            <Media :deletable="deletable" :media="item" @on-delete="removeItem" has-title />
+            <Media :deletable="deletable" :media="item" @on-delete="removeItem" has-title heading />
         </component>
     </Masonry>
 </template>

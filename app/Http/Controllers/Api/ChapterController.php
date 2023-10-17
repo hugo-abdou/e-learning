@@ -29,15 +29,9 @@ class ChapterController extends Controller
         $chapter = $course->chapters()->create([
             'title' => $request->validated('title'),
             'order' => $request->validated('order'),
-            'is_main' => $request->validated('is_main'),
         ]);
 
-
-
-        $videos = [];
-        if ($request->validated('video')) $videos[] = $request->validated('video');
-        $chapter->video()->syncWithPivotValues($videos, ['type' => 'video']);
-        $chapter->media()->syncWithPivotValues($request->validated('documents'), ['type' => 'document']);
+        $chapter->attachments()->sync($request->validated('attachments'));
         return ChapterResource::make($chapter);
     }
 
@@ -59,14 +53,9 @@ class ChapterController extends Controller
             'course_id' => $request->validated('course_id'),
             'title' => $request->validated('title'),
             'order' => $request->validated('order'),
-            'is_main' => $request->validated('is_main'),
         ]);
 
-        $videos = [];
-        if ($request->validated('video')) $videos[] = $request->validated('video');
-        $chapter->video()->syncWithPivotValues($videos, ['type' => 'video']);
-
-        $chapter->documents()->syncWithPivotValues($request->validated('documents'), ['type' => 'document']);
+        $chapter->attachments()->sync($request->validated('attachments'));
 
         return ChapterResource::make($chapter);
     }

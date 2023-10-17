@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('chapter_media', function (Blueprint $table) {
             $table->id();
             $table->foreignId('chapter_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('media_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('attachment_id')->constrained('media')->cascadeOnDelete();
             $table->string('type');
         });
     }
