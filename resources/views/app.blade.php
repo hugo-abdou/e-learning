@@ -18,7 +18,7 @@
             <div class="loading-logo">
                 <!-- SVG Logo -->
 
-                <img src="/worldwide.png" width="86">
+                <img src="/assets/worldwide.png" width="86">
             </div>
             <div class=" loading">
                 <div class="effect-1 effects"></div>

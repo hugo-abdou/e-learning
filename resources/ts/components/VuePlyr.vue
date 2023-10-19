@@ -63,10 +63,12 @@ export default {
                         i18n: { qualityLabel: { 0: "Auto" } }
                     };
                     this.hls.on(Hls.Events.LEVEL_SWITCHED, function (event, data) {});
+
                     this.player = new Plyr(videoEl, {
                         ...this.options
                     });
                     this.player.on("ended", e => (this.finished = true));
+                    // this.player.options.controls = [];
                     if (this.$attrs.hasOwnProperty("autoplay")) {
                         this.player.play();
                     }
@@ -89,9 +91,6 @@ export default {
     },
     updated() {
         this.init();
-    },
-    beforeUnmount() {
-        this.player.destroy();
     }
 };
 </script>

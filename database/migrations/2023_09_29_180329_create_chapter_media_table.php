@@ -16,6 +16,9 @@ return new class extends Migration
             $table->foreignId('chapter_id')->constrained()->cascadeOnDelete();
             $table->foreignId('attachment_id')->constrained('media')->cascadeOnDelete();
             $table->string('type');
+            $table->string('watermark')->nullable();
+            $table->json('visibility')->nullable();
+            $table->boolean('download')->default(false);
         });
     }
 

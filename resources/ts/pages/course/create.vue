@@ -17,16 +17,15 @@
                 <div class="d-flex justify-space-between mt-8">
                     <VBtn variant="plain" color="secondary" :disabled="currentStep === 0" @click="currentStep--">
                         <VIcon icon="tabler-arrow-left" start class="flip-in-rtl" />
-                        Previous
+                        {{ $t("previous") }}
                     </VBtn>
 
-                    <VBtn v-if="steps.length - 1 === currentStep" color="success" @click="nextStep">
-                        submit
-                        <VIcon icon="tabler-check" end class="flip-in-rtl" />
+                    <VBtn v-if="steps.length - 1 === currentStep" append-icon="tabler-check" color="success" @click="nextStep">
+                        {{ $t("submit") }}
                     </VBtn>
 
                     <VBtn variant="plain" v-else @click="nextStep">
-                        Next
+                        {{ $t("next") }}
                         <VIcon icon="tabler-arrow-right" end class="flip-in-rtl" />
                     </VBtn>
                 </div>
@@ -40,22 +39,20 @@ import { useCourseStore } from "@/stores/useCourseStore";
 import { Chapter, ChapterForm, Course, CourseForm } from "@/types";
 
 const currentStep = ref(0);
-// @ts-ignore
-const formComponent = ref<{ formEl: VForm; validate: () => Promise<any> }>({});
 
 const steps = ref([
     {
+        id: 1,
         icon: "tabler-clipboard",
-        title: "Details",
-        subtitle: "Enter Coure Details",
-        discription: "Provide data with this form to create your Coure",
+        title: "course.steps.details.title",
+        subtitle: "course.steps.details.subtitle",
         component: null as { formEl: VForm; validate: () => Promise<any> } | null
     },
     {
+        id: 2,
         icon: "grommet-icons:chapter-add",
-        title: "Chapters",
-        subtitle: "Add Chapters",
-        discription: "Add Chapters",
+        title: "course.steps.chapters.title",
+        subtitle: "course.steps.chapters.subtitle",
         component: null as { formEl: VForm; validate: () => Promise<any> } | null
     }
 ]);
@@ -63,19 +60,21 @@ const course = ref<Course>();
 
 const nextStep = async () => {
     const step = steps.value[currentStep.value];
+    console.log(step.component?.formEl);
     try {
-        if (step.title.toLocaleLowerCase() === "details") {
+        if (step.id === 1) {
             const data: CourseForm = await step.component?.validate();
             course.value = await courseStore.createCourse(data);
         }
-        if (step.title.toLocaleLowerCase() === "chapters" && course.value) {
+        if (step.id === 2 && course.value) {
             const data: Chapter[] = await step.component?.validate();
+            // @ts-ignore
             const chaptersForm: ChapterForm[] = data.map((item, i) => {
                 const attachments: { [key: number]: any } = {};
-                item.attachments.forEach(({ id }) => {
-                    attachments[id] = { type: "media" };
+                item.attachments.forEach(({ id, type, download, visibility, watermark }) => {
+                    attachments[id] = { type, download, visibility: JSON.stringify(visibility), watermark };
                 });
-                return { ...item, video: item.video?.id || null, attachments, order: i };
+                return { ...item, attachments, order: i };
             });
             const courseId = course.value.id;
             await Promise.all(chaptersForm.map(form => courseStore.createChapter(courseId, form)));

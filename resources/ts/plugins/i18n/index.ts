@@ -9,11 +9,11 @@ const messages = Object.fromEntries(
 );
 
 export default createI18n({
-    legacy: false,
+    legacy: true,
     locale: localStorage.getItem("locale") || "en",
+    messages,
     fallbackLocale: "en",
     missing: import.meta.env.MODE === "development" ? missingHandler : undefined,
-    messages,
     missingWarn: false,
     fallbackWarn: false
 });

@@ -70,9 +70,22 @@ export const resolveCourseVisibilityVariant = (stat: number) => {
     if (stat === CourseVisibility.Hidden) return { color: "default", icon: "fluent:eye-hide-20-regular" };
     return { color: "default", icon: "clarity:unknown-status-line" };
 };
+export const scrollToTop = () => {
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+};
 export const UploadBunAttrs: Partial<{}> = {
     class: "border-md border-dashed bg-background w-100 h-100",
     style: "min-height: 100px;aspect-ratio: 16/9",
     variant: "plain",
     color: "secondary"
 };
+
+// player.on("timeupdate", event => {
+//     const currentTime = event.detail.plyr.currentTime;
+//     const duration = event.detail.plyr.duration;
+//     const progress = (currentTime / duration) * 100;
+//     console.log(`Video Progress: ${progress.toFixed(2)}%`);
+// });

@@ -1,4 +1,15 @@
 {
+  "previous": "Previous",
+  "next": "Next",
+  "submit": "Submit",
+  "Add Chapter": "Add Chapter",
+  "media": {
+    "thumbnale": "Thumbnale",
+    "upload": {
+      "label": "Upload",
+      "description": "Upload a file from your desktop or choose one from your gallery"
+    }
+  },
   "Didn't get the mail?": "Didn't get the mail?",
   "account_activation_title": "Verify your email ✉️",
   "account_activation_subtitle": "Account activation link sent to your email address: {email} Please follow the link inside to continue.",
@@ -41,6 +52,61 @@
   "BROWSER": "BROWSER",
   "IP": "IP",
   "RECENT ACTIVITIES": "RECENT ACTIVITIES",
+  "course": {
+    "fields": {
+      "title": {
+        "label": "Title",
+        "description": "A catchy title can help you hook viewers. When you create video titles, it’s a good idea to include keywords your audience is likely to use when looking for videos like yours."
+      },
+      "difficulty": {
+        "label": "Difficulty",
+        "description": "Specify the difficulty level of the course to help users understand the skill level required.",
+        "options": {
+          "beginner": "Beginner",
+          "intermediate": "Intermediate",
+          "advanced": "Advanced"
+        }
+      },
+      "prerequisite": {
+        "label": "Prerequisite",
+        "description": "List any prerequisites or recommended skills that viewers should have before taking this course."
+      },
+      "description": {
+        "label": "Description",
+        "description": "Provide a detailed description of the course content, objectives, and what learners can expect to gain from it."
+      }
+    },
+    "steps": {
+      "details": {
+        "title": "Course Details",
+        "subtitle": "Provide detailed information about your course"
+      },
+      "chapters": {
+        "title": "Chapters",
+        "subtitle": "Organize your content into chapters for a structured learning experience"
+      }
+    }
+  },
+  "chapter": {
+    "fields": {
+      "title": {
+        "label": "Title",
+        "description": "A catchy title can help you hook viewers. When you create video titles, it’s a good idea to include keywords your audience is likely to use when looking for videos like yours."
+      },
+      "watermark": {
+        "label": "Watermark",
+        "description": "This text will be added to your assets to protect you. You can use normal text or %user_name% to display your student's name on the asset. This way, when someone tries to steal it, you will know who stole it."
+      },
+      "download": {
+        "label": "Download",
+        "description": "Toggle this option to allow users to download this asset."
+      },
+      "visibility": {
+        "label": "Visibility",
+        "description": "Choose who can see this media, such as everyone, registered users, or specific groups."
+      }
+    }
+  },
   "$vuetify": {
     "badge": "Badge",
     "pagination": {

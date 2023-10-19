@@ -35,7 +35,7 @@
                         :headers="headers.map(i => ({ ...i, title: $t(i.title) }))"
                         class="text-no-wrap"
                         @update:options="options = $event"
-                        :loading="loading"
+                        :loading="!courses.length"
                     >
                         <template #loading>
                             <VSkeletonLoader class="pt-2" :type="['table-tbody']"></VSkeletonLoader>
@@ -75,7 +75,7 @@
                         </template>
                         <!-- Actions -->
                         <template #item.actions="{ item }">
-                            <VBtn icon variant="text" size="small" color="medium-emphasis">
+                            <VBtn icon variant="text" size="x-small" color="medium-emphasis">
                                 <VIcon size="24" icon="tabler-dots-vertical" />
                                 <VMenu activator="parent">
                                     <VList>

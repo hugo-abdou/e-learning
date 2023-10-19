@@ -220,7 +220,6 @@ export type DataTableHeader = {
 export interface BaseMedia {
     id: number;
     mime_type: string;
-    type: "image" | "video";
     name: string;
     status: number;
     thumb_url: string;
@@ -230,7 +229,7 @@ export interface BaseMedia {
 }
 interface VideoMedia extends BaseMedia {
     type: "video";
-    plyr?: Plyr;
+    playing: boolean;
     duration: number;
 }
 interface ImageMedia extends BaseMedia {
@@ -241,6 +240,12 @@ interface DocumentMedia extends BaseMedia {
 }
 
 export type Media = VideoMedia | ImageMedia | DocumentMedia;
+export type Attachment = Media & {
+    visibility: string[];
+    download: boolean;
+    watermark?: string;
+};
+
 type Author = {
     id: number;
     name: string;
@@ -266,13 +271,12 @@ export interface Chapter {
     order: number;
     course_id?: number;
     title: string;
-    video: Media | null;
-    attachments: Media[];
+    attachments: Attachment[];
 }
 export interface CourseForm extends Omit<Course, "id" | "duration" | "author" | "chapters"> {}
 export interface ChapterForm extends Omit<Chapter, "id"> {
-    video: number | null;
-    attachments: any;
+    id?: number;
+    attachments: Attachment[];
 }
 
 export interface PaginationResponse<T> {

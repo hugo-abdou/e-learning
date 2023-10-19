@@ -1,4 +1,4 @@
 <template>
-    <VBtn variant="tonal" size="26"> </VBtn>
+    <VBtn variant="tonal" color="default" size="small" density="comfortable"></VBtn>
 </template>
 <script setup lang="ts"></script>

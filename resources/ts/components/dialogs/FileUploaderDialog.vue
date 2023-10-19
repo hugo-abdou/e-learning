@@ -29,7 +29,7 @@
                             :max-number-selectable-files="maxNumberOfFiles"
                             :allowed-file-types="allowedFileTypes"
                             selectable
-                            :grid="{ cols: '6' }"
+                            :grid="{ cols: '12', sm: '6' }"
                             v-model="selectedFiles"
                             search-posisions="0px"
                         />

@@ -2,11 +2,12 @@ import { defineStore, acceptHMRUpdate } from "pinia";
 import { Media, ResourceResponse } from "@/types";
 import axiosIns from "@/plugins/axios";
 import { AxiosResponse } from "axios";
+import { MediaTypes } from "@core/enums";
 
 interface MediaDialog {
     open: boolean;
     title: string | null;
-    type: "play-video" | null;
+    type: keyof typeof MediaTypes | undefined;
     data: any;
 }
 
@@ -17,7 +18,7 @@ export const useMediaStore = defineStore({
             open: false,
             title: null,
             data: {},
-            type: null
+            type: undefined
         } as MediaDialog
     }),
     actions: {
@@ -45,14 +46,14 @@ export const useMediaStore = defineStore({
                     .catch(err => reject(err));
             });
         },
-        openPlayer(data?: any) {
+        openMediaDialog(data?: any, type?: keyof typeof MediaTypes | undefined) {
             this.dialog.open = true;
-            this.dialog.type = "play-video";
+            this.dialog.type = type;
             this.dialog.data = data;
         },
-        closePlayer() {
+        closeMediaDialog() {
             this.dialog.open = false;
-            this.dialog.type = null;
+            this.dialog.type = undefined;
             this.dialog.data = {};
         }
     }

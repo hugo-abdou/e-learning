@@ -4,32 +4,16 @@
             <VImg :src="thumb" class="w-100 h-100" cover />
             <VImg :src="thumb" style="top: 0" class="w-100 h-100 position-absolute blurred-background rounded" />
 
-            <div class="position-absolute w-100 d-flex align-center" style="top: 0; padding-block: 2px">
-                <VAvatar size="26" class="ml-1" color="#fff" variant="text">
-                    <VIcon size="18" :icon="resource.type === 'video' ? 'tabler:video' : 'mdi-image-outline'" />
-                </VAvatar>
+            <div class="position-absolute w-100 d-flex align-center pa-2" style="top: 0">
+                <ActionButton disabled :icon="resource.type === MediaTypes.video ? 'tabler:video' : 'mdi-image-outline'" />
                 <VChip v-if="resource.status !== MediaStatus.Completed" size="x-small" class="ma-1" :color="status.color">
                     <VIcon start size="16" :icon="status.icon" />
                     {{ status.lable }}
                 </VChip>
-                <ActionButton
-                    v-if="resource.status === MediaStatus.Error"
-                    @click="retry"
-                    icon="tabler:refresh"
-                    color="error"
-                    class="ml-1"
-                />
-                <slot name="toolbar" />
                 <VSpacer />
-                <ActionButton
-                    v-if="deletable"
-                    @click.stop="deleteMedia(resource)"
-                    icon="tabler-trash"
-                    color="error"
-                    class="mr-1 text-error"
-                />
+                <slot name="toolbar" />
             </div>
-            <div class="position-absolute w-100 d-flex align-center" style="bottom: 0; padding-block: 2px">
+            <div class="position-absolute w-100 d-flex align-center pa-1" style="bottom: 0">
                 <template v-if="resource.type === 'video' && resource.status === MediaStatus.Completed">
                     <VChip rounded="sm" size="x-small" class="ml-1" color="#fff" variant="tonal">
                         <VIcon start size="16" icon="mdi-clock-fast" />
@@ -37,17 +21,32 @@
                             {{ secondsToMinutes(resource.duration) }}
                         </span>
                     </VChip>
-                    <ActionButton @click="playPreview" icon="mdi-play-circle" color="#fff" class="text-" variant="text" />
                 </template>
+                <VSpacer />
+                <VMenu transition="speed-dial" location="top" class="mx-2">
+                    <template #activator="{ props }">
+                        <ActionButton v-bind="props" icon="mdi-dots-vertical" />
+                    </template>
+                    <div class="mb-1 d-flex flex-column gap-1">
+                        <ActionButton variant="elevated" v-if="deletable" @click.stop="deleteMedia(resource)" icon="tabler-trash" />
+                        <ActionButton
+                            variant="elevated"
+                            v-if="resource.status === MediaStatus.Error"
+                            @click="retry"
+                            icon="tabler:refresh"
+                        />
+                        <ActionButton variant="elevated" size="small" @click="playPreview(resource.type)" icon="mdi-eye-outline" />
+                    </div>
+                </VMenu>
             </div>
         </VCard>
-        <p class="truncate px-2 py-2 ma-0" v-if="hasTitle" :title="resource.name">{{ resource.name }}</p>
+        <p class="truncate px-2 py-2 ma-0 media-title" v-if="hasTitle" :title="resource.name">{{ resource.name }}</p>
         <slot />
     </div>
 </template>
 
 <script setup lang="ts">
-import { MediaStatus } from "@/@core/enums";
+import { MediaStatus, MediaTypes } from "@/@core/enums";
 import { secondsToMinutes } from "@/helpers";
 import { useMediaStore } from "@/stores/mediaStore";
 import { Media } from "@/types";
@@ -65,6 +64,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), { isPreview: false, hasTitle: false, deletable: false, heading: true });
+const fab = ref(false);
 
 interface Emits {
     (e: "onDelete", value: number): void;
@@ -77,16 +77,21 @@ const status = computed(() => resolveMediaStatusVariant(resource.value.status));
 const defaultThumbnal = {
     video: "/assets/video_placeholder.gif",
     image: "/assets/image-placeholder.jpg",
-    pdf: "/assets/pdf_placeholder.jpg"
+    pdf: "/assets/pdf_placeholder.png"
 };
 const thumb = computed(() => resource.value.thumb_url || defaultThumbnal[resource.value.type]);
 
 const mediaStore = useMediaStore();
-const playPreview = () => {
-    mediaStore.openPlayer({
-        thumb,
-        url: resource.value.url
-    });
+const playPreview = (type: keyof typeof MediaTypes | undefined) => {
+    if (type === MediaTypes.video) {
+        mediaStore.openMediaDialog({ thumb, url: resource.value.url }, type);
+    }
+    if (type === MediaTypes.pdf) {
+        mediaStore.openMediaDialog({ watermark: "", url: resource.value.url }, type);
+    }
+    if (type === MediaTypes.image) {
+        mediaStore.openMediaDialog({ url: resource.value.url || resource.value.thumb_url }, type);
+    }
 };
 let interval: NodeJS.Timer;
 const refreshMedia = async () => {
@@ -106,7 +111,9 @@ const retry = async () => {
     } catch (error) {}
 };
 const deleteMedia = (media: Media) => {
-    emit("onDelete", media.id);
+    if (confirm("are you sure you want to delete this media")) {
+        emit("onDelete", media.id);
+    }
 };
 onMounted(() => {
     if (resource.value.status === MediaStatus.Pending || resource.value.status === MediaStatus.Processing) {
@@ -121,5 +128,8 @@ onUnmounted(() => {
 <style scoped>
 .active .media-card {
     background-color: rgb(var(--v-theme-primary)) !important;
+}
+.active .media-card .media-title {
+    color: rgb(var(--v-theme-on-primary)) !important;
 }
 </style>

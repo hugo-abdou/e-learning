@@ -72,6 +72,7 @@ declare module '@vue/runtime-core' {
     HorizontalNavLink: typeof import('./resources/ts/@layouts/components/HorizontalNavLink.vue')['default']
     HorizontalNavPopper: typeof import('./resources/ts/@layouts/components/HorizontalNavPopper.vue')['default']
     I18n: typeof import('./resources/ts/@core/components/I18n.vue')['default']
+    InfoTooltip: typeof import('./resources/ts/components/InfoTooltip.vue')['default']
     Masonry: typeof import('./resources/ts/components/Masonry.vue')['default']
     Media: typeof import('./resources/ts/components/Media.vue')['default']
     MediaPlayerDialog: typeof import('./resources/ts/components/dialogs/MediaPlayerDialog.vue')['default']
@@ -108,6 +109,7 @@ declare module '@vue/runtime-core' {
     VerticalNavLayout: typeof import('./resources/ts/@layouts/components/VerticalNavLayout.vue')['default']
     VerticalNavLink: typeof import('./resources/ts/@layouts/components/VerticalNavLink.vue')['default']
     VerticalNavSectionTitle: typeof import('./resources/ts/@layouts/components/VerticalNavSectionTitle.vue')['default']
+    VSpeedDial: typeof import('./resources/ts/components/VSpeedDial.vue')['default']
     VuePlyr: typeof import('./resources/ts/components/VuePlyr.vue')['default']
   }
 }

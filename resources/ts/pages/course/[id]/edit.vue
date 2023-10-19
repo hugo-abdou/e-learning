@@ -1,7 +1,7 @@
 <template>
     <VContainer>
         <VRow align="center">
-            <VCol cols="12">
+            <VCol cols="12" class="d-flex gap-2 flex-wrap">
                 <VTabs v-model="currentStep" class="v-tabs-pill">
                     <template v-for="step in steps" :key="step.icon">
                         <VTab>
@@ -12,7 +12,7 @@
                 </VTabs>
             </VCol>
             <VCol cols="12">
-                <VWindow v-model="currentStep" class="mt-5">
+                <VWindow v-model="currentStep" class="mt-5 px-1">
                     <VWindowItem>
                         <CourseDetailsForm :course="course" :ref="el => (steps[0].component = el as null)" />
                     </VWindowItem>
@@ -21,12 +21,13 @@
                     </VWindowItem>
                 </VWindow>
 
-                <div class="d-flex justify-space-between mt-8">
+                <div class="d-flex gap-2 justify-space-between mt-8">
                     <VSpacer />
                     <VBtn color="success" @click="save">
                         Save
                         <VIcon icon="tabler-check" end class="flip-in-rtl" />
                     </VBtn>
+                    <!-- <VBtn v-if="course" :to="{ name: 'course-id', params: { id: course.id } }" color="default">Previw</VBtn> -->
                 </div>
             </VCol>
         </VRow>
@@ -84,18 +85,21 @@ const save = async () => {
         if (step.title.toLocaleLowerCase() === "chapters" && course.value) {
             const data: Chapter[] = await step.component?.validate();
             const course_id = course.value.id;
+            // @ts-expect-error
             const chaptersForm: ChapterForm[] = data.map((item, i) => {
                 const attachments: { [key: number]: any } = {};
-                item.attachments.forEach(({ id }) => {
-                    attachments[id] = { type: "media" };
+                item.attachments.forEach(({ id, type, download, visibility, watermark }) => {
+                    attachments[id] = { type, download, visibility: JSON.stringify(visibility), watermark };
                 });
-                return { ...item, course_id, video: item.video?.id || null, attachments, order: i };
+                return { ...item, course_id, attachments, order: i };
             });
+
+            console.log(chaptersForm);
             // @ts-ignore
             await Promise.all(chaptersForm.map(form => courseStore.updateChapter(form.id, form)));
         }
     } catch (error) {
-        // console.error(error);
+        console.error(error);
     }
 };
 </script>

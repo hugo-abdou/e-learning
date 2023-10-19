@@ -13,7 +13,6 @@ import i18n from "./plugins/i18n";
 import { VueMasonryPlugin } from "vue-masonry";
 
 loadFonts();
-
 // Create vue app
 const app = createApp(App);
 

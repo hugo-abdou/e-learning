@@ -36,6 +36,6 @@ class Chapter extends Model
 
     public function attachments(): BelongsToMany
     {
-        return $this->belongsToMany(Media::class, relatedPivotKey: 'attachment_id', foreignPivotKey: 'chapter_id');
+        return $this->belongsToMany(Media::class, relatedPivotKey: 'attachment_id', foreignPivotKey: 'chapter_id')->withPivot(['type', 'download', 'visibility', 'watermark']);
     }
 }

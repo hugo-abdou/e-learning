@@ -71,8 +71,8 @@ class User extends Authenticatable implements MustVerifyEmail
             return mb_substr($segment, 0, 1);
         })->join(' '));
 
-        return '/profile.png';
-        // return 'https://ui-avatars.com/api/?name='.urlencode($name).'&color=7F9CF5&background=EBF4FF';
+        // return '/profile.png';
+        return 'https://ui-avatars.com/api/?name=' . urlencode($name) . '&color=7F9CF5&background=EBF4FF';
     }
 
     /**
