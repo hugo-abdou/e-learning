@@ -1,1 +1,0 @@
-import{M as n,O as s,S as o,aa as l,y as r}from"./main-d3200a92.js";const c=n()({name:"VContainer",props:{fluid:{type:Boolean,default:!1},...s(),...o()},setup(e,a){let{slots:t}=a;return l(()=>r(e.tag,{class:["v-container",{"v-container--fluid":e.fluid},e.class],style:e.style},t)),{}}});export{c as V};

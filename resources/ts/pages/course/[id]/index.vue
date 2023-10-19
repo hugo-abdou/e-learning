@@ -3,8 +3,8 @@
         <VRow>
             <VCol cols="12" md="8">
                 <VCard>
-                    <VCardText class="py-0 px-0">
-                        <div v-if="isReady && activeAttachment" class="position-relative">
+                    <VCardText v-if="!loading && activeAttachment" class="py-0 px-0">
+                        <div class="position-relative">
                             <div v-if="activeAttachment.type === MediaTypes.video">
                                 <VuePlyr
                                     @ready="plyr = $event.target.plyr"
@@ -56,62 +56,59 @@
                                 />
                             </div>
                         </div>
-                        <v-skeleton-loader v-else :type="['image', 'image']"></v-skeleton-loader>
                     </VCardText>
-                    <VCardItem>
-                        <div v-if="isReady">
-                            <VCardTitle class="text-capitalize text-h3 d-flex">
-                                <span class="truncate">
-                                    {{ course?.title }}
-                                </span>
-                                <VSpacer />
-                                <div class="text-sm">
-                                    <VMenu transition="speed-dial" location="top" class="mx-2">
-                                        <template #activator="{ props }">
-                                            <ActionButton variant="plain" color="default" v-bind="props" icon="mdi-dots-vertical" />
-                                        </template>
-                                        <div class="mb-1 d-flex flex-column gap-1">
-                                            <ActionButton
-                                                v-if="auth.user.id === course?.author.id"
-                                                :to="{ name: 'course-id-edit', params: { id: course.id } }"
-                                                variant="elevated"
-                                                icon="tabler-edit"
-                                            />
-                                            <ActionButton variant="elevated" icon="tabler-share" />
-                                            <ActionButton variant="elevated" icon="tabler-bookmarks" />
-                                        </div>
-                                    </VMenu>
-                                </div>
-                            </VCardTitle>
-                            <VCardSubtitle class="d-flex align-center">
-                                <div class="d-flex mt-3">
-                                    <VAvatar size="35" class="me-2">
-                                        <VImg v-if="course?.author.profile_photo_url" :src="course?.author.profile_photo_url" cover />
-                                        <span v-else>{{ avatarText(course?.author.name || "") }}</span>
-                                    </VAvatar>
-                                    <div class="d-flex flex-column">
-                                        <h6 class="text-base">
-                                            <RouterLink to="#" class="font-weight-medium user-list-name text-grey-600">
-                                                {{ course?.author.name }}
-                                            </RouterLink>
-                                        </h6>
-                                        <p class="text-xs">Lorem ipsum dolor sit amet, consectetur adipisicing elit</p>
+                    <v-skeleton-loader v-else :type="['image', 'image']"></v-skeleton-loader>
+                    <VCardItem v-if="!loading">
+                        <VCardTitle class="text-capitalize text-h3 d-flex">
+                            <span class="truncate">
+                                {{ course?.title }}
+                            </span>
+                            <VSpacer />
+                            <div class="text-sm">
+                                <VMenu transition="speed-dial" location="top" class="mx-2">
+                                    <template #activator="{ props }">
+                                        <ActionButton variant="plain" color="default" v-bind="props" icon="mdi-dots-vertical" />
+                                    </template>
+                                    <div class="mb-1 d-flex flex-column gap-1">
+                                        <ActionButton
+                                            v-if="auth.user.id === course?.author.id"
+                                            :to="{ name: 'course-id-edit', params: { id: course.id } }"
+                                            variant="elevated"
+                                            icon="tabler-edit"
+                                        />
+                                        <ActionButton variant="elevated" icon="tabler-share" />
+                                        <ActionButton variant="elevated" icon="tabler-bookmarks" />
                                     </div>
+                                </VMenu>
+                            </div>
+                        </VCardTitle>
+                        <VCardSubtitle class="d-flex align-center">
+                            <div class="d-flex mt-3">
+                                <VAvatar size="35" class="me-2">
+                                    <VImg v-if="course?.author.profile_photo_url" :src="course?.author.profile_photo_url" cover />
+                                    <span v-else>{{ avatarText(course?.author.name || "") }}</span>
+                                </VAvatar>
+                                <div class="d-flex flex-column">
+                                    <h6 class="text-base">
+                                        <RouterLink to="#" class="font-weight-medium user-list-name text-grey-600">
+                                            {{ course?.author.name }}
+                                        </RouterLink>
+                                    </h6>
+                                    <p class="text-xs">Lorem ipsum dolor sit amet, consectetur adipisicing elit</p>
                                 </div>
-                            </VCardSubtitle>
-                        </div>
-                        <v-skeleton-loader v-else :type="['heading', 'list-item-avatar-three-line']"></v-skeleton-loader>
-                        <VSpacer />
+                            </div>
+                        </VCardSubtitle>
                     </VCardItem>
+                    <v-skeleton-loader v-else :type="['heading', 'list-item-avatar-three-line']"></v-skeleton-loader>
                     <VDivider class="mx-6" />
-                    <VCardItem v-if="isReady" title="About this course">
+                    <VCardItem v-if="!loading" title="About this course">
                         <p class="mb-0 pt-1">
                             {{ course?.description }}
                         </p>
                     </VCardItem>
                     <v-skeleton-loader class="py-5" v-else :type="['heading', 'paragraph']"></v-skeleton-loader>
                     <VDivider class="mx-6" />
-                    <VCardItem v-if="isReady" title="By the numbers">
+                    <VCardItem v-if="!loading" title="By the numbers">
                         <div class="d-flex flex-wrap mt-5">
                             <div class="me-5">
                                 <p class="text-nowrap">
@@ -134,7 +131,12 @@
             </VCol>
             <VCol cols="12" md="4">
                 <div class="position-sticky" style="top: 90px">
-                    <VExpansionPanels v-model="selectedChapter" v-if="isReady" variant="accordion">
+                    <VExpansionPanels
+                        v-model="selectedChapter"
+                        v-if="!loading"
+                        variant="accordion"
+                        class="expansion-panels-width-border overflow-hidden"
+                    >
                         <VExpansionPanel
                             v-if="course?.chapters.length"
                             v-for="(item, ch_i) in course?.chapters"
@@ -181,7 +183,7 @@
                                             </span>
                                         </VChip>
                                     </VListItem>
-                                    <VListItem>
+                                    <VListItem v-if="!item.attachments.length">
                                         <VListItemTitle>Chapter empty</VListItemTitle>
                                     </VListItem>
                                 </VList>
@@ -208,6 +210,7 @@ import { MediaTypes } from "@/@core/enums";
 import { useUserStore } from "@/stores/user";
 const route = useRoute();
 const router = useRouter();
+const loading = ref(false);
 const courseStore = useCourseStore();
 const course = ref<Course>();
 const isReady = computed<boolean>(() => !!course.value);
@@ -267,11 +270,13 @@ const playVideo = () => {
 
 onBeforeMount(async () => {
     try {
+        loading.value = true;
         course.value = await courseStore.getCourse(Number(route.params.id), { additional: { chapters: true } });
         activeChapter.value = course.value?.chapters[selectedChapter.value];
     } catch (error) {
         router.push({ name: "course" });
     }
+    loading.value = false;
 });
 </script>
 <route lang="yaml">

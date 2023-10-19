@@ -1,6 +1,6 @@
 <template>
     <VForm ref="formEl">
-        <VExpansionPanels :class="chaptersForm.length > 1 && 'no-icon-rotate'" v-model="currentChapter" variant="accordion">
+        <VExpansionPanels :class="chaptersForm.length > 1 && 'no-icon-rotate'" v-model="currentChapter" variant="default">
             <VExpansionPanel v-for="(chapter, i) in chaptersForm" :key="i">
                 <VExpansionPanelTitle>
                     <VCardTitle style="width: 90%" class="text-capitalize d-flex pr-0">
@@ -14,7 +14,7 @@
                             <template #activator="{ props }">
                                 <ActionButton variant="plain" color="default" v-bind="props" icon="mdi-dots-vertical" />
                             </template>
-                            <VList class="mr-1 px-2 d-flex gap-1">
+                            <VList class="mr-1 px-2 d-flex gap-1 bg-background">
                                 <ActionButton variant="text" :disabled="i === 0" @click.stop="up(i)" icon="mdi-arrow-up" />
                                 <ActionButton
                                     variant="text"
@@ -82,7 +82,7 @@
                             </VCol>
                             <VCol cols="12" sm="4">
                                 <InfoTooltip :text="$t('media.upload.description')" v-slot="{ props }">
-                                    <VBtn v-bind="{ ...props, ...UploadBunAttrs }" @click="openDialog('upload-chapter-document')">
+                                    <VBtn v-bind="{ ...props, ...UploadBunAttrs }" @click="openDialog('upload-chapter-attachment')">
                                         <div class="d-flex flex-column align-center">
                                             <VIcon icon="fluent:document-add-16-regular" size="32" />
                                             <VLabel class="mt-2">{{ $t("media.upload.label") }}</VLabel>
@@ -130,18 +130,22 @@ const chaptersForm = ref<ChapterForm[]>(props.chapters);
 const formEl = ref<VForm>({});
 const dialog = reactive({ open: false, type: "" as string | null });
 const uploaderRules = computed(() => {
-    switch (dialog.type) {
-        case "upload-chapter-document":
-            return {
-                allowedFileTypes: ["image/*", "application/pdf", "video/*"],
-                maxNumberOfFiles: 3
-            };
-        default:
-            return {
-                allowedFileTypes: ["*"],
-                maxNumberOfFiles: 1
-            };
+    if (chaptersForm.value[currentChapter.value]?.attachments.length === 0) {
+        return {
+            allowedFileTypes: ["video/*"],
+            maxNumberOfFiles: 1
+        };
     }
+    if (dialog.type === "upload-chapter-attachment") {
+        return {
+            allowedFileTypes: ["image/*", "application/pdf", "video/*"],
+            maxNumberOfFiles: 3
+        };
+    }
+    return {
+        allowedFileTypes: ["*"],
+        maxNumberOfFiles: 1
+    };
 });
 
 onMounted(() => {
@@ -159,7 +163,7 @@ const openDialog = (type: string) => {
     dialog.type = type;
 };
 const setMediaFromUploader = (media: MediaType[]) => {
-    if (dialog.type === "upload-chapter-document") {
+    if (dialog.type === "upload-chapter-attachment") {
         chaptersForm.value[currentChapter.value].attachments.push(
             ...media.map(m => ({ ...m, visibility: [], download: false, watermark: "" }))
         );

@@ -35,12 +35,11 @@
                         :headers="headers.map(i => ({ ...i, title: $t(i.title) }))"
                         class="text-no-wrap"
                         @update:options="options = $event"
-                        :loading="!courses.length"
+                        :loading="loading"
                     >
                         <template #loading>
                             <VSkeletonLoader class="pt-2" :type="['table-tbody']"></VSkeletonLoader>
                         </template>
-
                         <template #item.title="{ item }">
                             <div class="d-flex align-center gap-2 py-2 text-capitalize">
                                 <div class="d-flex flex-column">
@@ -157,7 +156,9 @@ const courseStore = useCourseStore();
 const deleteCourse = (id: number) => courseStore.deleteCourse(id).then(getCourses);
 const publishCourse = (id: number) => courseStore.publishCourse(id).then(getCourses);
 const getCourses = debounce(() => {
-    loading.value = true;
+    if (options.value.page === 1) {
+        loading.value = true;
+    }
     courseStore
         .getCourses(options.value)
         .then(({ data, meta }) => {

@@ -12,7 +12,7 @@
                 </VTabs>
             </VCol>
             <VCol cols="12">
-                <VWindow v-model="currentStep" class="mt-5 px-1">
+                <VWindow v-model="currentStep" class="mt-5 overflow-visible">
                     <VWindowItem>
                         <CourseDetailsForm :course="course" :ref="el => (steps[0].component = el as null)" />
                     </VWindowItem>
@@ -37,7 +37,9 @@
 import type { VForm } from "vuetify/components/VForm";
 import { useCourseStore } from "@/stores/useCourseStore";
 import { Chapter, ChapterForm, Course, CourseForm } from "@/types";
+import useSnackBarStore from "@/components/SnackBar/useSnackBarStore";
 
+const snackbarStore = useSnackBarStore();
 const route = useRoute();
 const router = useRouter();
 const courseStore = useCourseStore();
@@ -93,13 +95,13 @@ const save = async () => {
                 });
                 return { ...item, course_id, attachments, order: i };
             });
+            snackbarStore.add({ text: "course updated successfuly", timeout: 5000 });
 
-            console.log(chaptersForm);
-            // @ts-ignore
-            await Promise.all(chaptersForm.map(form => courseStore.updateChapter(form.id, form)));
+            await Promise.all(chaptersForm.map(form => courseStore.updateChapter(form.id || 0, form)));
         }
     } catch (error) {
-        console.error(error);
+        // @ts-ignore
+        snackbarStore.add({ text: error?.message, color: "error", timeout: 5000 });
     }
 };
 </script>

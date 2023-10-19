@@ -25,7 +25,7 @@
                 <VSpacer />
                 <VMenu transition="speed-dial" location="top" class="mx-2">
                     <template #activator="{ props }">
-                        <ActionButton v-bind="props" icon="mdi-dots-vertical" />
+                        <ActionButton v-bind="props" color="#fff" variant="tonal" icon="mdi-dots-vertical" />
                     </template>
                     <div class="mb-1 d-flex flex-column gap-1">
                         <ActionButton variant="elevated" v-if="deletable" @click.stop="deleteMedia(resource)" icon="tabler-trash" />
