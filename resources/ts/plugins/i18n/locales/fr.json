@@ -81,6 +81,10 @@
       "chapters": {
         "title": "des chapitres",
         "subtitle": "Organisez votre contenu en chapitres pour une expérience d'apprentissage structurée"
+      },
+      "visibility": {
+        "title": "Visibility",
+        "subtitle": "Choose when to publish and who can see your video"
       }
     }
   },

@@ -1,43 +1,85 @@
 <template>
-    <div class="w-100 h-100 rounded bg-surface border media-card overflow-hidden position-relative">
+    <div
+        class="w-100 h-100 rounded bg-surface border media-card overflow-hidden position-relative"
+        @mouseleave="mouseEnter = false"
+        @mouseenter="mouseEnter = true"
+    >
         <VCard color="surface" style="aspect-ratio: 16/9" :class="hasTitle ? 'rounded-b-0' : 'rounded'" class="h-100 w-100">
-            <VImg :src="thumb" class="w-100 h-100" cover />
-            <VImg :src="thumb" style="top: 0" class="w-100 h-100 position-absolute blurred-background rounded" />
+            <template v-if="!isPreview || resource.type === 'image'">
+                <VImg :src="thumb" class="w-100 h-100" cover />
+                <VImg :src="thumb" style="top: 0" class="w-100 h-100 position-absolute blurred-background rounded" />
+            </template>
+            <template v-if="isPreview">
+                <PdfViewer v-if="resource.type === 'pdf'" :key="resource.url" :src="resource.url" class="h-100" ref="pdfViewer" />
+            </template>
 
-            <div class="position-absolute w-100 d-flex align-center pa-2" style="top: 0">
-                <ActionButton disabled :icon="resource.type === MediaTypes.video ? 'tabler:video' : 'mdi-image-outline'" />
-                <VChip v-if="resource.status !== MediaStatus.Completed" size="x-small" class="ma-1" :color="status.color">
-                    <VIcon start size="16" :icon="status.icon" />
-                    {{ status.lable }}
-                </VChip>
-                <VSpacer />
-                <slot name="toolbar" />
-            </div>
-            <div class="position-absolute w-100 d-flex align-center pa-1" style="bottom: 0">
-                <template v-if="resource.type === 'video' && resource.status === MediaStatus.Completed">
-                    <VChip rounded="sm" size="x-small" class="ml-1" color="#fff" variant="tonal">
-                        <VIcon start size="16" icon="mdi-clock-fast" />
-                        <span>
-                            {{ secondsToMinutes(resource.duration) }}
-                        </span>
-                    </VChip>
-                </template>
-                <VSpacer />
-                <VMenu transition="speed-dial" location="top" class="mx-2">
-                    <template #activator="{ props }">
-                        <ActionButton v-bind="props" color="#fff" variant="tonal" icon="mdi-dots-vertical" />
+            <div :class="mouseEnter && 'plyr--video'" class="plyr--full-ui plyr--html5 plyr--pip-supported">
+                <div class="plyr__controls">
+                    <template v-if="resource.type === 'video' && resource.status === MediaStatus.Completed">
+                        <VChip rounded="sm" size="x-small" class="ml-1" color="default" variant="tonal">
+                            <VIcon start size="16" icon="mdi-clock-fast" />
+                            <span>
+                                {{ secondsToMinutes(resource.duration) }}
+                            </span>
+                        </VChip>
                     </template>
-                    <div class="mb-1 d-flex flex-column gap-1">
-                        <ActionButton variant="elevated" v-if="deletable" @click.stop="deleteMedia(resource)" icon="tabler-trash" />
-                        <ActionButton
-                            variant="elevated"
-                            v-if="resource.status === MediaStatus.Error"
-                            @click="retry"
-                            icon="tabler:refresh"
+                    <template v-if="resource.type === 'pdf' && pdfViewer">
+                        <VChip rounded="sm" size="small" class="ml-1" color="default" variant="tonal"
+                            >page {{ pdfViewer.page }} of {{ pdfViewer.pages }} pages</VChip
+                        >
+                        <VSpacer />
+                        <VPagination
+                            v-if="resource.type === 'pdf'"
+                            :model-value="pdfViewer.page"
+                            @update:model-value="
+                                event => {
+                                    pdfViewer.page = event;
+                                    emit('update:pdf', { page: pdfViewer.page, pages: pdfViewer.pages });
+                                }
+                            "
+                            :length="Math.ceil(pdfViewer.pages / 1)"
+                            :total-visible="5"
                         />
-                        <ActionButton variant="elevated" size="small" @click="playPreview(resource.type)" icon="mdi-eye-outline" />
+                    </template>
+                    <VSpacer />
+                    <slot name="bottom-toolbar" />
+                    <div class="mx-2">
+                        <VMenu :attach="$el" transition="speed-dial" location="top">
+                            <template #activator="{ props }">
+                                <ActionButton v-bind="props" color="#fff" variant="tonal" icon="mdi-dots-vertical" />
+                            </template>
+                            <div class="mb-1 d-flex flex-column gap-1">
+                                <ActionButton
+                                    color="default"
+                                    variant="elevated"
+                                    v-if="deletable"
+                                    @click.stop="deleteMedia(resource)"
+                                    icon="tabler-trash"
+                                />
+                                <ActionButton
+                                    color="default"
+                                    variant="elevated"
+                                    v-if="resource.status === MediaStatus.Error"
+                                    @click="retry"
+                                    icon="tabler:refresh"
+                                />
+                                <ActionButton variant="elevated" size="small" @click="playPreview(resource.type)" icon="mdi-eye-outline" />
+                            </div>
+                        </VMenu>
                     </div>
-                </VMenu>
+                </div>
+            </div>
+            <div v-show="mouseEnter && false" id="media-overlay" class="flex-column justify-space-between">
+                <div class="pa-1" style="top: 0">
+                    <ActionButton disabled :icon="resource.type === MediaTypes.video ? 'tabler:video' : 'mdi-image-outline'" />
+                    <VChip v-if="resource.status !== MediaStatus.Completed" size="x-small" class="ma-1" :color="status.color">
+                        <VIcon start size="16" :icon="status.icon" />
+                        {{ status.lable }}
+                    </VChip>
+                    <VSpacer />
+                    <slot name="top-toolbar" />
+                </div>
+                <div class="pa-1 d-flex align-center justify-space-between" style="bottom: 0"></div>
             </div>
         </VCard>
         <p class="truncate px-2 py-2 ma-0 media-title" v-if="hasTitle" :title="resource.name">{{ resource.name }}</p>
@@ -50,7 +92,7 @@ import { MediaStatus, MediaTypes } from "@/@core/enums";
 import { secondsToMinutes } from "@/helpers";
 import { useMediaStore } from "@/stores/mediaStore";
 import { Media } from "@/types";
-import { resolveMediaStatusVariant } from "@/utils";
+import { resolveDefaultThumbnal, resolveMediaStatusVariant } from "@/utils";
 
 defineOptions({ inheritAttrs: false });
 
@@ -64,22 +106,19 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), { isPreview: false, hasTitle: false, deletable: false, heading: true });
-const fab = ref(false);
+const mouseEnter = ref(false);
 
 interface Emits {
     (e: "onDelete", value: number): void;
+    (e: "update:pdf", value: { page: number; pages: number }): void;
 }
 const emit = defineEmits<Emits>();
+const pdfViewer = ref();
 
-const play = ref(props.isPreview);
 const resource = ref<Media>(props.media);
 const status = computed(() => resolveMediaStatusVariant(resource.value.status));
-const defaultThumbnal = {
-    video: "/assets/video_placeholder.gif",
-    image: "/assets/image-placeholder.jpg",
-    pdf: "/assets/pdf_placeholder.png"
-};
-const thumb = computed(() => resource.value.thumb_url || defaultThumbnal[resource.value.type]);
+
+const thumb = computed(() => resource.value.thumb_url || resolveDefaultThumbnal(resource.value.type));
 
 const mediaStore = useMediaStore();
 const playPreview = (type: keyof typeof MediaTypes | undefined) => {
@@ -131,5 +170,27 @@ onUnmounted(() => {
 }
 .active .media-card .media-title {
     color: rgb(var(--v-theme-on-primary)) !important;
+}
+
+#media-overlay {
+    pointer-events: none;
+    z-index: 99999;
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        rgba(0, 0, 0, 0.267),
+        rgba(0, 0, 0, 0),
+        rgba(0, 0, 0, 0),
+        rgba(0, 0, 0, 0),
+        rgba(0, 0, 0, 0),
+        rgba(0, 0, 0, 0.747)
+    );
+}
+#media-overlay * {
+    pointer-events: all;
 }
 </style>

@@ -244,6 +244,7 @@ export type Attachment = Media & {
     visibility: string[];
     download: boolean;
     watermark?: string;
+    name: string;
 };
 
 type Author = {

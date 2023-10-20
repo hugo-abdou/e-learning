@@ -68,7 +68,7 @@ const theme: VuetifyOptions["theme"] = {
                 "shadow-key-umbra-color": "#2F2B3D"
             }
         },
-        dark: {
+        darkOld: {
             dark: true,
             colors: {
                 white: "#fff",
@@ -92,7 +92,7 @@ const theme: VuetifyOptions["theme"] = {
                 "on-blur": "#D0D4F1",
                 "grey-50": "#26293A",
                 "grey-100": "#2F3349",
-                "grey-200": "#26293A",
+                "grey-200": "#26293aad",
                 "grey-300": "#4A5072",
                 "grey-400": "#5E6692",
                 "grey-500": "#7983BB",
@@ -129,7 +129,7 @@ const theme: VuetifyOptions["theme"] = {
                 "shadow-key-umbra-color": "#0F1422"
             }
         },
-        darkold: {
+        dark: {
             dark: true,
             colors: {
                 primary: localStorage.getItem(`${themeConfig.app.title}-darkThemePrimaryColor`) || staticPrimaryColor,

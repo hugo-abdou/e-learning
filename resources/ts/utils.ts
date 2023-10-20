@@ -1,4 +1,4 @@
-import { CourseDifficulty, CourseStatus, CourseVisibility, MediaStatus } from "./@core/enums";
+import { CourseDifficulty, CourseStatus, CourseVisibility, MediaStatus, MediaTypes } from "./@core/enums";
 
 export const paginateArray = (array: unknown[], perPage: number, page: number) => array.slice((page - 1) * perPage, page * perPage);
 
@@ -70,6 +70,33 @@ export const resolveCourseVisibilityVariant = (stat: number) => {
     if (stat === CourseVisibility.Hidden) return { color: "default", icon: "fluent:eye-hide-20-regular" };
     return { color: "default", icon: "clarity:unknown-status-line" };
 };
+
+export const resolveAttachmentTypeIcon = (type: keyof typeof MediaTypes) => {
+    switch (type) {
+        case MediaTypes.image:
+            return "mdi-image-outline";
+        case MediaTypes.video:
+            return "mdi-video-outline";
+        case MediaTypes.pdf:
+            return "mdi-file-document-outline";
+        default:
+            return "mdi-exclamation";
+    }
+};
+
+export const resolveDefaultThumbnal = (type: keyof typeof MediaTypes) => {
+    switch (type) {
+        case MediaTypes.image:
+            return "/assets/image-placeholder.jpg";
+        case MediaTypes.video:
+            return "/assets/video_placeholder.gif";
+        case MediaTypes.pdf:
+            return "/assets/pdf_placeholder.png";
+        default:
+            return "";
+    }
+};
+
 export const scrollToTop = () => {
     window.scrollTo({
         top: 0,

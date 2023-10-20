@@ -59,6 +59,7 @@ watchEffect(() => {
         <VSlideGroupItem v-for="(item, index) in props.items" :key="item.title" :value="index">
             <div
                 class="cursor-pointer mx-1"
+                style="max-width: 400px"
                 :class="[!props.isActiveStepValid && isValidationEnabled && 'stepper-steps-invalid', activeOrCompletedStepsClasses(index)]"
                 @click="!isValidationEnabled && emit('update:currentStep', index)"
             >
@@ -75,7 +76,7 @@ watchEffect(() => {
                                 <p class="stepper-title font-weight-medium mb-0">
                                     {{ $t(item.title) }}
                                 </p>
-                                <span v-if="item.subtitle" class="stepper-subtitle text-wrap d-block" style="width: 70% !important">
+                                <span v-if="item.subtitle" class="stepper-subtitle text-wrap d-block">
                                     <span class="text-sm">{{ $t(item.subtitle) }}</span>
                                 </span>
                             </div>
@@ -124,7 +125,7 @@ watchEffect(() => {
                                 {{ $t(item.title) }}
                             </h6>
 
-                            <span v-if="item.subtitle" class="text-xs step-subtitle text-wrap d-block" style="width: 70% !important">
+                            <span v-if="item.subtitle" class="text-xs step-subtitle text-wrap d-block">
                                 {{ $t(item.subtitle) }}
                             </span>
                         </div>

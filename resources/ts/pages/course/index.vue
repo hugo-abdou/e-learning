@@ -156,7 +156,7 @@ const courseStore = useCourseStore();
 const deleteCourse = (id: number) => courseStore.deleteCourse(id).then(getCourses);
 const publishCourse = (id: number) => courseStore.publishCourse(id).then(getCourses);
 const getCourses = debounce(() => {
-    if (options.value.page === 1) {
+    if (!courses.value.length) {
         loading.value = true;
     }
     courseStore

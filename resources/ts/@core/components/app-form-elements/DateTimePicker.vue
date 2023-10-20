@@ -117,7 +117,7 @@ const elementId = computed(() => {
 </script>
 
 <template>
-    <div class="border rounded overflow-hidden bg-surface">
+    <div class="border rounded overflow-hidden bg-surface mx-auto" style="width: fit-content">
         <!-- v-input -->
         <VLabel v-if="fieldProps.label" class="mb-1 text-body-2 text-high-emphasis" :for="elementId" :text="fieldProps.label" />
         <!-- flat picker for inline props -->

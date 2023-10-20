@@ -4,7 +4,9 @@ import { VuePDF, usePDF } from "@tato30/vue-pdf";
 import { useMediaStore } from "@/stores/mediaStore";
 import { VSkeletonLoader } from "vuetify/labs/VSkeletonLoader";
 import "@tato30/vue-pdf/style.css";
+import { useUserStore } from "@/stores/user";
 
+defineOptions({ inheritAttrs: false });
 interface Props {
     src: string;
     watermark?: string;
@@ -12,8 +14,7 @@ interface Props {
 }
 const props = defineProps<Props>();
 
-defineOptions({ inheritAttrs: false });
-
+const mediaStore = useMediaStore();
 const page = ref(1);
 const progress = ref({
     loaded: 0,
@@ -29,28 +30,28 @@ const { pdf, pages, info } = usePDF(
 const reset = () => {
     page.value = 1;
 };
-const mediaStore = useMediaStore();
+const next = () => page.value < pages.value && page.value++;
+const prev = () => page.value > 1 && page.value--;
+const auth = useUserStore();
+const sanetizedWatermark = computed(() => props.watermark?.replace("%user_name%", auth.user.name));
+defineExpose({ reset, next, prev, page, pages });
 </script>
 
 <template>
-    <div v-bind="$attrs" class="w-100 position-relative" @contextmenu.prevent="">
-        <div v-if="progress.loaded" class="w-100 h-100 overflow-auto" style="max-height: calc(100vh - 125px)">
-            <VuePDF :pdf="pdf" :page="page" :watermark-text="watermark" fit-parent />
-            <div class="position-absolute pa-5" style="bottom: 0; right: 0">
-                <VBtn
+    <div v-bind="$attrs" class="w-100 h-100 overflow-auto" @contextmenu.prevent="">
+        <div v-if="progress.loaded">
+            <VuePDF :pdf="pdf" :page="page" :watermark-text="sanetizedWatermark" fit-parent />
+            <div class="position-absolute" style="bottom: 20; right: 20">
+                <ActionButton
                     v-if="canOpenPreview"
-                    @click="mediaStore.openMediaDialog({ watermark, url: src }, 'pdf')"
-                    size="x-small"
-                    icon="mdi-file-find"
+                    @click="mediaStore.openMediaDialog({ watermark: sanetizedWatermark, url: src }, 'pdf')"
+                    icon="mdi-eye-outline"
+                    variant="elevated"
                 />
             </div>
         </div>
         <v-skeleton-loader v-else class="py-5" :type="['heading', 'paragraph', 'paragraph']"></v-skeleton-loader>
-    </div>
-    <slot v-bind="{ reset, page, pages }" />
-    <div class="d-flex align-center justify-sm-space-between justify-center flex-wrap gap-3 pa-5 pt-3 border-t">
-        <p class="text-sm text-disabled mb-0">Showing page {{ page }} of {{ pages }} pages</p>
-        <VPagination :model-value="page" @update:model-value="page = $event" :length="Math.ceil(pages / 1)" :total-visible="5" />
+        <slot v-bind="{ reset, next, prev, page, pages }" />
     </div>
 </template>
 

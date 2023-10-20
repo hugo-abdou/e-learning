@@ -90,8 +90,8 @@ const save = async () => {
             // @ts-expect-error
             const chaptersForm: ChapterForm[] = data.map((item, i) => {
                 const attachments: { [key: number]: any } = {};
-                item.attachments.forEach(({ id, type, download, visibility, watermark }) => {
-                    attachments[id] = { type, download, visibility: JSON.stringify(visibility), watermark };
+                item.attachments.forEach(({ name, id, type, download, visibility, watermark }) => {
+                    attachments[id] = { name, type, download, visibility: JSON.stringify(visibility), watermark };
                 });
                 return { ...item, course_id, attachments, order: i };
             });

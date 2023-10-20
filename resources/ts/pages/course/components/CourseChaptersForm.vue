@@ -34,11 +34,11 @@
                                 <VTextField
                                     :rules="[requiredValidator]"
                                     v-model="chapter.title"
-                                    :label="$t('chapter.fields.title.label') + ' (required)'"
+                                    :label="$t('chapter.fields.title.label')"
                                 />
                             </VCol>
                             <VCol cols="12" v-for="doc in chapter.attachments" :key="doc.id">
-                                <VRow class="mb-2">
+                                <VRow class="mb-2 py-2 rounded bg-background">
                                     <VCol cols="12" sm="4">
                                         <Media
                                             :media="doc"
@@ -50,6 +50,13 @@
                                     </VCol>
                                     <VCol cols="12" sm="8">
                                         <VRow align="center">
+                                            <VCol cols="12">
+                                                <VTextField
+                                                    :rules="[requiredValidator]"
+                                                    v-model="doc.name"
+                                                    :label="$t('chapter.fields.title.label')"
+                                                />
+                                            </VCol>
                                             <VCol cols="12" sm="6">
                                                 <VSelect
                                                     v-model="doc.visibility"
@@ -64,21 +71,20 @@
                                                     </template>
                                                 </VSelect>
                                             </VCol>
-                                            <VCol cols="12" sm="6" class="d-flex gap-2">
-                                                <VSwitch v-model="doc.download" :label="$t('chapter.fields.download.label')" />
-                                                <InfoTooltip :text="$t('chapter.fields.download.description')" />
-                                            </VCol>
-                                            <VCol v-if="doc.type === 'pdf'" cols="12" sm="6">
+                                            <VCol v-if="doc.type === MediaTypes.pdf" cols="12" sm="6">
                                                 <VTextField v-model="doc.watermark" :label="$t('chapter.fields.watermark.label')">
                                                     <template #append-inner>
                                                         <InfoTooltip :text="$t('chapter.fields.watermark.description')" />
                                                     </template>
                                                 </VTextField>
                                             </VCol>
+                                            <VCol cols="12" sm="6" class="d-flex gap-2">
+                                                <VSwitch v-model="doc.download" :label="$t('chapter.fields.download.label')" />
+                                                <InfoTooltip :text="$t('chapter.fields.download.description')" />
+                                            </VCol>
                                         </VRow>
                                     </VCol>
                                 </VRow>
-                                <VDivider />
                             </VCol>
                             <VCol cols="12" sm="4">
                                 <InfoTooltip :text="$t('media.upload.description')" v-slot="{ props }">
@@ -116,6 +122,7 @@ import { ChapterForm, Media as MediaType } from "@/types";
 import { UploadBunAttrs } from "@/utils";
 import type { VForm } from "vuetify/components/VForm";
 import { scrollToTop } from "@/utils";
+import { MediaTypes } from "@/@core/enums";
 interface Props {
     chapters?: ChapterForm[];
 }

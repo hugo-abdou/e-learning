@@ -14,8 +14,8 @@ class AttachmentResource extends JsonResource
         $download = !!$this->pivot->download;
         return array_merge($this->getMediaUrls(), [
             'id' => $this->id,
-            'name' => $this->name,
             'type' => Media::checkFileType($this->mime_type),
+            "name" => $this->pivot->name,
             'status' => $this->status,
             "download" => !!$this->pivot->download,
             "visibility" => json_decode($this->pivot->visibility ?? '[]'),
