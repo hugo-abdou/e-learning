@@ -16,6 +16,8 @@ class MediaResource extends JsonResource
             'name' => $this->name,
             'type' => Media::checkFileType($this->mime_type),
             'status' => $this->status,
+            "width" => $this->data['width'] ?? 0,
+            "height" => $this->data['height'] ?? 0,
             // 'mime_type' => $this->mime_type,
             // 'path' => $this->path,
         ]);

@@ -23,8 +23,8 @@ export const useCourseStore = defineStore({
         async deleteCourse(id: number) {
             return await axiosIns.delete(`/courses/${id}`);
         },
-        async publishCourse(id: number) {
-            return await axiosIns.patch(`/courses/${id}/publish`);
+        async publishCourse(id: number, status: string = "published") {
+            return await axiosIns.patch(`/courses/${id}/publish`, { status });
         },
         async scheduleCourse(id: number, date: string) {
             return await axiosIns.patch(`/courses/${id}/schedule`, { date });

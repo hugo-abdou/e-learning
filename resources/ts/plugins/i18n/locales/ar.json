@@ -81,6 +81,10 @@
       "chapters": {
         "title": "الفصول",
         "subtitle": "قم بتنظيم محتواك في فصول لتحقيق تجربة تعلم منظمة"
+      },
+      "visibility": {
+        "title": "Visibility",
+        "subtitle": "Choose when to publish and who can see your video"
       }
     }
   },

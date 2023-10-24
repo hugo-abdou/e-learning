@@ -23,10 +23,10 @@ class CourseResource extends JsonResource
             "author" => $this->author->only(["id", "name", 'profile_photo_url']),
             "prerequisite_id" =>  $this->prerequisite_id,
             "status" => $this->status,
-            "is_visible" => $this->is_visible,
             "thumbnail" =>  $this->thumbnail_url,
             "duration" => $this->duration,
             "difficulty" => $this->difficulty,
+            "schedule_at" => $this->schedule_at,
         ];
 
         if ($additional = $request->get('additional')) {

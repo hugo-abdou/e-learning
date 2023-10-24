@@ -8,19 +8,25 @@
                 <StorageStatistics class="mb-5" />
             </VCol>
             <VCol cols="12">
-                <GalleryView deletable searchPosisions="90px" />
+                <GalleryView ref="gallery" deletable searchPosisions="90px">
+                    <template #actions>
+                        <VBtn prependIcon="mdi-image-plus-outline" @click="isAddMediaDialogOpen = true">Add Media</VBtn>
+                    </template>
+                </GalleryView>
             </VCol>
         </VRow>
-        <!-- <FileUploaderDialog
-            v-model:isDialogVisible="isAddMediaDialogOpen"
-            @uploadSuccess="(f, { body }) => media.unshift(body)"
-            @done="isAddMediaDialogOpen = false"
-        /> -->
+        <fileUploaderDialog @done="uploadDone" v-model:is-dialog-visible="isAddMediaDialogOpen" :max-number-of-files="100" />
     </div>
 </template>
 
 <script setup lang="ts">
 import StorageStatistics from "@/views/analytics/StorageStatistics.vue";
+const isAddMediaDialogOpen = ref(false);
+const gallery = ref<{ init: Function; loadMore: Function }>();
+const uploadDone = () => {
+    gallery.value?.init();
+    isAddMediaDialogOpen.value = false;
+};
 </script>
 <route lang="yaml">
 meta:

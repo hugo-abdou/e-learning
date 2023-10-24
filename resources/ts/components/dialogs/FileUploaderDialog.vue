@@ -24,7 +24,6 @@
                 </VWindowItem>
                 <VWindowItem value="gallery">
                     <VCardText style="height: 450px" class="overflow-auto pa-0">
-                        <!-- <PerfectScrollbar :options="{ wheelPropagation: false, suppressScrollX: true }" style="height: 450px"> -->
                         <GalleryView
                             :max-number-selectable-files="maxNumberOfFiles"
                             :allowed-file-types="allowedFileTypes"
@@ -33,7 +32,6 @@
                             v-model="selectedFiles"
                             search-posisions="0px"
                         />
-                        <!-- </PerfectScrollbar> -->
                     </VCardText>
                     <VCardActions class="d-flex justify-end gap-3 flex-wrap">
                         <VBtn @click="$emit('done', selectedFiles)">Done</VBtn>
@@ -57,7 +55,7 @@ interface Props {
     maxNumberOfFiles?: number;
     allowedFileTypes?: string[];
 }
-const props = withDefaults(defineProps<Props>(), { isDialogVisible: false, maxNumberOfFiles: 5, allowedFileTypes: () => ["*"] });
+const props = withDefaults(defineProps<Props>(), { isDialogVisible: false, maxNumberOfFiles: 5 });
 
 // tabs
 const tabs = [

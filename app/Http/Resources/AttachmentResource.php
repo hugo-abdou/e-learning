@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\Media;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class AttachmentResource extends JsonResource
 {
@@ -12,15 +13,17 @@ class AttachmentResource extends JsonResource
     public function toArray($request)
     {
         $download = !!$this->pivot->download;
-        return array_merge($this->getMediaUrls(), [
+        $data =  array_merge($this->getMediaUrls(), [
             'id' => $this->id,
-            'name' => $this->name,
             'type' => Media::checkFileType($this->mime_type),
+            "name" => $this->pivot->name,
             'status' => $this->status,
-            "download" => !!$this->pivot->download,
+            "download" => $download,
             "visibility" => json_decode($this->pivot->visibility ?? '[]'),
             "watermark" => $this->pivot->watermark,
         ]);
+        if ($download) $data['path'] = Storage::disk('public')->url($this->path);
+        return $data;
     }
 
     public function getMediaUrls()

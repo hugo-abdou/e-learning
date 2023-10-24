@@ -57,9 +57,20 @@
                         <!-- Status -->
                         <template #item.status="{ item }">
                             <VChip :color="resolveCourseStatusVariant(item.raw.status).color">
-                                <VIcon :icon="resolveCourseStatusVariant(item.raw.status).icon" class="ma-1" />
-                                <span class="text-capitalize">
+                                <template #prepend>
+                                    <InfoTooltip
+                                        v-if="item.raw.status === CourseStatus.Scheduled"
+                                        icon="mdi-clock-time-five-outline"
+                                        :text="formatDate(item.raw.schedule_at)"
+                                    />
+                                    <VIcon v-else :icon="resolveCourseStatusVariant(item.raw.status).icon" />
+                                </template>
+
+                                <span class="text-capitalize ml-1">
                                     {{ item.raw.status }}
+                                </span>
+                                <span v-if="item.raw.status === CourseStatus.Error" class="text-capitalize ml-1">
+                                    {{ `#${item.raw.id}` }}
                                 </span>
                             </VChip>
                         </template>
@@ -137,7 +148,7 @@ import { Course, DataTableHeader } from "@/types";
 import { CourseStatus } from "@core/enums";
 import { useCourseStore } from "@/stores/useCourseStore";
 import { debounce } from "lodash";
-import { avatarText } from "@/@core/utils/formatters";
+import { avatarText, formatDate } from "@/@core/utils/formatters";
 import { VSkeletonLoader } from "vuetify/labs/VSkeletonLoader";
 
 const scheduledCourseCours = ref<number | null>(null);
@@ -156,7 +167,7 @@ const courseStore = useCourseStore();
 const deleteCourse = (id: number) => courseStore.deleteCourse(id).then(getCourses);
 const publishCourse = (id: number) => courseStore.publishCourse(id).then(getCourses);
 const getCourses = debounce(() => {
-    if (options.value.page === 1) {
+    if (!courses.value.length) {
         loading.value = true;
     }
     courseStore
@@ -170,8 +181,8 @@ const getCourses = debounce(() => {
 // Headers
 const headers: DataTableHeader[] = [
     { title: "Title", key: "title" },
-    { title: "Status", key: "status", width: 70, align: "center" },
-    { title: "Difficulty", key: "difficulty", width: 70, align: "center" },
+    { title: "Status", key: "status", width: 70 },
+    { title: "Difficulty", key: "difficulty", width: 70 },
     { title: "", key: "actions", sortable: false, width: 70 }
 ];
 

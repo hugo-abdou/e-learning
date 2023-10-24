@@ -49,18 +49,14 @@ class ChapterController extends Controller
      */
     public function update(ChapterRequest $request, $chapter)
     {
-        try {
-            $chapter = Chapter::updateOrCreate(['id' => $chapter], [
-                'course_id' => $request->validated('course_id'),
-                'title' => $request->validated('title'),
-                'order' => $request->validated('order'),
-            ]);
+        $chapter = Chapter::updateOrCreate(['id' => $chapter], [
+            'course_id' => $request->validated('course_id'),
+            'title' => $request->validated('title'),
+            'order' => $request->validated('order'),
+        ]);
 
-            $chapter->attachments()->sync($request->validated('attachments'));
-        } catch (\Throwable $th) {
-            dd($request->validated('attachments'));
-            //throw $th;
-        }
+        $chapter->attachments()->sync($request->validated('attachments'));
+
 
         return ChapterResource::make($chapter);
     }

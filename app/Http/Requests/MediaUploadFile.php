@@ -64,6 +64,8 @@ class MediaUploadFile extends FormRequest
             'disk' => 'public',
             'path' => $path,
             'status' => MediaStatus::Pending->value,
+            'data->width' => "1080",
+            'data->height' => "720",
             'conversions' => []
         ]);
     }

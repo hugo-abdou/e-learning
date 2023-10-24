@@ -8,4 +8,9 @@ enum MediaStatus: string
     case Processing = '1';
     case Completed = '2';
     case Error = '3';
+
+    static function values()
+    {
+        return collect(self::cases())->map(fn ($value) => $value->value)->toArray();
+    }
 }

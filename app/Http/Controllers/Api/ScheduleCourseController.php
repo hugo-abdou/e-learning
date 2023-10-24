@@ -17,7 +17,7 @@ class ScheduleCourseController extends Controller
     {
         $course->update([
             'status' => CourseStatus::Scheduled->value,
-            'published_at' => Carbon::make($request->date)->toDateTimeString(),
+            'schedule_at' => Carbon::make($request->date)->toDateTimeString(),
         ]);
         return response()->json(['message' => 'Course scheduled successfully']);
     }

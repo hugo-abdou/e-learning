@@ -84,11 +84,30 @@ export function formatBytes(bytes: number, decimals = 2) {
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 }
-export function secondsToMinutes(seconds: number) {
-    var minutes = Math.floor(seconds / 60);
-    var remainingSeconds = (seconds % 60).toFixed(0);
-    if (remainingSeconds < 10) {
-        remainingSeconds = "0" + remainingSeconds;
+export function calculateAspectRatio(width: number, height: number) {
+    const gcd = (a: number, b: number): number => (b === 0 ? a : gcd(b, a % b));
+    const divisor = gcd(width, height);
+    const aspectWidth = width / divisor;
+    const aspectHeight = height / divisor;
+    return `${aspectWidth}/${aspectHeight}`;
+}
+export function calculateWordsToDisplay(containerWidth: number, text: string, opt: { charWidth?: number; maxLines?: number }) {
+    const charWidth = opt?.charWidth || 8;
+    const maxLines = opt?.maxLines || 1;
+    const estimatedCharCount = Math.floor(containerWidth / (charWidth * maxLines));
+    let charactersToDisplay = text.slice(0, estimatedCharCount);
+    if (charactersToDisplay.length < text.length) {
+        charactersToDisplay += "...";
     }
-    return minutes + ":" + remainingSeconds;
+
+    return charactersToDisplay;
+}
+export function secondsToMinutes(seconds: number) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = (seconds % 60).toFixed(0);
+
+    const formattedTime = `${String(minutes).padStart(2, "0")}:${String(remainingSeconds).padStart(2, "0")}`;
+    if (hours > 0) return `${String(hours).padStart(2, "0")}:${formattedTime}`;
+    return formattedTime;
 }

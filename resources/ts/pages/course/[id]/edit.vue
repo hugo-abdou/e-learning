@@ -1,7 +1,7 @@
 <template>
     <VContainer>
         <VRow align="center">
-            <VCol cols="12" class="d-flex gap-2 flex-wrap">
+            <VCol class="d-flex gap-2 flex-wrap" style="flex-grow: 12 !important">
                 <VTabs v-model="currentStep" class="v-tabs-pill">
                     <template v-for="step in steps" :key="step.icon">
                         <VTab>
@@ -11,13 +11,25 @@
                     </template>
                 </VTabs>
             </VCol>
+
+            <VCol v-if="currentStep === 1">
+                <VBtnToggle v-model="gridType" divided color="primary" variant="outlined" class="mx-auto">
+                    <VBtn value="list" icon="mdi-list-box-outline" />
+                    <VBtn value="grid" icon="mdi-grid-large" />
+                </VBtnToggle>
+            </VCol>
             <VCol cols="12">
                 <VWindow v-model="currentStep" class="mt-5 overflow-visible">
                     <VWindowItem>
                         <CourseDetailsForm :course="course" :ref="el => (steps[0].component = el as null)" />
                     </VWindowItem>
                     <VWindowItem>
-                        <CourseChaptersForm v-if="chapters" :chapters="chapters" :ref="el => (steps[1].component = el as null)" />
+                        <CourseChaptersForm
+                            :gridType="gridType"
+                            v-if="chapters"
+                            :chapters="chapters"
+                            :ref="el => (steps[1].component = el as null)"
+                        />
                     </VWindowItem>
                 </VWindow>
 
@@ -45,6 +57,7 @@ const router = useRouter();
 const courseStore = useCourseStore();
 
 const currentStep = ref(0);
+const gridType = ref<"list" | "grid">("list");
 
 const steps = ref([
     {
@@ -90,8 +103,8 @@ const save = async () => {
             // @ts-expect-error
             const chaptersForm: ChapterForm[] = data.map((item, i) => {
                 const attachments: { [key: number]: any } = {};
-                item.attachments.forEach(({ id, type, download, visibility, watermark }) => {
-                    attachments[id] = { type, download, visibility: JSON.stringify(visibility), watermark };
+                item.attachments.forEach(({ name, id, type, download, visibility, watermark }) => {
+                    attachments[id] = { name, type, download, visibility: JSON.stringify(visibility), watermark };
                 });
                 return { ...item, course_id, attachments, order: i };
             });

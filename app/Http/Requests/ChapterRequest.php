@@ -24,6 +24,11 @@ class ChapterRequest extends FormRequest
         $rules = [
             "course_id" => 'nullable|integer',
             "attachments.*" => 'nullable|array',
+            "attachments.*.watermark" => 'nullable|string',
+            "attachments.*.visibility" => 'nullable|string',
+            "attachments.*.download" => 'nullable|boolean',
+            "attachments.*.type" => 'nullable|string',
+            "attachments.*.name" => 'nullable|string',
             "video" =>  'nullable|integer',
             "title" => 'required|string',
             "order" => 'required|integer',

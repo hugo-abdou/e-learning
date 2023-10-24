@@ -30,27 +30,41 @@
                 <VExpansionPanelText class="border-t">
                     <VCardText class="mb-5">
                         <VRow>
-                            <VCol cols="12" class="mb-2">
+                            <VCol cols="12" class="mb-3">
                                 <VTextField
                                     :rules="[requiredValidator]"
                                     v-model="chapter.title"
-                                    :label="$t('chapter.fields.title.label') + ' (required)'"
+                                    :label="$t('chapter.fields.title.label')"
                                 />
                             </VCol>
-                            <VCol cols="12" v-for="doc in chapter.attachments" :key="doc.id">
-                                <VRow class="mb-2">
-                                    <VCol cols="12" sm="4">
+                            <Masonry
+                                class="w-100"
+                                :items="chapter.attachments"
+                                v-slot="{ item: doc }"
+                                :grid="gridType === 'grid' ? { cols: '12', sm: '6' } : { cols: '12' }"
+                            >
+                                <VRow :key="gridType" class="mb-2 py-2 rounded border bg-background w-100 px-1 ma-0">
+                                    <VCol v-bind="gridType === 'list' ? { cols: '12', sm: '4' } : { cols: '12' }">
                                         <Media
                                             :media="doc"
                                             hasTitle
                                             deletable
+                                            aspect-ratio="2"
                                             @on-delete="chapter.attachments = chapter.attachments.filter(({ id }) => id !== doc.id)"
                                         >
                                         </Media>
                                     </VCol>
-                                    <VCol cols="12" sm="8">
-                                        <VRow align="center">
-                                            <VCol cols="12" sm="6">
+
+                                    <VCol v-bind="gridType === 'list' ? { cols: '12', sm: '8' } : { cols: '12' }">
+                                        <VRow>
+                                            <VCol cols="12">
+                                                <VTextField
+                                                    :rules="[requiredValidator]"
+                                                    v-model="doc.name"
+                                                    :label="$t('chapter.fields.title.label')"
+                                                />
+                                            </VCol>
+                                            <VCol cols="6">
                                                 <VSelect
                                                     v-model="doc.visibility"
                                                     :items="['Public', 'Plan A', 'Plan B']"
@@ -64,11 +78,11 @@
                                                     </template>
                                                 </VSelect>
                                             </VCol>
-                                            <VCol cols="12" sm="6" class="d-flex gap-2">
+                                            <VCol cols="6" class="d-flex align-center gap-2">
                                                 <VSwitch v-model="doc.download" :label="$t('chapter.fields.download.label')" />
                                                 <InfoTooltip :text="$t('chapter.fields.download.description')" />
                                             </VCol>
-                                            <VCol v-if="doc.type === 'pdf'" cols="12" sm="6">
+                                            <VCol v-if="doc.type === MediaTypes.pdf" cols="12">
                                                 <VTextField v-model="doc.watermark" :label="$t('chapter.fields.watermark.label')">
                                                     <template #append-inner>
                                                         <InfoTooltip :text="$t('chapter.fields.watermark.description')" />
@@ -78,11 +92,14 @@
                                         </VRow>
                                     </VCol>
                                 </VRow>
-                                <VDivider />
-                            </VCol>
-                            <VCol cols="12" sm="4">
+                            </Masonry>
+                            <VCol cols="12">
                                 <InfoTooltip :text="$t('media.upload.description')" v-slot="{ props }">
-                                    <VBtn v-bind="{ ...props, ...UploadBunAttrs }" @click="openDialog('upload-chapter-attachment')">
+                                    <VBtn
+                                        v-bind="{ ...props, ...UploadBunAttrs }"
+                                        style="height: 100%"
+                                        @click="openDialog('upload-chapter-attachment')"
+                                    >
                                         <div class="d-flex flex-column align-center">
                                             <VIcon icon="fluent:document-add-16-regular" size="32" />
                                             <VLabel class="mt-2">{{ $t("media.upload.label") }}</VLabel>
@@ -116,11 +133,16 @@ import { ChapterForm, Media as MediaType } from "@/types";
 import { UploadBunAttrs } from "@/utils";
 import type { VForm } from "vuetify/components/VForm";
 import { scrollToTop } from "@/utils";
+import { MediaTypes } from "@/@core/enums";
+import Media from "@/components/Media/index.vue";
+
 interface Props {
     chapters?: ChapterForm[];
+    gridType?: "grid" | "list";
 }
 const props = withDefaults(defineProps<Props>(), {
-    chapters: () => []
+    chapters: () => [],
+    gridType: "grid"
 });
 
 const courseStore = useCourseStore();

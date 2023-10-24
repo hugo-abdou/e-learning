@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { useTheme } from "vuetify";
 import ScrollToTop from "@core/components/ScrollToTop.vue";
 import { useThemeConfig } from "@core/composable/useThemeConfig";
 import { hexToRgb } from "@layouts/utils";
 import ServerErrorLogger from "./ServerErrorLogger.vue";
 import SnackBar from "@/components/SnackBar/index.vue";
+import { useTheme } from "vuetify/lib/framework.mjs";
 
 const vm = getCurrentInstance();
 provide("app", vm);

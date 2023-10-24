@@ -12,7 +12,10 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+
+use Intervention\Image\Facades\Image;
 
 class ProcessImageMediaJob
 {
@@ -47,8 +50,13 @@ class ProcessImageMediaJob
                     ->path($this->config['path'] ?? 'media')
                     ->conversions($conversions)->upload();
                 $data['status'] = MediaStatus::Completed->value;
+                $image = Image::make(Storage::disk($this->config['disk'] ?? 'public')->url($media->path));
+                $data['data->width'] = $image->getWidth();
+                $data['data->height'] = $image->getHeight();
             } catch (\Throwable $th) {
-                $data['data'] = ["error" => $th->getMessage()];
+                $data['data->error'] =  $th->getMessage();
+                $data['data->width'] = "1080";
+                $data['data->height'] = "720";
                 $data['status'] = MediaStatus::Error->value;
             }
             $media->update($data);

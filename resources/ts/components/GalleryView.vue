@@ -1,19 +1,27 @@
 <template>
-    <div class="mb-5 position-sticky bg-surface rounded pa-4 px-3" :style="{ top: searchPosisions || '0px', 'z-index': 10 }">
-        <AppTextField v-model="options.search" :placeholder="$t('Search')" density="compact" />
-    </div>
-
-    <Masonry :grid="grid" :is-loading="isLoading" @load="loadMore" :items="media" v-slot="{ item }">
-        <component
-            :is="selectable ? CustomCheckboxe : 'div'"
-            v-model="selectedMedia"
-            :disabled="selectedMedia.length >= maxNumberSelectableFiles && !selectedMedia.includes(item.id)"
-            :selected="selectedMedia.includes(item.id)"
-            :value="item.id"
-        >
-            <Media :deletable="deletable" :media="item" @on-delete="removeItem" has-title heading />
-        </component>
-    </Masonry>
+    <VCard class="position-sticky mb-5 pa-2" :style="{ top: searchPosisions || '0px', 'z-index': 10 }">
+        <VRow>
+            <VCol style="flex-grow: 13">
+                <AppTextField v-model="options.search" :placeholder="$t('Search')" density="compact" />
+            </VCol>
+            <VCol>
+                <slot name="actions" />
+            </VCol>
+        </VRow>
+    </VCard>
+    <VContainer>
+        <Masonry :grid="grid" :is-loading="isLoading" @load="loadMore" :items="media" v-slot="{ item }">
+            <component
+                :is="selectable ? CustomCheckboxe : 'div'"
+                v-model="selectedMedia"
+                :disabled="selectedMedia.length >= maxNumberSelectableFiles && !selectedMedia.includes(item.id)"
+                :selected="selectedMedia.includes(item.id)"
+                :value="item.id"
+            >
+                <Media :deletable="deletable" :media="item" @update:media="init" @on-delete="removeItem" is-preview />
+            </component>
+        </Masonry>
+    </VContainer>
 </template>
 
 <script setup lang="ts">
@@ -22,6 +30,7 @@ import { GridColumn, Options } from "@/@core/types";
 import { useMediaStore } from "@/stores/mediaStore";
 import { Media as MediaType } from "@/types";
 import { debounce } from "lodash";
+import Media from "@/components/Media/index.vue";
 
 interface Props {
     selectable?: boolean;
@@ -57,7 +66,6 @@ watch(selectedMedia, val => {
         media.value.filter(({ id }) => val.includes(id))
     );
 });
-
 const totalMedia = ref(0);
 const options = ref<Options>({
     page: 1,
@@ -67,14 +75,14 @@ const options = ref<Options>({
     search: undefined,
     ...props.options
 });
-
 const loadMore = debounce(async () => {
+    isLoading.value = true;
     if (media.value.length < totalMedia.value) {
         options.value.page++;
         media.value.push(...(await getMedia()));
     }
+    isLoading.value = false;
 }, 500);
-
 watch(
     () => options.value.search,
     debounce(async () => {
@@ -87,7 +95,6 @@ const removeItem = async (item: number) => {
     media.value = media.value.filter(({ id }) => id !== item);
     emit("onDelete", item);
 };
-
 const getMedia = async () => {
     try {
         const res = await mediaStore.get({ ...options.value, types: props.allowedFileTypes });
@@ -99,12 +106,16 @@ const getMedia = async () => {
     }
 };
 
-onMounted(async () => {
+const init = async () => {
+    isLoading.value = true;
     options.value.page = 1;
     const res = await getMedia();
     media.value = res;
-});
+    isLoading.value = false;
+};
+onMounted(init);
 onUnmounted(() => {
     mediaStore.$reset();
 });
+defineExpose({ init, loadMore });
 </script>

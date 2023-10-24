@@ -85,6 +85,7 @@ const onSubmit = async () => {
                                     type="email"
                                     :rules="[requiredValidator, emailValidator]"
                                     :error-messages="errors.email"
+                                    autocomplete="username"
                                 />
                             </VCol>
 
@@ -98,6 +99,7 @@ const onSubmit = async () => {
                                     @click:append-inner="isPasswordVisible = !isPasswordVisible"
                                     :rules="[requiredValidator]"
                                     :error-messages="errors.password"
+                                    autocomplete="current-password"
                                 />
 
                                 <!-- remember me checkbox -->
