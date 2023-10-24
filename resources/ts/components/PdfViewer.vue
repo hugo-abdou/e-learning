@@ -5,14 +5,14 @@ import { useMediaStore } from "@/stores/mediaStore";
 import { VSkeletonLoader } from "vuetify/labs/VSkeletonLoader";
 import "@tato30/vue-pdf/style.css";
 import { useUserStore } from "@/stores/user";
+import { DocumentMedia } from "@/types";
 
-defineOptions({ inheritAttrs: false });
 interface Props {
-    src: string;
-    watermark?: string;
+    document: DocumentMedia;
     canOpenPreview?: boolean;
 }
 const props = defineProps<Props>();
+const emit = defineEmits<{ (e: "update:pdf", value: { page: number; pages: number }): void }>();
 
 const mediaStore = useMediaStore();
 const page = ref(1);
@@ -23,7 +23,7 @@ const progress = ref({
 const { pdf, pages, info } = usePDF(
     {
         useWorkerFetch: true,
-        url: props.src
+        url: props.document.url
     },
     { onProgress: e => (progress.value = e) }
 );
@@ -33,23 +33,16 @@ const reset = () => {
 const next = () => page.value < pages.value && page.value++;
 const prev = () => page.value > 1 && page.value--;
 const auth = useUserStore();
-const sanetizedWatermark = computed(() => props.watermark?.replace("%user_name%", auth.user.name));
+const sanetizedWatermark = computed(() => props.document.watermark?.replace("%user_name%", auth.user.name));
+watch([page, pages], ([page, pages]) => {
+    emit("update:pdf", { page, pages });
+});
 defineExpose({ reset, next, prev, page, pages });
 </script>
 
 <template>
-    <div v-bind="$attrs" class="w-100 h-100 overflow-auto" @contextmenu.prevent="">
-        <div v-if="progress.loaded">
-            <VuePDF :pdf="pdf" :page="page" :watermark-text="sanetizedWatermark" fit-parent />
-            <div class="position-absolute" style="bottom: 20; right: 20">
-                <ActionButton
-                    v-if="canOpenPreview"
-                    @click="mediaStore.openMediaDialog({ watermark: sanetizedWatermark, url: src }, 'pdf')"
-                    icon="mdi-eye-outline"
-                    variant="elevated"
-                />
-            </div>
-        </div>
+    <div @contextmenu.prevent="" class="overflow-auto" style="max-height: 100%">
+        <VuePDF v-if="progress.loaded" :pdf="pdf" :page="page" :watermark-text="sanetizedWatermark" fit-parent />
         <v-skeleton-loader v-else class="py-5" :type="['heading', 'paragraph', 'paragraph']"></v-skeleton-loader>
         <slot v-bind="{ reset, next, prev, page, pages }" />
     </div>

@@ -10,10 +10,6 @@ enum CourseDifficulty: string
 
     static function values()
     {
-        return [
-            self::Beginner->value,
-            self::Intermediate->value,
-            self::Advanced->value
-        ];
+        return collect(self::cases())->map(fn ($value) => $value->value)->toArray();
     }
 }

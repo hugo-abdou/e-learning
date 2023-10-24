@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\CourseStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,6 +22,11 @@ class Course extends Model
         'thumbnail_url',
     ];
 
+    protected $casts = [
+        'data' => 'array',
+    ];
+
+    protected $dates = ['schedule_at', 'close_at'];
 
     /**
      * Get the default profile photo URL if no profile photo has been uploaded.
@@ -32,15 +38,34 @@ class Course extends Model
         return $this->thumbnail;
     }
 
-    /**
-     * Get all of the media for the Cour
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function media()
+    function error(\Throwable $th)
     {
-        dd('not implimentd yet');
-        // return $this->hasMany(Comment::class, 'foreign_key', 'local_key');
+        $this->update([
+            'status' => CourseStatus::Error,
+            'data->error' => $th->getMessage()
+        ]);
+    }
+    function close()
+    {
+        $this->update(['status' => CourseStatus::Closed]);
+    }
+    function publish()
+    {
+        $this->update(['status' => CourseStatus::Published]);
+    }
+
+
+    public function isPublished()
+    {
+        return $this->status == CourseStatus::Published;
+    }
+    public function isDraft()
+    {
+        return $this->status == CourseStatus::Draft;
+    }
+    public function isScheduled()
+    {
+        return $this->status == CourseStatus::Scheduled;
     }
 
     /**

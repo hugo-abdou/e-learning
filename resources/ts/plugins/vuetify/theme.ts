@@ -132,6 +132,8 @@ const theme: VuetifyOptions["theme"] = {
         dark: {
             dark: true,
             colors: {
+                white: "#fff",
+                black: "#000",
                 primary: localStorage.getItem(`${themeConfig.app.title}-darkThemePrimaryColor`) || staticPrimaryColor,
                 "on-primary": "#fff",
                 secondary: "#A8AAAE",

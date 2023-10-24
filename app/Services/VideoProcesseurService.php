@@ -2,15 +2,10 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Log;
 use FFMpeg\FFMpeg;
 use FFMpeg\Coordinate\Dimension;
 use FFMpeg\FFProbe;
-use FFMpeg\Filters\Video\ExtractMultipleFramesFilter;
-use FFMpeg\Filters\Video\ResizeFilter;
 use FFMpeg\Format\Video\X264;
-use FFMpeg\Format\Video\VideoInterface;
 use Illuminate\Http\UploadedFile;
 
 class VideoProcesseurService
@@ -97,7 +92,10 @@ class VideoProcesseurService
     {
         try {
             $video = $this->ffmpeg->open($this->filePath);
+            $streams = $video->getStreams();
             $metadata = $video->getFormat();
+            $metadata->set('width', $streams->first()->get('width'));
+            $metadata->set('height', $streams->first()->get('height'));
             return $metadata;
         } catch (\Exception $ex) {
             throw $ex;
@@ -162,59 +160,3 @@ class VideoProcesseurService
         ];
     }
 }
-
-
-// try {
-//     // Listen for the payload from the parent process
-//     $payload = json_decode(file_get_contents("php://stdin"), true);
-
-//     $tempFilePath = $payload['tempFilePath'];
-//     $name = preg_replace('/[^\w]/', '_', $payload['name']);
-
-//     // Helper function to end the process with a specific payload
-//     $endProcess = function ($endPayload) use ($tempFilePath) {
-//         $statusCode = $endPayload['statusCode'];
-//         $text = $endPayload['text'];
-
-//         // Remove temp file
-//         if (File::exists($tempFilePath)) {
-//             File::delete($tempFilePath);
-//         }
-
-//         // Format response so it fits the API response
-//         Log::info('Task ended');
-//         echo json_encode(['statusCode' => $statusCode, 'text' => $text]) . PHP_EOL;
-
-//         // End process
-//         exit;
-//     };
-
-//     // Generate video metadata
-//     $videoMeta = generateMeta($tempFilePath, $name);
-
-//     // Convert video to different resolutions
-//     $resolutionsResult = [];
-//     foreach (resolutions() as $resolution) {
-//         $resolutionsResult[] = convert($tempFilePath, $name, $resolution);
-//     }
-
-//     // Generate master playlist
-//     $masterPlaylist = generateMasterPlaylist($resolutionsResult, $name);
-
-//     // Generate thumbnail
-//     $thumbnail = generateThumbnail($tempFilePath, $name);
-
-//     // End the process with the final payload
-//     $endProcess([
-//         'statusCode' => 200,
-//         'text' => [
-//             'resolutions' => $resolutionsResult,
-//             'masterPlaylist' => $masterPlaylist,
-//             'videoMeta' => $videoMeta,
-//             'thumbnail' => $thumbnail,
-//         ],
-//     ]);
-// } catch (\Exception $error) {
-//     // Handle any exceptions and end the process with an error payload
-//     $endProcess(['statusCode' => 500, 'text' => $error->getMessage()]);
-// }

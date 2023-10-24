@@ -27,7 +27,6 @@ class CourseRequest extends FormRequest
         return [
             "title" => "required|string",
             "description" => "required|string",
-            "is_visible" => 'required|boolean',
             "difficulty" => [Rule::in(CourseDifficulty::values())],
             "prerequisite_id" => 'nullable|exists:courses,id',
             "thumbnail" => 'nullable|string'

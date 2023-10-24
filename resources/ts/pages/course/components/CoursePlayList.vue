@@ -1,24 +1,41 @@
 <template>
     <!-- @vue-ignore -->
-    <VList lines="two" :border="isBorderd" :selected="[attachment]" @update:selected="updateSelected">
+    <VList lines="three" :border="isBorderd" :selected="[attachment]" @update:selected="updateSelected">
         <template v-for="(attachment, i) in playlist" :key="attachment.id" class="mt-2">
-            <VListItem v-if="attachment.type !== 'header'" variant="flat" :value="attachment">
+            <VListItem v-if="attachment.type !== 'header'" :value="attachment" :title="attachment.name">
                 <template #prepend="{ isActive }">
-                    <VAvatar style="width: 72px; height: 50px" rounded variant="tonal">
-                        <VImg :src="attachment.thumb_url || resolveDefaultThumbnal(attachment.type)" cover />
-                    </VAvatar>
+                    <VIcon
+                        class="position-absolute"
+                        style="left: 3px"
+                        v-if="attachment.type == 'video' && attachment.playing && isActive"
+                        size="14"
+                        icon="tabler-pause"
+                    />
+                    <VImg
+                        style="width: 100px; aspect-ratio: 16/9"
+                        class="rounded mr-2 bg-background border"
+                        :src="attachment.thumb_url || resolveDefaultThumbnal(attachment.type)"
+                        cover
+                    />
                 </template>
-                <VListItemTitle :title="attachment.name">
-                    {{ attachment.name }}
-                </VListItemTitle>
-                <VListItemSubtitle class="d-flex gap-2 align-center">
+                <template #title="{ title }">
+                    <ResponsiveText :text="title" :max-lines="2" :char-width="2" v-slot="{ text }">
+                        {{ text }}
+                    </ResponsiveText>
+                </template>
+                <VListItemSubtitle class="d-flex gap-2 pa-1 align-center">
                     <VIcon size="16" :icon="resolveAttachmentTypeIcon(attachment.type)" />
                     <VChip v-if="attachment.type == 'video'" size="x-small">
-                        <VIcon start size="16" icon="mdi-clock-fast" />
-                        <span>
-                            {{ secondsToMinutes(attachment.duration) }}
-                        </span>
+                        <VIcon icon="mdi-clock-fast" size="16" class="mr-1" />
+                        {{ secondsToMinutes(attachment.duration) }}
                     </VChip>
+                    <VSpacer />
+                    <InfoTooltip v-if="attachment.download" text="download" v-slot="{ props }">
+                        <ActionButton size="x-small" icon="mdi-download" download :href="attachment.path" v-bind="props" />
+                        <!-- <VBtn icon size="x-small" color="default" @click.stop="" download :href="attachment.path" v-bind="props">
+                            <VIcon size="16" icon="mdi-download" />
+                        </VBtn> -->
+                    </InfoTooltip>
                 </VListItemSubtitle>
             </VListItem>
             <VListItem v-else>
@@ -34,7 +51,7 @@
 <script setup lang="ts">
 import { useThemeConfig } from "@/@core/composable/useThemeConfig";
 import { resolveAttachmentTypeIcon, resolveDefaultThumbnal } from "@/utils";
-import { secondsToMinutes } from "@/helpers";
+import { secondsToMinutes, calculateWordsToDisplay } from "@/helpers";
 import { Attachment, Chapter } from "@/types";
 
 type PlaylistAttachment = Attachment;
@@ -61,7 +78,6 @@ const updateSelected = (e: PlaylistAttachment[]) => {
         emit("update:attachment", e[0]);
     }
 };
-
 const next = () => {
     if (props.attachment) {
         // @ts-ignore

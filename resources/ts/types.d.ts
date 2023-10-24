@@ -221,11 +221,14 @@ export interface BaseMedia {
     id: number;
     mime_type: string;
     name: string;
+    path?: string;
     status: number;
     thumb_url: string;
     url: string;
     driver?: string;
     data: any;
+    width: number;
+    height: number;
 }
 interface VideoMedia extends BaseMedia {
     type: "video";
@@ -237,13 +240,13 @@ interface ImageMedia extends BaseMedia {
 }
 interface DocumentMedia extends BaseMedia {
     type: "pdf";
+    watermark: string;
 }
 
-export type Media = VideoMedia | ImageMedia | DocumentMedia;
+export type Media = ImageMedia | VideoMedia | DocumentMedia;
 export type Attachment = Media & {
     visibility: string[];
     download: boolean;
-    watermark?: string;
     name: string;
 };
 
@@ -259,13 +262,14 @@ export interface Course {
     author: Author;
     prerequisite_id?: number | null;
     status: "draft" | "published";
-    is_visible: boolean;
     thumbnail?: string | null;
     duration: number;
     difficulty: "beginner" | "intermediate" | "advanced";
     chapters: Chapter[];
     chaptersCount?: number;
     media?: string[];
+    schedule_at: string;
+    closed_at: string;
 }
 export interface Chapter {
     id: number;
@@ -274,7 +278,7 @@ export interface Chapter {
     title: string;
     attachments: Attachment[];
 }
-export interface CourseForm extends Omit<Course, "id" | "duration" | "author" | "chapters"> {}
+export interface CourseForm extends Omit<Course, "id" | "duration" | "author" | "chapters" | "schedule_at" | "closed_at"> {}
 export interface ChapterForm extends Omit<Chapter, "id"> {
     id?: number;
     attachments: Attachment[];

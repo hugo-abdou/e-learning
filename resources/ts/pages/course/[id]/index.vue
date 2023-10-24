@@ -5,59 +5,32 @@
                 <VCard>
                     <VCardText v-if="!loading && activeAttachment" class="py-0 px-0">
                         <div class="position-relative">
-                            <div v-if="activeAttachment.type === MediaTypes.video">
-                                <VuePlyr
-                                    @ready="plyr = $event.target.plyr"
-                                    @ended="finished = true"
-                                    @pause="activeAttachment.playing = false"
-                                    @play="activeAttachment.playing = true"
-                                    :src="activeAttachment.url"
-                                    :poster="activeAttachment.thumb_url"
-                                    :title="course?.title"
-                                />
-                                <div
-                                    v-if="finished"
-                                    class="position-absolute w-100 h-100 d-flex gap-1 align-center justify-center"
-                                    style="inset: 0; background-color: rgba(0, 0, 0, 0.568)"
-                                >
-                                    <v-btn @click="replay" color="default" prepend-icon="mdi-rotate-left">Start Over</v-btn>
-                                    <v-btn @click="nextAttachment" color="default" append-icon="mdi-skip-forward">Continue</v-btn>
-                                </div>
-                            </div>
-
-                            <Media v-else :media="activeAttachment" :key="activeAttachment.type" @update:pdf="pdfPageUpdated" is-preview>
-                                <template #bottom-toolbar>
-                                    <v-btn
-                                        v-if="activeAttachment.type === MediaTypes.pdf && finished"
-                                        @click="nextAttachment"
-                                        variant="tonal"
-                                        color="default"
-                                        append-icon="mdi-skip-forward"
-                                    >
-                                        Continue
-                                    </v-btn>
-                                    <v-btn
-                                        v-if="activeAttachment.type === MediaTypes.image"
-                                        @click="nextAttachment"
-                                        variant="tonal"
-                                        color="default"
-                                        append-icon="mdi-skip-forward"
-                                    >
+                            <Media v-bind="{ ...events }" :key="activeAttachment.id" aspect-ratio="1.77" :media="activeAttachment">
+                                <template #toolbar>
+                                    <v-btn @click="nextAttachment" variant="elevated" color="default" append-icon="mdi-skip-forward">
                                         Continue
                                     </v-btn>
                                 </template>
                             </Media>
+                            <div
+                                v-if="finished"
+                                class="position-absolute w-100 h-100 d-flex gap-1 align-center justify-center"
+                                style="inset: 0; background-color: rgba(0, 0, 0, 0.568)"
+                            >
+                                <v-btn @click="replay" color="default" prepend-icon="mdi-rotate-left">Start Over</v-btn>
+                                <v-btn @click="nextAttachment" color="default" append-icon="mdi-skip-forward">Continue</v-btn>
+                            </div>
                         </div>
                     </VCardText>
                     <v-skeleton-loader v-else :type="['image', 'image']"></v-skeleton-loader>
                 </VCard>
                 <VCardItem v-if="!loading">
-                    <VCardTitle class="text-capitalize text-h3 d-flex">
-                        <span class="truncate">
-                            {{ course?.title }}
-                        </span>
+                    <VCardTitle class="text-capitalize text-h3 text-wrap d-flex">
+                        <ResponsiveText :max-lines="2" :char-width="3.5" :text="course?.title || ''" v-slot="{ text }">
+                            {{ text }}
+                        </ResponsiveText>
                     </VCardTitle>
-                    <VCardSubtitle class="d-flex mt-3 px-1">
+                    <VCardSubtitle class="d-flex mt-3 px-1 align-center">
                         <VAvatar size="35" class="me-2">
                             <VImg v-if="course?.author.profile_photo_url" :src="course?.author.profile_photo_url" cover />
                             <span v-else>{{ avatarText(course?.author.name || "") }}</span>
@@ -68,10 +41,18 @@
                                     {{ course?.author.name }}
                                 </RouterLink>
                             </h6>
-                            <p class="text-xs">Lorem ipsum dolor sit amet, consectetur adipisicing elit</p>
+                            <p class="text-xs">Lorem ipsum dolor sit amet</p>
                         </div>
                         <VSpacer />
-                        <VMenu location="top right" class="mx-2">
+                        <VSlideGroup show-arrows center-active>
+                            <VSlideGroupItem v-for="action in menuItem.filter(({ _if }) => _if)" :key="action.title">
+                                <VChip v-bind="action.props" class="ma-1">
+                                    {{ action.title }}
+                                </VChip>
+                            </VSlideGroupItem>
+                        </VSlideGroup>
+
+                        <VMenu v-if="false" location="top right" class="mx-2">
                             <template #activator="{ props }">
                                 <VBtn variant="tonal" density="comfortable" icon="mdi-dots-vertical" color="default" v-bind="props" />
                             </template>
@@ -129,8 +110,10 @@ import { useCourseStore } from "@/stores/useCourseStore";
 import { Attachment, Course } from "@/types";
 import { avatarText } from "@/@core/utils/formatters";
 import { secondsToMinutes } from "@/helpers";
-import { MediaTypes } from "@/@core/enums";
 import { useUserStore } from "@/stores/user";
+import Media from "@/components/Media/index.vue";
+import { MediaTypes } from "@/@core/enums";
+
 const route = useRoute();
 const router = useRouter();
 const loading = ref(false);
@@ -142,6 +125,7 @@ const playList = ref();
 
 const auth = useUserStore();
 const plyr = ref<Plyr>();
+
 const menuItem = computed(() => {
     return [
         {
@@ -149,12 +133,25 @@ const menuItem = computed(() => {
             _if: auth.user.id === course.value?.author.id,
             props: { to: { name: "course-id-edit", params: { id: course.value?.id } }, "prepend-icon": "mdi-edit" }
         },
-        { title: "download", _if: true, props: { "prepend-icon": "mdi-download" } },
         { title: "share", _if: true, props: { "prepend-icon": "tabler-share" } }
     ];
 });
+const events = computed(() => {
+    if (activeAttachment.value && activeAttachment.value?.type === MediaTypes.video) {
+        return {
+            // @ts-ignore
+            onReady: (e: CustomEvent) => (plyr.value = e.target?.plyr),
+            onEnded: (e: CustomEvent) => (finished.value = true),
+            // @ts-ignore
+            onPause: (e: CustomEvent) => (activeAttachment.value.playing = false),
+            // @ts-ignore
+            onPlay: (e: CustomEvent) => (activeAttachment.value.playing = true)
+        };
+    }
+});
 
 const pdfPageUpdated = ({ page, pages }: any) => {
+    console.log(page, pages);
     if (page == pages) finished.value = true;
 };
 const nextAttachment = () => {

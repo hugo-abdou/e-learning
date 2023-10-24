@@ -8,7 +8,7 @@ interface MediaDialog {
     open: boolean;
     title: string | null;
     type: keyof typeof MediaTypes | undefined;
-    data: any;
+    data: Media | undefined;
 }
 
 export const useMediaStore = defineStore({
@@ -46,7 +46,7 @@ export const useMediaStore = defineStore({
                     .catch(err => reject(err));
             });
         },
-        openMediaDialog(data?: any, type?: keyof typeof MediaTypes | undefined) {
+        openMediaDialog(data: Media, type?: keyof typeof MediaTypes | undefined) {
             this.dialog.open = true;
             this.dialog.type = type;
             this.dialog.data = data;
@@ -54,7 +54,7 @@ export const useMediaStore = defineStore({
         closeMediaDialog() {
             this.dialog.open = false;
             this.dialog.type = undefined;
-            this.dialog.data = {};
+            this.dialog.data = undefined;
         }
     }
 });

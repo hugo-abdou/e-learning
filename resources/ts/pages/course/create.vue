@@ -1,8 +1,14 @@
 <template>
     <VContainer>
         <VRow align="center">
-            <VCol cols="12">
+            <VCol cols="8">
                 <AppStepper :current-step="currentStep" direction="horizontal" :items="steps" icon-size="22" class="stepper-icon-step-bg" />
+            </VCol>
+            <VCol v-if="currentStep === 1">
+                <VBtnToggle v-model="gridType" divided color="primary" variant="outlined" class="mx-auto">
+                    <VBtn value="list" icon="mdi-list-box-outline" />
+                    <VBtn value="grid" icon="mdi-grid-large" />
+                </VBtnToggle>
             </VCol>
             <VCol cols="12">
                 <VWindow v-model="currentStep" class="disable-tab-transition stepper-content mt-5">
@@ -13,13 +19,18 @@
                         <CourseChaptersForm :ref="el => (steps[1].component = el as null)" />
                     </VWindowItem>
                     <VWindowItem>
-                        <VExpansionPanels v-model="visibility" style="max-width: 500px; margin-inline: auto" variant="accordion">
+                        <VExpansionPanels
+                            mandatory="force"
+                            v-model="visibility"
+                            style="max-width: 500px; margin-inline: auto"
+                            variant="accordion"
+                        >
                             <VExpansionPanel value="publish">
                                 <VExpansionPanelTitle> Save or publish </VExpansionPanelTitle>
                                 <VCardSubtitle class="mb-2">Make your video public or private</VCardSubtitle>
                                 <VExpansionPanelText>
                                     <CustomRadiosWithIcon
-                                        v-model:selected-radio="(publishStatus as string)"
+                                        v-model:selected-radio="publishStatus"
                                         :radio-content="publishStatusList"
                                         :grid-column="{ md: '6' }"
                                     />
@@ -29,7 +40,11 @@
                                 <VExpansionPanelTitle> Schedule </VExpansionPanelTitle>
                                 <VCardSubtitle class="mb-2">Select a date to make your video public.</VCardSubtitle>
                                 <VExpansionPanelText>
-                                    <DateTimePicker style="width: min-content" v-model="scheduleDate" :config="{ inline: true }">
+                                    <DateTimePicker
+                                        style="width: min-content"
+                                        v-model="scheduleDate"
+                                        :config="{ inline: true, enableTime: true, dateFormat: 'Z' }"
+                                    >
                                     </DateTimePicker>
                                 </VExpansionPanelText>
                             </VExpansionPanel>
@@ -43,7 +58,7 @@
                         {{ $t("previous") }}
                     </VBtn>
 
-                    <VBtn v-if="steps.length - 1 === currentStep" append-icon="tabler-check" color="success" @click="nextStep">
+                    <VBtn v-if="steps.length - 1 === currentStep" append-icon="tabler-check" color="success" @click="submit">
                         {{ $t(visibility) }}
                     </VBtn>
 
@@ -65,22 +80,22 @@ import { CourseStatus } from "@/@core/enums";
 const currentStep = ref(2);
 
 const visibility = ref<"publish" | "schedule">("publish");
-const publishStatus = ref<"draft" | "published">("draft");
+const publishStatus = ref<"private" | "published">("private");
 const publishStatusList = [
     {
-        title: CourseStatus.Draft.toUpperCase(),
+        title: "Private",
         desc: "Only you and people you choose can watch your video",
-        value: CourseStatus.Draft,
+        value: CourseStatus.Private,
         icon: { icon: "carbon:virtual-private-cloud", size: "28" }
     },
     {
-        title: CourseStatus.Published.toUpperCase(),
+        title: "Publish",
         desc: "Everyone can watch your video",
         value: CourseStatus.Published,
         icon: { icon: "mdi-public", size: "28" }
     }
 ];
-const scheduleDate = ref(new Date());
+const scheduleDate = ref(new Date().toISOString());
 
 const steps = ref([
     {
@@ -107,6 +122,9 @@ const steps = ref([
 ]);
 const course = ref<Course>();
 
+const gridType = ref<"list" | "grid">("list");
+const router = useRouter();
+const courseStore = useCourseStore();
 const nextStep = async () => {
     const step = steps.value[currentStep.value];
     try {
@@ -132,8 +150,20 @@ const nextStep = async () => {
         console.error(error);
     }
 };
-const router = useRouter();
-const courseStore = useCourseStore();
+const submit = async () => {
+    try {
+        if (!course.value) throw new Error("Course not Found");
+        if (visibility.value === "schedule") {
+            await courseStore.scheduleCourse(course.value.id, scheduleDate.value);
+        }
+        if (visibility.value === "publish") {
+            await courseStore.publishCourse(course.value.id, publishStatus.value);
+        }
+        router.push({ name: "course" });
+    } catch (error) {
+        throw error;
+    }
+};
 </script>
 <style lang="scss">
 .stepper-content .card-list {

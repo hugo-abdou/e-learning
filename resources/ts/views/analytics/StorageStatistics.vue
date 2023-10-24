@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import VueApexCharts from "vue3-apexcharts";
-import { useTheme } from "vuetify";
 import { hexToRgb } from "@layouts/utils";
 import useAnalyticsStore from "@/stores/useAnalyticsStore";
 import { formatBytes } from "@/helpers";
+import { useTheme } from "vuetify/lib/framework.mjs";
 interface State {
     count: number;
     icon: string;

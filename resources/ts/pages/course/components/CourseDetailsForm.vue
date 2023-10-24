@@ -76,9 +76,10 @@
 <script setup lang="ts">
 import { CourseDifficulty, CourseStatus } from "@/@core/enums";
 import { requiredValidator } from "@/@core/utils/validators";
-import { Course, CourseForm } from "@/types";
+import { CourseForm } from "@/types";
 import { UploadBunAttrs } from "@/utils";
 import type { VForm } from "vuetify/components/VForm";
+import Media from "@/components/Media/index.vue";
 
 interface Props {
     course?: CourseForm;
@@ -87,7 +88,6 @@ const props = withDefaults(defineProps<Props>(), {
     course: () => ({
         title: "",
         description: "",
-        is_visible: true,
         status: CourseStatus.Draft,
         difficulty: CourseDifficulty.Beginner,
         thumbnail: null,

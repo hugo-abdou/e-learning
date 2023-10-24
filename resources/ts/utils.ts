@@ -1,4 +1,12 @@
-import { CourseDifficulty, CourseStatus, CourseVisibility, MediaStatus, MediaTypes } from "./@core/enums";
+import {
+    CourseDifficulty,
+    CourseDifficultyColors,
+    CourseStatus,
+    CourseStatusColors,
+    CourseVisibility,
+    MediaStatus,
+    MediaTypes
+} from "./@core/enums";
 
 export const paginateArray = (array: unknown[], perPage: number, page: number) => array.slice((page - 1) * perPage, page * perPage);
 
@@ -52,17 +60,22 @@ export const resolveMediaStatusVariant = (stat: number) => {
 };
 export const resolveCourseStatusVariant = (stat: string) => {
     const statLowerCase = stat.toLowerCase();
-    if (statLowerCase === CourseStatus.Draft) return { color: "secondary", icon: "basil:lock-time-outline" };
-    if (statLowerCase === CourseStatus.Scheduled) return { color: "info", icon: "healthicons:i-schedule-school-date-time" };
-    if (statLowerCase === CourseStatus.Published) return { color: "success", icon: "material-symbols:published-with-changes-rounded" };
-    if (statLowerCase === CourseStatus.Error) return { color: "error", icon: "codicon:error" };
+    if (statLowerCase === CourseStatus.Draft) return { color: CourseStatusColors.Draft, icon: "mdi-database-outline" };
+    if (statLowerCase === CourseStatus.Private) return { color: CourseStatusColors.Private, icon: "mdi-eye-off-outline" };
+    if (statLowerCase === CourseStatus.Scheduled) return { color: CourseStatusColors.Scheduled, icon: "mdi-calendar-arrow-right" };
+    if (statLowerCase === CourseStatus.Published) return { color: CourseStatusColors.Published, icon: "mdi-earth" };
+    if (statLowerCase === CourseStatus.Error) return { color: CourseStatusColors.Error, icon: "mdi-alert-circle-outline" };
+    if (statLowerCase === CourseStatus.Closed) return { color: CourseStatusColors.Closed, icon: "mdi-eye-lock-outline" };
     return { color: "default", icon: "clarity:unknown-status-line" };
 };
 export const resolveCourseDifficultyVariant = (stat: string) => {
     const statLowerCase = stat.toLowerCase();
-    if (statLowerCase === CourseDifficulty.Beginner) return { color: "secondary", icon: "fluent:learning-app-20-regular" };
-    if (statLowerCase === CourseDifficulty.Intermediate) return { color: "primary", icon: "fluent-mdl2:learning-tools" };
-    if (statLowerCase === CourseDifficulty.Advanced) return { color: "success", icon: "carbon:machine-learning-model" };
+    if (statLowerCase === CourseDifficulty.Beginner)
+        return { color: CourseDifficultyColors.Beginner, icon: "fluent:learning-app-20-regular" };
+    if (statLowerCase === CourseDifficulty.Intermediate)
+        return { color: CourseDifficultyColors.Intermediate, icon: "fluent-mdl2:learning-tools" };
+    if (statLowerCase === CourseDifficulty.Advanced)
+        return { color: CourseDifficultyColors.Advanced, icon: "carbon:machine-learning-model" };
     return { color: "default", icon: "clarity:unknown-status-line" };
 };
 export const resolveCourseVisibilityVariant = (stat: number) => {
@@ -104,8 +117,8 @@ export const scrollToTop = () => {
     });
 };
 export const UploadBunAttrs: Partial<{}> = {
-    class: "border-md border-dashed bg-background w-100 h-100",
-    style: "min-height: 100px;aspect-ratio: 16/9",
+    class: "border-md border-dashed w-100 h-100",
+    style: "min-height: 100px",
     variant: "plain",
     color: "secondary"
 };

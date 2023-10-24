@@ -52,10 +52,14 @@ class ProcessVideoMediaJob implements ShouldQueue
                         ...$conversions
                     ])->upload();
                 $meta = VideoProcesseurService::create()->fromPath(storage_path('app/public/' . $media->path))->generateMeta();
-                $data['data'] = ["duration" => $meta->get('duration')];
+                $data['data->width'] = $meta->get('width');
+                $data['data->height'] = $meta->get('height');
+                $data['data->duration'] = $meta->get('duration');
                 $data['status'] = MediaStatus::Completed->value;
             } catch (\Throwable $th) {
-                $data['data'] = ["error" => $th->getMessage()];
+                $data['data->error'] =  $th->getMessage();
+                $data['data->width'] = "1080";
+                $data['data->height'] = "720";
                 $data['status'] = MediaStatus::Error->value;
             }
             $media->update($data);

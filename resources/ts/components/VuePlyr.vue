@@ -4,11 +4,9 @@ import Hls from "hls.js";
 import "plyr/dist/plyr.css";
 export default {
     name: "VuePlyr",
-    inheritAttrs: false,
     props: {
         src: String,
-        poster: String,
-        isPreview: { type: Boolean, default: false }
+        poster: String
     },
     data() {
         return {
@@ -36,45 +34,46 @@ export default {
         },
         init() {
             return new Promise((resolve, reject) => {
-                let videoEl = this.$refs.video;
-
-                if (!Hls.isSupported()) {
-                    videoEl.src = this.src;
-                    this.player = new Plyr(videoEl, this.options);
-                    resolve(this.player);
-                    return;
-                }
-                this.hls = new Hls({
-                    autoStartLoad: true,
-                    maxBufferSize: 2,
-                    maxBufferLength: 30
-                });
-                this.hls.loadSource(this.src);
-                this.hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
-                    const availableQualities = this.hls.levels.map(l => l.height);
-                    availableQualities.unshift(0);
-                    this.options = {
-                        quality: {
-                            default: availableQualities.length,
-                            options: availableQualities,
-                            forced: true,
-                            onChange: e => this.updateQuality(e)
-                        },
-                        i18n: { qualityLabel: { 0: "Auto" } }
-                    };
-                    this.hls.on(Hls.Events.LEVEL_SWITCHED, function (event, data) {});
-
-                    this.player = new Plyr(videoEl, {
-                        ...this.options
-                    });
-                    this.player.on("ended", e => (this.finished = true));
-                    // this.player.options.controls = [];
-                    if (this.$attrs.hasOwnProperty("autoplay")) {
-                        this.player.play();
+                try {
+                    let videoEl = this.$refs.video;
+                    if (!Hls.isSupported()) {
+                        videoEl.src = this.src;
+                        this.player = new Plyr(videoEl, {
+                            ...this.options
+                        });
+                        resolve(this.player);
+                        return;
                     }
-                    resolve(this.player);
-                });
-                this.hls.attachMedia(videoEl);
+                    this.hls = new Hls({
+                        autoStartLoad: true,
+                        maxBufferSize: 2,
+                        maxBufferLength: 30
+                    });
+                    this.hls.loadSource(this.src);
+                    this.hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
+                        const availableQualities = this.hls.levels.map(l => l.height);
+                        availableQualities.unshift(0);
+                        this.options = {
+                            quality: {
+                                default: availableQualities.length,
+                                options: availableQualities,
+                                forced: true,
+                                onChange: e => this.updateQuality(e)
+                            },
+                            i18n: { qualityLabel: { 0: "Auto" } }
+                        };
+                        // this.hls.on(Hls.Events.LEVEL_SWITCHED, function (event, data) {});
+                        this.player = new Plyr(videoEl, this.options);
+                        if (this.$attrs.hasOwnProperty("autoplay")) {
+                            this.player.play();
+                        }
+                        resolve(this.player);
+                    });
+                    this.hls.attachMedia(videoEl);
+                } catch (error) {
+                    reject(error);
+                    throw error;
+                }
             });
         },
         openPreview() {
@@ -95,11 +94,5 @@ export default {
 };
 </script>
 <template>
-    <video
-        ref="video"
-        v-bind="$attrs"
-        controls
-        class="w-100 h-100"
-        style="aspect-ratio: 16/9; --plyr-color-main: rgb(var(--v-theme-primary))"
-    ></video>
+    <video ref="video" controls style="--plyr-color-main: rgb(var(--v-theme-primary)); aspect-ratio: 16/9"></video>
 </template>

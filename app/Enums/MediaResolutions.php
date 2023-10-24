@@ -11,4 +11,9 @@ enum MediaResolutions: string
     case RESOLUTION_1080P =  '1080p';
     case RESOLUTION_1440P =  '1440p';
     case RESOLUTION_2160P =  '2160p';
+
+    static function values()
+    {
+        return collect(self::cases())->map(fn ($value) => $value->value)->toArray();
+    }
 }
