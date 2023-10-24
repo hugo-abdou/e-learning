@@ -77,7 +77,7 @@ import { useCourseStore } from "@/stores/useCourseStore";
 import { Chapter, ChapterForm, Course, CourseForm } from "@/types";
 import { CourseStatus } from "@/@core/enums";
 
-const currentStep = ref(2);
+const currentStep = ref(0);
 
 const visibility = ref<"publish" | "schedule">("publish");
 const publishStatus = ref<"private" | "published">("private");

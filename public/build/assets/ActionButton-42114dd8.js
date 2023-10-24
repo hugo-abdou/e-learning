@@ -1,0 +1,1 @@
+import{av as o,o as n,f as a,af as e}from"./main-85c91a26.js";const t={};function c(r,s){return n(),a(e,{variant:"tonal",color:"default",size:"small",density:"comfortable"})}const f=o(t,[["render",c]]);export{f as _};
