@@ -1,0 +1,137 @@
+{
+  "previous": "Précédent",
+  "next": "Suivant",
+  "submit": "Ajouter",
+  "Add Chapter": "Ajouter un chapitre",
+  "media": {
+    "thumbnale": "Vignette",
+    "upload": {
+      "label": "Téléverser",
+      "description": "Téléversez un fichier depuis votre bureau ou choisissez-en un depuis votre galerie"
+    }
+  },
+  "Allowed-ext": "Autorisé JPG, GIF ou PNG. Taille maximale de 800K",
+  "confirmation-msg-1": "Êtes-vous sûr de vouloir supprimer ce compte ?",
+  "confirmation-msg-2": "Une fois que vous avez supprimé ce compte, il n'y a pas de retour en arrière possible. Soyez certain.",
+  "confirmation-msg-3": "Êtes-vous sûr de vouloir vous déconnecter des autres navigateurs ?",
+  "passwordRequirements_1": "Minimum 8 caractères - plus c'est mieux",
+  "passwordRequirements_2": "Au moins une minuscule",
+  "passwordRequirements_3": "Au moins un chiffre, un symbole ou un espace",
+  "Dashboard": "Tableau de bord",
+  "Users": "Utilisateurs",
+  "Details": "Détails",
+  "Username": "Nom d'utilisateur",
+  "Email": "Email",
+  "Role": "Rôle",
+  "Account": "Compte",
+  "Security": "Sécurité",
+  "Profile Details": "Détails du profil",
+  "Upload new photo": "Télécharger une nouvelle photo",
+  "First Name": "Prénom",
+  "E-mail": "E-mail",
+  "Save changes": "Enregistrer les modifications",
+  "Reset": "Réinitialiser",
+  "Delete Account": "Supprimer le compte",
+  "Deactivate Account": "Désactiver le compte",
+  "Select Role": "Sélectionner le rôle",
+  "Items Per Page": "Éléments par page",
+  "Search": "Rechercher",
+  "Add New User": "Ajouter un nouvel utilisateur",
+  "Previous": "Précédent",
+  "Next": "Suivant",
+  "Change Password": "Changer le mot de passe",
+  "Current Password": "Mot de passe actuel",
+  "Confirm password": "Confirm password",
+  "New Password": "Nouveau mot de passe",
+  "Confirm New Password": "Confirmer le nouveau mot de passe",
+  "Password Requirements": "Exigences du mot de passe",
+  "Log Out Other Browsers": "Déconnexion des autres navigateurs",
+  "BROWSER": "NAVIGATEUR",
+  "IP": "ADRESSE IP",
+  "RECENT ACTIVITIES": "ACTIVITÉS RÉCENTES",
+  "course": {
+    "fields": {
+      "title": {
+        "label": "Titre",
+        "description": "Un titre accrocheur peut vous aider à attirer l'attention des téléspectateurs. Lorsque vous créez des titres de vidéo, il est conseillé d'inclure des mots-clés que votre public est susceptible d'utiliser lors de la recherche de vidéos comme la vôtre."
+      },
+      "difficulty": {
+        "label": "Difficulté",
+        "description": "Spécifiez le niveau de difficulté du cours pour aider les utilisateurs à comprendre le niveau de compétence requis.",
+        "options": {
+          "beginner": "Débutant",
+          "intermediate": "Intermédiaire",
+          "advanced": "Avancé"
+        }
+      },
+      "prerequisite": {
+        "label": "Prérequis",
+        "description": "Indiquez les prérequis ou les compétences recommandées que les téléspectateurs devraient avoir avant de suivre ce cours."
+      },
+      "description": {
+        "label": "Description",
+        "description": "Fournissez une description détaillée du contenu du cours, des objectifs et de ce que les apprenants peuvent attendre d'en tirer."
+      }
+    },
+    "steps": {
+      "details": {
+        "title": "Détails du cours",
+        "subtitle": "Fournissez des informations détaillées sur votre cours"
+      },
+      "chapters": {
+        "title": "des chapitres",
+        "subtitle": "Organisez votre contenu en chapitres pour une expérience d'apprentissage structurée"
+      },
+      "visibility": {
+        "title": "Visibility",
+        "subtitle": "Choose when to publish and who can see your video"
+      }
+    }
+  },
+  "chapter": {
+    "fields": {
+      "title": {
+        "label": "Titre",
+        "description": "Un titre accrocheur peut vous aider à attirer l'attention des téléspectateurs. Lorsque vous créez des titres de vidéo, il est conseillé d'inclure des mots-clés que votre public est susceptible d'utiliser lors de la recherche de vidéos comme la vôtre."
+      },
+      "watermark": {
+        "label": "Filigrane",
+        "description": "Ce texte sera ajouté à vos ressources pour vous protéger. Vous pouvez utiliser un texte normal ou %user_name% pour afficher le nom de votre étudiant sur la ressource. Ainsi, lorsque quelqu'un essaie de le voler, vous saurez qui l'a volé."
+      },
+      "download": {
+        "label": "Téléchargement",
+        "description": "Activez cette option pour permettre aux utilisateurs de télécharger cette ressource."
+      },
+      "visibility": {
+        "label": "Visibilité",
+        "description": "Choisissez qui peut voir ce média, comme tout le monde, les utilisateurs enregistrés ou des groupes spécifiques."
+      }
+    }
+  },
+  "$vuetify": {
+    "badge": "Badge",
+    "pagination": {
+      "ariaLabel": {
+        "root": "racine",
+        "previous": "précédent",
+        "next": "suivant",
+        "currentPage": "page actuelle",
+        "page": "page"
+      }
+    },
+    "input": {
+      "clear": "effacer",
+      "appendAction": "ajouter une action",
+      "prependAction": "ajouter une action au début",
+      "counterSize": "taille du compteur"
+    },
+    "fileInput": {
+      "counterSize": "taille du compteur"
+    },
+    "rating": {
+      "ariaLabel": {
+        "item": "élément"
+      }
+    }
+  }
+}

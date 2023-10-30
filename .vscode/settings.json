@@ -1,0 +1,44 @@
+{
+    "editor.formatOnSave": true,
+    "files.insertFinalNewline": true,
+    "javascript.updateImportsOnFileMove.enabled": "always",
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.autoClosingBrackets": "always"
+    },
+    "[markdown]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    // SCSS
+    "[scss]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    // JSON
+    "[json]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[jsonc]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    // Vue
+    "[vue]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    // Extension: ESLint
+    "eslint.options": {
+        "rulePaths": ["eslint-internal-rules"]
+    },
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true,
+        "source.fixAll.stylelint": true,
+        "source.organizeImports": true
+    },
+    "eslint.alwaysShowStatus": true,
+    "eslint.format.enable": true,
+    // Extension: Stylelint
+    "stylelint.packageManager": "pnpm",
+    "stylelint.validate": ["css", "scss", "vue"]
+}
