@@ -1,52 +1,93 @@
-<script lang="ts" setup>
-const userListMeta = Array(4).fill({
-  icon: 'tabler-user-exclamation',
-  color: 'warning',
-  title: 'Pending Users',
-  stats: '237',
-  percentage: +42,
-  subtitle: 'Last week analytics',
-})
+<script setup lang="ts">
+import Footer from "@/views/front-pages/front-page-footer.vue";
+import Navbar from "@/views/front-pages/front-page-navbar.vue";
+import Banner from "@/views/front-pages/landing-page/banner.vue";
+import ContactUs from "@/views/front-pages/landing-page/contact-us.vue";
+import CustomersReview from "@/views/front-pages/landing-page/customers-review.vue";
+import FaqSection from "@/views/front-pages/landing-page/faq-section.vue";
+import Features from "@/views/front-pages/landing-page/features.vue";
+import HeroSection from "@/views/front-pages/landing-page/hero-section.vue";
+import OurTeam from "@/views/front-pages/landing-page/our-team.vue";
+import PricingPlans from "@/views/front-pages/landing-page/pricing-plans.vue";
+import ProductStats from "@/views/front-pages/landing-page/product-stats.vue";
+
+definePage({
+    meta: {
+        layout: "blank"
+    }
+});
+
+const activeSectionId = ref();
+
+const refHome = ref();
+const refFeatures = ref();
+const refTeam = ref();
+const refContact = ref();
+const refFaq = ref();
+
+useIntersectionObserver(
+    [refHome, refFeatures, refTeam, refContact, refFaq],
+    ([{ isIntersecting, target }]) => {
+        if (isIntersecting) activeSectionId.value = target.id;
+    },
+    {
+        threshold: 0.25
+    }
+);
 </script>
 
 <template>
-  <VRow>
-    <VCol
-      v-for="meta in userListMeta"
-      :key="meta.title"
-      cols="12"
-      sm="6"
-      lg="3"
-    >
-      <VCard>
-        <VCardText class="d-flex justify-space-between">
-          <div>
-            <span>{{ meta.title }}</span>
-            <div class="d-flex align-center gap-2 my-1">
-              <h6 class="text-h4">
-                {{ meta.stats }}
-              </h6>
-              <span :class="meta.percentage > 0 ? 'text-success' : 'text-error'">
-                ( {{ meta.percentage > 0 ? "+" : "" }} {{ meta.percentage }}%)
-              </span>
-            </div>
-            <span class="text-body-2">{{ meta.subtitle }}</span>
-          </div>
+    <div class="landing-page-wrapper">
+        <Navbar :active-id="activeSectionId" />
 
-          <VAvatar
-            rounded
-            variant="tonal"
-            :color="meta.color"
-            :icon="meta.icon"
-          />
-        </VCardText>
-      </VCard>
-    </VCol>
-  </VRow>
+        <!-- 👉 Hero Section  -->
+        <HeroSection ref="refHome" />
+
+        <!-- 👉 Useful features  -->
+        <div :style="{ 'background-color': 'rgb(var(--v-theme-surface))' }">
+            <Features ref="refFeatures" />
+        </div>
+
+        <!-- 👉 Customer Review -->
+        <div :style="{ 'background-color': 'rgb(var(--v-theme-surface))' }">
+            <CustomersReview />
+        </div>
+
+        <!-- 👉 Our Team -->
+        <div :style="{ 'background-color': 'rgb(var(--v-theme-surface))' }">
+            <OurTeam ref="refTeam" />
+        </div>
+
+        <!-- 👉 Pricing Plans -->
+        <div :style="{ 'background-color': 'rgb(var(--v-theme-surface))' }">
+            <PricingPlans />
+        </div>
+
+        <!-- 👉 Product stats -->
+        <ProductStats />
+
+        <!-- 👉 FAQ Section -->
+        <div :style="{ 'background-color': 'rgb(var(--v-theme-surface))' }">
+            <FaqSection ref="refFaq" />
+        </div>
+
+        <!-- 👉 Banner  -->
+        <Banner />
+
+        <!-- 👉 Contact Us  -->
+        <ContactUs ref="refContact" />
+
+        <!-- 👉 Footer -->
+        <Footer />
+    </div>
 </template>
 
-<route lang="yaml">
-meta:
-  redirectIfNotLoggedIn: true
-  redirectIfNotVerified: true
-</route>
+<style lang="scss">
+@media (max-width: 960px) and (min-width: 600px) {
+    .landing-page-wrapper {
+        .v-container {
+            padding-inline: 2rem !important;
+        }
+    }
+}
+</style>

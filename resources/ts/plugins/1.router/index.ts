@@ -23,7 +23,10 @@ const router = createRouter({
 
         return { top: 0 };
     },
-    extendRoutes: pages => [...[...pages].map(route => recursiveLayouts(route))]
+    extendRoutes: pages => {
+        console.log(pages);
+        return [...[...pages].map(route => recursiveLayouts(route))];
+    }
 });
 
 router.beforeResolve(async (to, from, next) => {

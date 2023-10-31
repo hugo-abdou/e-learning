@@ -53,6 +53,7 @@ declare module 'vue-router/auto/routes' {
     'course-components-course-schedule-dialog': RouteRecordInfo<'course-components-course-schedule-dialog', '/course/components/CourseScheduleDialog', Record<never, never>, Record<never, never>>,
     'course-components-responsive-text': RouteRecordInfo<'course-components-responsive-text', '/course/components/ResponsiveText', Record<never, never>, Record<never, never>>,
     'course-create': RouteRecordInfo<'course-create', '/course/create', Record<never, never>, Record<never, never>>,
+    'dashboard': RouteRecordInfo<'dashboard', '/dashboard', Record<never, never>, Record<never, never>>,
     'forgot-password': RouteRecordInfo<'forgot-password', '/forgot-password', Record<never, never>, Record<never, never>>,
     'gallery': RouteRecordInfo<'gallery', '/gallery', Record<never, never>, Record<never, never>>,
     'login': RouteRecordInfo<'login', '/login', Record<never, never>, Record<never, never>>,

@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import { useConfigStore } from '@core/stores/config'
+import type { SearchResults } from '@db/app-bar-search/types'
 import Shepherd from 'shepherd.js'
 import { withQuery } from 'ufo'
 import type { RouteLocationRaw } from 'vue-router'
-import type { SearchResults } from '@db/app-bar-search/types'
-import { useConfigStore } from '@core/stores/config'
 
 interface Suggestion {
   icon: string
@@ -31,58 +31,58 @@ const suggestionGroups: SuggestionGroup[] = [
   {
     title: 'Popular Searches',
     content: [
-      { icon: 'tabler-chart-donut', title: 'Analytics', url: { name: 'dashboards-analytics' } },
-      { icon: 'tabler-chart-bubble', title: 'CRM', url: { name: 'dashboards-crm' } },
-      { icon: 'tabler-file', title: 'Landing Page', url: { name: 'front-pages-landing-page' } },
-      { icon: 'tabler-users', title: 'User List', url: { name: 'apps-user-list' } },
+      // { icon: 'tabler-chart-donut', title: 'Analytics', url: { name: 'dashboards-analytics' } },
+      // { icon: 'tabler-chart-bubble', title: 'CRM', url: { name: 'dashboards-crm' } },
+      // { icon: 'tabler-file', title: 'Landing Page', url: { name: 'front-pages-landing-page' } },
+      // { icon: 'tabler-users', title: 'User List', url: { name: 'apps-user-list' } },
     ],
   },
   {
     title: 'Apps & Pages',
     content: [
-      { icon: 'tabler-calendar', title: 'Calendar', url: { name: 'apps-calendar' } },
-      { icon: 'tabler-shopping-cart', title: 'ECommerce Product', url: { name: 'apps-ecommerce-product-list' } },
-      { icon: 'tabler-school', title: 'Academy', url: { name: 'apps-academy-dashboard' } },
-      { icon: 'tabler-truck', title: 'Logistic Fleet', url: { name: 'apps-logistics-fleet' } },
+      // { icon: 'tabler-calendar', title: 'Calendar', url: { name: 'apps-calendar' } },
+      // { icon: 'tabler-shopping-cart', title: 'ECommerce Product', url: { name: 'apps-ecommerce-product-list' } },
+      // { icon: 'tabler-school', title: 'Academy', url: { name: 'apps-academy-dashboard' } },
+      // { icon: 'tabler-truck', title: 'Logistic Fleet', url: { name: 'apps-logistics-fleet' } },
     ],
   },
   {
     title: 'User Interface',
     content: [
-      { icon: 'tabler-letter-a', title: 'Typography', url: { name: 'pages-typography' } },
-      { icon: 'tabler-square', title: 'Tabs', url: { name: 'components-tabs' } },
-      { icon: 'tabler-map', title: 'Tour', url: { name: 'extensions-tour' } },
-      { icon: 'tabler-keyboard', title: 'Statistics', url: { name: 'pages-cards-card-statistics' } },
+      // { icon: 'tabler-letter-a', title: 'Typography', url: { name: 'pages-typography' } },
+      // { icon: 'tabler-square', title: 'Tabs', url: { name: 'components-tabs' } },
+      // { icon: 'tabler-map', title: 'Tour', url: { name: 'extensions-tour' } },
+      // { icon: 'tabler-keyboard', title: 'Statistics', url: { name: 'pages-cards-card-statistics' } },
     ],
   },
   {
     title: 'Popular Searches',
     content: [
-      { icon: 'tabler-list', title: 'Select', url: { name: 'forms-select' } },
-      { icon: 'tabler-currency-dollar', title: 'Payment', url: { name: 'front-pages-payment' } },
-      { icon: 'tabler-calendar', title: 'Date & Time Picker', url: { name: 'forms-date-time-picker' } },
-      { icon: 'tabler-home', title: 'Property Listing Wizard', url: { name: 'wizard-examples-property-listing' } },
+      // { icon: 'tabler-list', title: 'Select', url: { name: 'forms-select' } },
+      // { icon: 'tabler-currency-dollar', title: 'Payment', url: { name: 'front-pages-payment' } },
+      // { icon: 'tabler-calendar', title: 'Date & Time Picker', url: { name: 'forms-date-time-picker' } },
+      // { icon: 'tabler-home', title: 'Property Listing Wizard', url: { name: 'wizard-examples-property-listing' } },
     ],
   },
 ]
 
 // 👉 No Data suggestion
 const noDataSuggestions: Suggestion[] = [
-  {
-    title: 'Analytics Dashboard',
-    icon: 'tabler-shopping-cart',
-    url: { name: 'dashboards-analytics' },
-  },
-  {
-    title: 'Account Settings',
-    icon: 'tabler-user',
-    url: { name: 'pages-account-settings-tab', params: { tab: 'account' } },
-  },
-  {
-    title: 'Pricing Page',
-    icon: 'tabler-cash',
-    url: { name: 'pages-pricing' },
-  },
+  // {
+  //   title: 'Analytics Dashboard',
+  //   icon: 'tabler-shopping-cart',
+  //   url: { name: 'dashboards-analytics' },
+  // },
+  // {
+  //   title: 'Account Settings',
+  //   icon: 'tabler-user',
+  //   url: { name: 'pages-account-settings-tab', params: { tab: 'account' } },
+  // },
+  // {
+  //   title: 'Pricing Page',
+  //   icon: 'tabler-cash',
+  //   url: { name: 'pages-pricing' },
+  // },
 ]
 
 const searchQuery = ref('')
@@ -238,11 +238,11 @@ const LazyAppBarSearch = defineAsyncComponent(() => import('@core/components/App
 @use "@styles/variables/_vuetify.scss";
 
 .meta-key {
-  border: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
-  border-radius: 6px;
-  block-size: 1.5625rem;
-  line-height: 1.3125rem;
-  padding-block: 0.125rem;
-  padding-inline: 0.25rem;
+    border: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
+    border-radius: 6px;
+    block-size: 1.5625rem;
+    line-height: 1.3125rem;
+    padding-block: 0.125rem;
+    padding-inline: 0.25rem;
 }
 </style>
