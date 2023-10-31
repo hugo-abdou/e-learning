@@ -23,8 +23,8 @@ export default class ResumableUppyPlugin extends BasePlugin {
                 "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')?.getAttribute("content")
             },
             withCredentials: true,
-            chunkSize: 2 * 1024 * 1024,
-            simultaneousUploads: 2,
+            chunkSize: 1 * 1024 * 1024,
+            simultaneousUploads: 1,
             maxChunkRetries: 3
         });
 
