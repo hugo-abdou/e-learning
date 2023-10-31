@@ -9,13 +9,11 @@ use App\Http\Resources\MediaResource;
 use App\Jobs\ProcessImageMediaJob;
 use App\Jobs\ProcessVideoMediaJob;
 use App\Models\Media;
+use App\Services\Resumable;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
-use Dilab\Network\SimpleRequest;
-use Dilab\Network\SimpleResponse;
-use Dilab\Resumable;
-use Exception;
 use Illuminate\Http\File as HttpFile;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -27,30 +25,27 @@ class ResumableUploadController extends Controller
      */
     public function __invoke(Request $request)
     {
-        // $tmpPath    = sys_get_temp_dir().'/' . env('APP_NAME', 'laravel');
+        // $tmpPath    = sys_get_temp_dir() . DIRECTORY_SEPARATOR . env('APP_NAME', 'laravel');
         $tmpPath    = storage_path('app' . DIRECTORY_SEPARATOR . 'tmp');
         if (!Storage::directoryExists($tmpPath)) {
             File::makeDirectory($tmpPath, $mode = 0777, true, true);
         }
 
-        $resumable = new Resumable(
-            new SimpleRequest(),
-            new SimpleResponse()
-        );
+        $resumable = new Resumable($request);
 
-        $resumable->tempFolder      = $tmpPath;
-        $resumable->uploadFolder    = $tmpPath;
+        $resumable->tempFolder = $tmpPath;
+        $resumable->uploadFolder = $tmpPath;
 
-        $result = $resumable->process();
+        $result =  $resumable->process();
 
         switch ($result) {
-            case 200:
-                return response("Ok", 200);
-            case 201:
-                $media = $this->completedResponce($resumable->uploadFolder . '/' . $resumable->uploadFileName);
+            case Response::HTTP_OK:
+                return response("Ok", Response::HTTP_OK);
+            case  Response::HTTP_CREATED:
+                $media = $this->completedResponce($tmpPath . DIRECTORY_SEPARATOR . $resumable->getOriginalFilename());
                 $this->prosseceMedia($media);
-                return response()->json(MediaResource::make(Media::find($media->id)), 201);
-            case 204:
+                return response()->json(MediaResource::make(Media::find($media->id)), Response::HTTP_CREATED);
+            case Response::HTTP_NOT_FOUND:
                 return response(['message' => 'Chunk not found'], 204);
             default:
                 return response(['message' => 'An error occurred'], 404);
@@ -78,7 +73,7 @@ class ResumableUploadController extends Controller
         return $media;
     }
 
-    function prosseceMedia(Media $media): void
+    private function prosseceMedia(Media $media): void
     {
         $type = Str::before($media->mime_type, '/');
         if ($type === 'application') {

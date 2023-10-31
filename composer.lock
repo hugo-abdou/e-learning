@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f5149c7a69b409494b41f4c403f25681",
+    "content-hash": "25ea9ea99e6aae16467850d0907d2e99",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -116,78 +116,30 @@
             "time": "2023-01-15T23:15:59+00:00"
         },
         {
-            "name": "cakephp/cakephp",
-            "version": "2.10.22",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/cakephp/cakephp.git",
-                "reference": "d0c51b37422d0d2c99be74045d4439a674259308"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/cakephp/zipball/d0c51b37422d0d2c99be74045d4439a674259308",
-                "reference": "d0c51b37422d0d2c99be74045d4439a674259308",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "require-dev": {
-                "cakephp/cakephp-codesniffer": "^1.0.0",
-                "phpunit/phpunit": "^3.7"
-            },
-            "suggest": {
-                "ext-mcrypt": "You need to install ext-openssl or ext-mcrypt to use AES-256 encryption",
-                "ext-openssl": "You need to install ext-openssl or ext-mcrypt to use AES-256 encryption"
-            },
-            "bin": [
-                "lib/Cake/Console/cake"
-            ],
-            "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "CakePHP Community",
-                    "homepage": "https://github.com/cakephp/cakephp/graphs/contributors"
-                }
-            ],
-            "description": "The CakePHP framework",
-            "homepage": "https://cakephp.org",
-            "keywords": [
-                "framework"
-            ],
-            "support": {
-                "forum": "https://stackoverflow.com/tags/cakephp",
-                "irc": "irc://irc.freenode.org/cakephp",
-                "issues": "https://github.com/cakephp/cakephp/issues",
-                "source": "https://github.com/cakephp/cakephp"
-            },
-            "time": "2020-06-07T02:16:36+00:00"
-        },
-        {
             "name": "cakephp/core",
-            "version": "3.9.4",
+            "version": "4.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/core.git",
-                "reference": "4b45635d6be8a98be175fea9c9f575de29d515b3"
+                "reference": "a95f5d8eb0de3876027cc6c8aff7c9284194efc8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/core/zipball/4b45635d6be8a98be175fea9c9f575de29d515b3",
-                "reference": "4b45635d6be8a98be175fea9c9f575de29d515b3",
+                "url": "https://api.github.com/repos/cakephp/core/zipball/a95f5d8eb0de3876027cc6c8aff7c9284194efc8",
+                "reference": "a95f5d8eb0de3876027cc6c8aff7c9284194efc8",
                 "shasum": ""
             },
             "require": {
-                "cakephp/utility": "^3.6.0",
-                "php": ">=5.6.0"
+                "cakephp/utility": "^4.0",
+                "php": ">=7.4.0"
+            },
+            "provide": {
+                "psr/container-implementation": "^1.0 || ^2.0"
             },
             "suggest": {
                 "cakephp/cache": "To use Configure::store() and restore().",
-                "cakephp/event": "To use PluginApplicationInterface or plugin applications."
+                "cakephp/event": "To use PluginApplicationInterface or plugin applications.",
+                "league/container": "To use Container and ServiceProvider classes"
             },
             "type": "library",
             "autoload": {
@@ -221,25 +173,25 @@
                 "issues": "https://github.com/cakephp/cakephp/issues",
                 "source": "https://github.com/cakephp/core"
             },
-            "time": "2020-10-21T21:21:05+00:00"
+            "time": "2023-09-08T02:51:25+00:00"
         },
         {
             "name": "cakephp/filesystem",
-            "version": "3.9.4",
+            "version": "4.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/filesystem.git",
-                "reference": "06014a335c840f092cc9b9b9f57c0b8e7faa09a1"
+                "reference": "72ef47257cfc7767c4835846cb7792c8c419fa34"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/filesystem/zipball/06014a335c840f092cc9b9b9f57c0b8e7faa09a1",
-                "reference": "06014a335c840f092cc9b9b9f57c0b8e7faa09a1",
+                "url": "https://api.github.com/repos/cakephp/filesystem/zipball/72ef47257cfc7767c4835846cb7792c8c419fa34",
+                "reference": "72ef47257cfc7767c4835846cb7792c8c419fa34",
                 "shasum": ""
             },
             "require": {
-                "cakephp/core": "^3.6.0",
-                "php": ">=5.6.0"
+                "cakephp/core": "^4.0",
+                "php": ">=7.4.0"
             },
             "type": "library",
             "autoload": {
@@ -271,25 +223,25 @@
                 "issues": "https://github.com/cakephp/cakephp/issues",
                 "source": "https://github.com/cakephp/filesystem"
             },
-            "time": "2020-06-07T01:48:49+00:00"
+            "time": "2023-07-29T16:24:46+00:00"
         },
         {
             "name": "cakephp/utility",
-            "version": "3.9.4",
+            "version": "4.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/utility.git",
-                "reference": "e655b399b7492e517caef52fb87af9db10543112"
+                "reference": "9fb72974e91e81f1545a15a6d45f50c82cd77def"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/utility/zipball/e655b399b7492e517caef52fb87af9db10543112",
-                "reference": "e655b399b7492e517caef52fb87af9db10543112",
+                "url": "https://api.github.com/repos/cakephp/utility/zipball/9fb72974e91e81f1545a15a6d45f50c82cd77def",
+                "reference": "9fb72974e91e81f1545a15a6d45f50c82cd77def",
                 "shasum": ""
             },
             "require": {
-                "cakephp/core": "^3.6.0",
-                "php": ">=5.6.0"
+                "cakephp/core": "^4.0",
+                "php": ">=7.4.0"
             },
             "suggest": {
                 "ext-intl": "To use Text::transliterate() or Text::slug()",
@@ -330,7 +282,7 @@
                 "issues": "https://github.com/cakephp/cakephp/issues",
                 "source": "https://github.com/cakephp/utility"
             },
-            "time": "2020-08-18T13:55:20+00:00"
+            "time": "2023-04-11T21:22:06+00:00"
         },
         {
             "name": "dasprid/enum",
@@ -2766,51 +2718,6 @@
                 }
             ],
             "time": "2023-06-21T08:46:11+00:00"
-        },
-        {
-            "name": "nassajis/laravel-resumable-upload",
-            "version": "1.2.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/nassajis/laravel-resumable-upload.git",
-                "reference": "8811329c4688a7b57f95da11cbbcef393199992c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/nassajis/laravel-resumable-upload/zipball/8811329c4688a7b57f95da11cbbcef393199992c",
-                "reference": "8811329c4688a7b57f95da11cbbcef393199992c",
-                "shasum": ""
-            },
-            "require": {
-                "cakephp/filesystem": "^3.0",
-                "php": ">=5.3.0"
-            },
-            "require-dev": {
-                "monolog/monolog": "^1.17",
-                "phpunit/phpunit": "~4.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Dilab\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Nassaji",
-                    "email": "nassaji.s@gmail.com"
-                }
-            ],
-            "description": "Laravel Resumable Upload",
-            "support": {
-                "issues": "https://github.com/nassajis/laravel-resumable-upload/issues",
-                "source": "https://github.com/nassajis/laravel-resumable-upload/tree/master"
-            },
-            "time": "2017-12-14T15:09:34+00:00"
         },
         {
             "name": "nesbot/carbon",
@@ -9682,5 +9589,5 @@
         "php": "^8.1"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }

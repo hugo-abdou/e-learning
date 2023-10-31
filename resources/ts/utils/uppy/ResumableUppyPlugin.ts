@@ -23,8 +23,8 @@ export default class ResumableUppyPlugin extends BasePlugin {
                 "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')?.getAttribute("content")
             },
             withCredentials: true,
-            chunkSize: 5 * 1024 * 1024,
-            simultaneousUploads: 1,
+            chunkSize: 2 * 1024 * 1024,
+            simultaneousUploads: 2,
             maxChunkRetries: 3
         });
 
@@ -40,6 +40,7 @@ export default class ResumableUppyPlugin extends BasePlugin {
             return file;
         });
         this.resumable.addFiles(files);
+        this.resumable.set;
         this.resumable.on("fileAdded", (file: ResumableFile) => {
             this.uppy.emit("upload-started", this.uppy.getFile(file.file.uuid));
             this.resumable.upload();
@@ -62,13 +63,17 @@ export default class ResumableUppyPlugin extends BasePlugin {
             });
         });
         this.resumable.on("fileSuccess", (file: ResumableFile, message: string) => {
-            const uploadResp = { status: 200, body: JSON.parse(message) };
-            this.uppy.emit("upload-success", this.uppy.getFile(file.file.uuid), uploadResp);
-            Promise.resolve();
+            if (message !== "Ok") {
+                const uploadResp = { status: 200, body: JSON.parse(message) };
+                this.uppy.emit("upload-success", this.uppy.getFile(file.file.uuid), uploadResp);
+                return Promise.resolve();
+            }
+            this.resumable.uploadNextChunk();
         });
         this.resumable.on("fileError", (file: ResumableFile, _error: string) => {
             const error: { message: string } = JSON.parse(_error);
             this.uppy.emit("upload-error", this.uppy.getFile(file.file.uuid), error);
+            Promise.reject(error);
         });
     }
 

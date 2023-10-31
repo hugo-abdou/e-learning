@@ -104,7 +104,6 @@ const deleteMedia = (media: MediaType) => {
                 :color="resolveMediaStatusVariant(resource.status).color"
                 :prepend-icon="resolveMediaStatusVariant(resource.status).icon"
             />
-            {{ style }}
         </div>
         <VImg :src="thumb" :style="style" cover>
             <template v-slot:placeholder>
