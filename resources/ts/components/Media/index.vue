@@ -94,7 +94,7 @@ const deleteMedia = (media: MediaType) => {
 </script>
 
 <template>
-    <VCard v-if="isPreview" :style="style" color="surface" class="h-100 media-card">
+    <VCard v-if="isPreview" :style="style" color="surface" class="media-card w-100 h-100 overflow-hidden">
         <div class="card-header-actions pa-1">
             <VChip
                 v-if="resource.status === MediaStatus.Processing || resource.status === MediaStatus.Error"
@@ -104,14 +104,16 @@ const deleteMedia = (media: MediaType) => {
                 :color="resolveMediaStatusVariant(resource.status).color"
                 :prepend-icon="resolveMediaStatusVariant(resource.status).icon"
             />
+            {{ style }}
         </div>
-        <VImg class="w-100 h-100" :src="thumb" cover>
+        <VImg :src="thumb" :style="style" cover>
             <template v-slot:placeholder>
                 <v-row class="fill-height ma-0" align="center" justify="center">
                     <v-progress-circular indeterminate color="grey-lighten-5"></v-progress-circular>
                 </v-row>
             </template>
         </VImg>
+        <!-- <VImg :src="thumb" style="inset-block-start: 0" class="w-100 h-100 position-absolute blurred-background rounded" /> -->
         <VToolbar absolute density="compact" class="toolbar-overlay pa-2">
             <div class="d-flex align-center justify-center w-100 me-2">
                 <VBtn v-if="resource.url" @click="playPreview(resource.type)" icon="tabler-play" variant="elevated" />

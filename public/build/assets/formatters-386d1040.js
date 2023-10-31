@@ -1,0 +1,1 @@
+const e=t=>t?t.split(" ").map(a=>a.charAt(0).toUpperCase()).join(""):"",n=t=>{const r=/\B(?=(\d{3})+(?!\d))/g;return Math.abs(t)>9999?`${Math.sign(t)*+(Math.abs(t)/1e3).toFixed(1)}k`:Math.abs(t).toFixed(0).replace(r,",")},o=(t,r={month:"short",day:"numeric",year:"numeric"})=>t&&new Intl.DateTimeFormat("en-US",r).format(new Date(t));export{e as a,o as f,n as k};
