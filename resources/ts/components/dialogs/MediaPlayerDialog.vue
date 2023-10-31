@@ -25,7 +25,11 @@ const aspectRatio = computed(() => {
             />
             <div v-if="dialog.type === MediaTypes.image">
                 <VImg :src="dialog.data.url" style="aspect-ratio: 16/9" cover />
-                <VImg :src="dialog.data.url" style="top: 0" class="w-100 h-100 position-absolute blurred-background rounded" />
+                <VImg
+                    :src="dialog.data.url"
+                    style="inset-block-start: 0"
+                    class="w-100 h-100 position-absolute blurred-background rounded"
+                />
             </div>
             <template v-if="dialog.type === MediaTypes.pdf">
                 <!-- @vue-skip -->

@@ -27,7 +27,8 @@ class ResumableUploadController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $tmpPath    = sys_get_temp_dir() . env('APP_NAME', 'laravel');
+        // $tmpPath    = sys_get_temp_dir().'/' . env('APP_NAME', 'laravel');
+        $tmpPath    = storage_path('app' . DIRECTORY_SEPARATOR . 'tmp');
         if (!Storage::directoryExists($tmpPath)) {
             File::makeDirectory($tmpPath, $mode = 0777, true, true);
         }
