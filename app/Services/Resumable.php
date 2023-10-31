@@ -2,10 +2,9 @@
 
 namespace App\Services;
 
-use Cake\Filesystem\File;
-use Cake\Filesystem\Folder;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Storage;
 
 class Resumable
 {
@@ -47,7 +46,7 @@ class Resumable
         $this->preProcess();
     }
 
-    // sets original filename and extenstion, blah blah
+    // sets original filename and extension, blah blah
     public function preProcess()
     {
         if (!empty($this->resumableParams())) {
@@ -121,7 +120,7 @@ class Resumable
     }
 
     /**
-     * Get final filapath.
+     * Get final filepath.
      *
      * @return string Final filename
      */
@@ -141,9 +140,9 @@ class Resumable
     }
 
     /**
-     * Makes sure the orginal extension never gets overriden by user defined filename.
+     * Makes sure the original extension never gets overridden by user-defined filename.
      *
-     * @param string User defined filename
+     * @param string User-defined filename
      * @param string Original filename
      * @return string Filename that always has an extension from the original file
      */
@@ -195,8 +194,8 @@ class Resumable
      */
     private function createFileAndDeleteTmp($identifier, $filename)
     {
-        $tmpFolder = new Folder($this->tmpChunkDir($identifier));
-        $chunkFiles = $tmpFolder->read(true, true, true)[1];
+        $tmpChunkDir = $this->tmpChunkDir($identifier);
+        $chunkFiles = Storage::files($tmpChunkDir);
 
         // if the user has set a custom filename
         if (null !== $this->filename) {
@@ -210,7 +209,7 @@ class Resumable
         $this->extension = $this->findExtension($this->filepath);
 
         if ($this->createFileFromChunks($chunkFiles, $this->filepath) && $this->deleteTmpFolder) {
-            $tmpFolder->delete();
+            Storage::deleteDirectory($tmpChunkDir);
             $this->isUploadComplete = true;
         }
     }
@@ -223,7 +222,6 @@ class Resumable
         }
         return $resumableParams['resumable' . ucfirst($shortName)];
     }
-
 
     public function isFileUploadComplete($filename, $identifier, $chunkSize, $totalSize)
     {
@@ -241,15 +239,15 @@ class Resumable
 
     public function isChunkUploaded($identifier, $filename, $chunkNumber)
     {
-        $file = new File($this->tmpChunkDir($identifier) . DIRECTORY_SEPARATOR . $this->tmpChunkFilename($filename, $chunkNumber));
-        return $file->exists();
+        $chunkFile = $this->tmpChunkDir($identifier) . DIRECTORY_SEPARATOR . $this->tmpChunkFilename($filename, $chunkNumber);
+        return Storage::exists($chunkFile);
     }
 
     public function tmpChunkDir($identifier)
     {
         $tmpChunkDir = $this->tempFolder . DIRECTORY_SEPARATOR . $identifier;
-        if (!file_exists($tmpChunkDir)) {
-            mkdir($tmpChunkDir);
+        if (!Storage::exists($tmpChunkDir)) {
+            Storage::makeDirectory($tmpChunkDir);
         }
         return $tmpChunkDir;
     }
@@ -263,25 +261,25 @@ class Resumable
     {
         $this->log('Beginning of create files from chunks');
 
-        natsort($chunkFiles);
-
-        $destFile = new File($destFile, true);
+        $destFileContents = '';
         foreach ($chunkFiles as $chunkFile) {
-            $file = new File($chunkFile);
-            $destFile->append($file->read());
+            $chunkFileContents = Storage::get($chunkFile);
+            $destFileContents .= $chunkFileContents;
 
             $this->log('Append ', ['chunk file' => $chunkFile]);
         }
 
+        Storage::put($destFile, $destFileContents);
+
         $this->log('End of create files from chunks');
-        return $destFile->exists();
+        return Storage::exists($destFile);
     }
 
     public function moveUploadedFile($file, $destFile)
     {
-        $file = new File($file);
-        if ($file->exists()) {
-            return $file->copy($destFile);
+        if ($file->isValid()) {
+            $file->storeAs(dirname($destFile), basename($destFile));
+            return true;
         }
         return false;
     }
@@ -299,7 +297,8 @@ class Resumable
     private function log($msg, $ctx = array())
     {
         if ($this->debug) {
-            $this->log->addDebug($msg, $ctx);
+            // Log your message here using Laravel's logging system
+            // Example: \Log::info($msg, $ctx);
         }
     }
 

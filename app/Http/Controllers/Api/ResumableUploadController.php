@@ -26,7 +26,7 @@ class ResumableUploadController extends Controller
     public function __invoke(Request $request)
     {
         // $tmpPath    = sys_get_temp_dir() . DIRECTORY_SEPARATOR . env('APP_NAME', 'laravel');
-        $tmpPath    = storage_path('app' . DIRECTORY_SEPARATOR . 'tmp');
+        $tmpPath    = 'tmp';
         if (!Storage::directoryExists($tmpPath)) {
             File::makeDirectory($tmpPath, $mode = 0777, true, true);
         }
@@ -54,7 +54,7 @@ class ResumableUploadController extends Controller
 
     private function completedResponce(string $uploadPath): Media
     {
-        $file = new HttpFile($uploadPath);
+        $file = new HttpFile(storage_path('app/'  . DIRECTORY_SEPARATOR . $uploadPath));
         $directionPath = 'media/' . auth()->id() . "/" . uniqid() . "_" . time();
         $path = Storage::disk('public')->putFileAs($directionPath, $file, "original." . $file->getExtension());
         $media = Media::create([
