@@ -15,6 +15,6 @@ defineExpose({ ...plyr.value });
 
 <template>
     <VCard>
-        <VuePlyr ref="plyr" :src="media.url" :poster="media.thumb_url" />
+        <VuePlyr ref="plyr" v-bind="$attrs" :src="media.url" :poster="media.thumb_url" />
     </VCard>
 </template>

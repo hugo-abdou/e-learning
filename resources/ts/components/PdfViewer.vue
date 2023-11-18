@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { VuePDF, usePDF } from "@tato30/vue-pdf";
 import { useMediaStore } from "@/stores/mediaStore";
-import { VSkeletonLoader } from "vuetify/labs/VSkeletonLoader";
-import "@tato30/vue-pdf/style.css";
 import { useUserStore } from "@/stores/user";
 import { DocumentMedia } from "@/types";
+import { VuePDF, usePDF } from "@tato30/vue-pdf";
+import "@tato30/vue-pdf/style.css";
+import { ref } from "vue";
+import { VSkeletonLoader } from "vuetify/labs/VSkeletonLoader";
 
 interface Props {
     document: DocumentMedia;
@@ -41,11 +41,9 @@ defineExpose({ reset, next, prev, page, pages });
 </script>
 
 <template>
-    <div @contextmenu.prevent="" class="overflow-auto" style="max-height: 100%">
+    <div @contextmenu.prevent="" class="overflow-auto" style="max-block-size: 100%">
         <VuePDF v-if="progress.loaded" :pdf="pdf" :page="page" :watermark-text="sanetizedWatermark" fit-parent />
         <v-skeleton-loader v-else class="py-5" :type="['heading', 'paragraph', 'paragraph']"></v-skeleton-loader>
         <slot v-bind="{ reset, next, prev, page, pages }" />
     </div>
 </template>
-
-<style scoped></style>

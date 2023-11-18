@@ -1,6 +1,6 @@
 <template>
     <VCard class="media-card">
-        <PdfViewer ref="pdfViwer" :document="(media as DocumentMedia)" can-open-preview />
+        <PdfViewer ref="pdfViwer" v-bind="$attrs" :document="(media as DocumentMedia)" can-open-preview />
         <VToolbar absolute density="compact" class="px-2">
             <VChip rounded="sm" size="small" class="ml-1" color="surface" variant="elevated">
                 page {{ pdfViwer?.page }} of {{ pdfViwer?.pages }} pages

@@ -43,6 +43,7 @@ declare module 'vue-router/auto/routes' {
     '$error': RouteRecordInfo<'$error', '/:error(.*)', { error: ParamValue<true> }, { error: ParamValue<false> }>,
     'account-settings-tab': RouteRecordInfo<'account-settings-tab', '/account-settings/:tab', { tab: ParamValue<true> }, { tab: ParamValue<false> }>,
     'browse': RouteRecordInfo<'browse', '/browse', Record<never, never>, Record<never, never>>,
+    'calendar': RouteRecordInfo<'calendar', '/calendar', Record<never, never>, Record<never, never>>,
     'course': RouteRecordInfo<'course', '/course', Record<never, never>, Record<never, never>>,
     'course-id': RouteRecordInfo<'course-id', '/course/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'course-id-edit': RouteRecordInfo<'course-id-edit', '/course/:id/edit', { id: ParamValue<true> }, { id: ParamValue<false> }>,

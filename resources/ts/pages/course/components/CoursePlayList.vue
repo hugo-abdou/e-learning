@@ -1,68 +1,72 @@
 <script setup lang="ts">
-import { secondsToMinutes } from '@/helpers';
-import type { Attachment, Chapter } from '@/types';
-import { resolveAttachmentTypeIcon, resolveDefaultThumbnal } from '@/utils';
+import { secondsToMinutes } from "@/helpers";
+import type { Attachment, Chapter } from "@/types";
+import { resolveAttachmentTypeIcon, resolveDefaultThumbnal } from "@/utils";
 
-type PlaylistAttachment = Attachment
+type PlaylistAttachment = Attachment;
 
 interface Props {
-  chapters: Chapter[]
-  attachment?: PlaylistAttachment
+  chapters: Chapter[];
+  attachment?: PlaylistAttachment;
 }
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
-const emit = defineEmits<Emits>()
+const emit = defineEmits<Emits>();
 interface Emits {
-  (e: 'update:attachment', value: PlaylistAttachment): void
-  (e: 'play', value: PlaylistAttachment): void
+  (e: "update:attachment", value: PlaylistAttachment): void;
+  (e: "play", value: PlaylistAttachment): void;
 }
 
 // TODO: make this dinamique
-const isBorderd = false
-type Playlist = (PlaylistAttachment | { type: 'header'; title: string; id: number })[]
-const playlist = ref<Playlist>([])
+const isBorderd = false;
+type Playlist = (
+  | PlaylistAttachment
+  | { type: "header"; title: string; id: number }
+)[];
+const playlist = ref<Playlist>([]);
 
 const updateSelected = (e: PlaylistAttachment[]) => {
-  if (e[0])
-    emit('update:attachment', e[0])
-}
+  if (e[0]) emit("update:attachment", e[0]);
+};
 
 const next = () => {
   if (props.attachment) {
     // @ts-expect-error
-    const activeIndex = props.attachment?.index
-    let nextIndex = activeIndex + 1
+    const activeIndex = props.attachment?.index;
+    let nextIndex = activeIndex + 1;
 
     // check if the index is a header or attachment
-    if (playlist.value[nextIndex]?.type === 'header')
-      nextIndex++
+    if (playlist.value[nextIndex]?.type === "header") nextIndex++;
 
     // @ts-expect-error
-    const attachment = playlist.value.find(({ index }) => nextIndex === index)
-    if (attachment)
-      emit('update:attachment', attachment as Attachment)
+    const attachment = playlist.value.find(({ index }) => nextIndex === index);
+    if (attachment) emit("update:attachment", attachment as Attachment);
   }
-}
+};
 
-const prev = () => { }
+const prev = () => {};
 
-defineExpose({ next, prev })
+defineExpose({ next, prev });
 onMounted(() => {
   playlist.value = props.chapters
     .reduce((result: Playlist, { attachments, title, id }) => {
       if (attachments.length) {
-        result.push({ type: 'header', title, id })
-        result.push(...JSON.parse(JSON.stringify(attachments.map(it => ({ ...it, chapter_id: id })))))
+        result.push({ type: "header", title, id });
+        result.push(
+          ...JSON.parse(
+            JSON.stringify(attachments.map((it) => ({ ...it, chapter_id: id })))
+          )
+        );
       }
 
-      return result
+      return result;
     }, [])
-    .map((it, i) => ({ ...it, index: i }))
+    .map((it, i) => ({ ...it, index: i }));
 
-  const first = playlist.value.filter(({ type }) => type !== 'header')[0]
+  const first = playlist.value.filter(({ type }) => type !== "header")[0];
 
-  emit('update:attachment', first as PlaylistAttachment)
-})
+  emit("update:attachment", first as PlaylistAttachment);
+});
 </script>
 
 <template>
@@ -73,10 +77,7 @@ onMounted(() => {
     :selected="[attachment]"
     @update:selected="updateSelected"
   >
-    <template
-      v-for="attachment in playlist"
-      :key="attachment.id"
-    >
+    <template v-for="attachment in playlist" :key="attachment.id">
       <VListItem
         v-if="attachment.type !== 'header'"
         class="mt-2"
@@ -92,9 +93,11 @@ onMounted(() => {
             icon="tabler-pause"
           />
           <VImg
-            style=" aspect-ratio: 16/9;inline-size: 100px"
+            style="aspect-ratio: 16/9; inline-size: 100px"
             class="rounded mr-2 bg-background border"
-            :src="attachment.thumb_url || resolveDefaultThumbnal(attachment.type)"
+            :src="
+              attachment.thumb_url || resolveDefaultThumbnal(attachment.type)
+            "
             cover
           />
         </template>
@@ -109,19 +112,9 @@ onMounted(() => {
           </ResponsiveText>
         </template>
         <VListItemSubtitle class="d-flex gap-2 pa-1 align-center">
-          <VIcon
-            size="16"
-            :icon="resolveAttachmentTypeIcon(attachment.type)"
-          />
-          <VChip
-            v-if="attachment.type === 'video'"
-            size="x-small"
-          >
-            <VIcon
-              icon="mdi-clock-fast"
-              size="16"
-              class="mr-1"
-            />
+          <VIcon size="16" :icon="resolveAttachmentTypeIcon(attachment.type)" />
+          <VChip v-if="attachment.type === 'video'" size="x-small">
+            <VIcon icon="mdi-clock-fast" size="16" class="mr-1" />
             {{ secondsToMinutes(attachment.duration) }}
           </VChip>
           <VSpacer />
@@ -146,7 +139,9 @@ onMounted(() => {
         </VListItemSubtitle>
       </VListItem>
       <VListItem v-else>
-        <VListItemTitle> {{ $t("Chapter") }} - {{ attachment.title }}</VListItemTitle>
+        <VListItemTitle>
+          {{ $t("Chapter") }} - {{ attachment.title }}</VListItemTitle
+        >
       </VListItem>
     </template>
     <VListItem v-if="!playlist.length">
@@ -154,5 +149,5 @@ onMounted(() => {
     </VListItem>
   </VList>
 </template>
-import { resolveAttachmentTypeIcon } from '@/resolveAttachmentTypeIcon';
-import { resolveDefaultThumbnal } from '@/resolveDefaultThumbnal';
+import { resolveAttachmentTypeIcon } from '@/resolveAttachmentTypeIcon'; import
+{ resolveDefaultThumbnal } from '@/resolveDefaultThumbnal';

@@ -112,7 +112,6 @@ const deleteMedia = (media: MediaType) => {
                 </v-row>
             </template>
         </VImg>
-        <!-- <VImg :src="thumb" style="inset-block-start: 0" class="w-100 h-100 position-absolute blurred-background rounded" /> -->
         <VToolbar absolute density="compact" class="toolbar-overlay pa-2">
             <div class="d-flex align-center justify-center w-100 me-2">
                 <VBtn v-if="resource.url" @click="playPreview(resource.type)" icon="tabler-play" variant="elevated" />
@@ -131,6 +130,7 @@ const deleteMedia = (media: MediaType) => {
             </VMenu>
         </VToolbar>
     </VCard>
+
     <component :is="MediaTYpeComponent" v-else :style="style" :media="resource" class="media-card">
         <template v-for="(_, name) in $slots" #[name]="slotProps">
             <slot :name="name" v-bind="slotProps || {}" />

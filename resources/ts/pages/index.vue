@@ -24,9 +24,10 @@ const refFeatures = ref();
 const refTeam = ref();
 const refContact = ref();
 const refFaq = ref();
+const refPricing = ref();
 
 useIntersectionObserver(
-    [refHome, refFeatures, refTeam, refContact, refFaq],
+    [refHome, refFeatures, refTeam, refContact, refPricing, refFaq],
     ([{ isIntersecting, target }]) => {
         if (isIntersecting) activeSectionId.value = target.id;
     },
@@ -60,7 +61,7 @@ useIntersectionObserver(
 
         <!-- 👉 Pricing Plans -->
         <div :style="{ 'background-color': 'rgb(var(--v-theme-surface))' }">
-            <PricingPlans />
+            <PricingPlans ref="refPricing" />
         </div>
 
         <!-- 👉 Product stats -->

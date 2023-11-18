@@ -1,18 +1,34 @@
 <script setup lang="ts">
-import type { Options } from '@/@core/types'
-import { formatDate } from '@/@core/utils/formatters'
-import { useCourseStore } from '@/stores/useCourseStore'
-import type { Course, DataTableHeader } from '@/types'
-import { paginationMeta, resolveCourseDifficultyVariant, resolveCourseStatusVariant } from '@/utils'
-import { CourseStatus } from '@core/enums'
-import { debounce } from 'lodash'
-import { VDataTableServer } from 'vuetify/labs/VDataTable'
-import { VSkeletonLoader } from 'vuetify/labs/VSkeletonLoader'
+import type { Options } from "@/@core/types";
+import { formatDate } from "@/@core/utils/formatters";
+import { useCourseStore } from "@/stores/useCourseStore";
+import type { Course, DataTableHeader } from "@/types";
+import {
+  paginationMeta,
+  resolveCourseDifficultyVariant,
+  resolveCourseStatusVariant,
+} from "@/utils";
+import { CourseStatus } from "@core/enums";
+import { debounce } from "lodash";
+import { VDataTableServer } from "vuetify/labs/VDataTable";
+import { VSkeletonLoader } from "vuetify/labs/VSkeletonLoader";
 
-const scheduledCourseCours = ref<number | null>(null)
-const totalCours = ref(0)
-const courses = ref<Course[]>([])
-const loading = ref<boolean>(false)
+const scheduledCourseCours = ref<number | null>(null);
+const totalCours = ref(0);
+const courses = ref<Course[]>([]);
+const loading = ref<boolean>(false);
+
+definePage({
+  // beforeEnter: async () => {
+  //     const store = (await import("@/stores/useCourseStore")).useCourseStore();
+  //     console.log(await store.getCourses({}));
+  // },
+  meta: {
+    redirectIfNotLoggedIn: true,
+    redirectIfNotVerified: true,
+    layout: "default",
+  },
+});
 
 const options = ref<Options>({
   page: 1,
@@ -20,39 +36,42 @@ const options = ref<Options>({
   sortBy: [],
   groupBy: [],
   search: undefined,
-})
+});
 
-const courseStore = useCourseStore()
-const deleteCourse = (id: number) => courseStore.deleteCourse(id).then(getCourses)
-const publishCourse = (id: number) => courseStore.publishCourse(id).then(getCourses)
+const courseStore = useCourseStore();
+const deleteCourse = (id: number) =>
+  courseStore.deleteCourse(id).then(getCourses);
+const publishCourse = (id: number) =>
+  courseStore.publishCourse(id).then(getCourses);
 
 const getCourses = debounce(() => {
-  if (!courses.value.length)
-    loading.value = true
+  if (!courses.value.length) loading.value = true;
 
   courseStore
     .getCourses(options.value)
     .then(({ data, meta }) => {
-      courses.value = data
-      totalCours.value = meta.total
+      courses.value = data;
+      totalCours.value = meta.total;
     })
-    .finally(() => (loading.value = false))
-}, 500)
+    .finally(() => (loading.value = false));
+}, 500);
 
 // Headers
 const headers: DataTableHeader[] = [
-  { title: 'Title', key: 'title' },
-  { title: 'Status', key: 'status', width: 70 },
-  { title: 'Difficulty', key: 'difficulty', width: 70 },
-  { title: '', key: 'actions', sortable: false, width: 70 },
-]
+  { title: "Title", key: "title" },
+  { title: "Status", key: "status", width: 70 },
+  { title: "Difficulty", key: "difficulty", width: 70 },
+  { title: "", key: "actions", sortable: false, width: 70 },
+];
 
 watch(
-  Object.keys(options.value).map(item => () => options.value[item as keyof Options]),
+  Object.keys(options.value).map(
+    (item) => () => options.value[item as keyof Options]
+  ),
   ([page, perPage, search]) => {
-    getCourses()
-  },
-)
+    getCourses();
+  }
+);
 </script>
 
 <template>
@@ -64,10 +83,7 @@ watch(
           <VCardText>
             <VRow align="end">
               <!-- 👉 Select Plan -->
-              <VCol
-                cols="12"
-                sm="2"
-              >
+              <VCol cols="12" sm="2">
                 <AppSelect
                   v-model="options.itemsPerPage"
                   :label="$t('Items Per Page')"
@@ -103,16 +119,13 @@ watch(
             v-model:page="options.page"
             :items="courses"
             :items-length="totalCours"
-            :headers="headers.map(i => ({ ...i, title: $t(i.title) }))"
+            :headers="headers.map((i) => ({ ...i, title: $t(i.title) }))"
             class="text-no-wrap"
             :loading="loading"
             @update:options="options = $event"
           >
             <template #loading>
-              <VSkeletonLoader
-                class="pt-2"
-                :type="['table-tbody']"
-              />
+              <VSkeletonLoader class="pt-2" :type="['table-tbody']" />
             </template>
             <template #item.title="{ item }">
               <div class="d-flex align-center gap-2 py-2 text-capitalize">
@@ -156,7 +169,9 @@ watch(
             </template>
             <!-- difficulty -->
             <template #item.difficulty="{ item }">
-              <VChip :color="resolveCourseDifficultyVariant(item.difficulty).color">
+              <VChip
+                :color="resolveCourseDifficultyVariant(item.difficulty).color"
+              >
                 <VIcon
                   :icon="resolveCourseDifficultyVariant(item.difficulty).icon"
                   class="ma-1"
@@ -168,26 +183,23 @@ watch(
             </template>
             <!-- Actions -->
             <template #item.actions="{ item }">
-              <VBtn
-                icon
-                variant="text"
-                size="x-small"
-                color="medium-emphasis"
-              >
-                <VIcon
-                  size="24"
-                  icon="tabler-dots-vertical"
-                />
+              <VBtn icon variant="text" size="x-small" color="medium-emphasis">
+                <VIcon size="24" icon="tabler-dots-vertical" />
                 <VMenu activator="parent">
                   <VList>
-                    <VListItem :to="{ name: 'course-id-edit', params: { id: item.id } }">
+                    <VListItem
+                      :to="{ name: 'course-id-edit', params: { id: item.id } }"
+                    >
                       <template #prepend>
                         <VIcon icon="tabler-edit" />
                       </template>
                       <VListItemTitle>{{ $t("Edit") }}</VListItemTitle>
                     </VListItem>
                     <VListItem
-                      v-if="item.status === CourseStatus.Draft || item.status === CourseStatus.Error"
+                      v-if="
+                        item.status === CourseStatus.Draft ||
+                        item.status === CourseStatus.Error
+                      "
                       @click="publishCourse(item.id)"
                     >
                       <template #prepend>
@@ -196,13 +208,18 @@ watch(
                       <VListItemTitle>{{ $t("Publish") }}</VListItemTitle>
                     </VListItem>
                     <VListItem
-                      v-if="item.status === CourseStatus.Draft || item.status === CourseStatus.Scheduled"
+                      v-if="
+                        item.status === CourseStatus.Draft ||
+                        item.status === CourseStatus.Scheduled
+                      "
                       @click="scheduledCourseCours = item.id"
                     >
                       <template #prepend>
                         <VIcon icon="solar:calendar-broken" />
                       </template>
-                      <VListItemTitle>{{ $t("Schedule publish") }}</VListItemTitle>
+                      <VListItemTitle>{{
+                        $t("Schedule publish")
+                      }}</VListItemTitle>
                     </VListItem>
                     <VListItem @click="deleteCourse(item.id)">
                       <template #prepend>
@@ -217,7 +234,9 @@ watch(
             <!-- pagination -->
             <template #bottom>
               <VDivider />
-              <div class="d-flex align-center justify-sm-space-between justify-center flex-wrap gap-3 pa-5 pt-3">
+              <div
+                class="d-flex align-center justify-sm-space-between justify-center flex-wrap gap-3 pa-5 pt-3"
+              >
                 <p class="text-sm text-disabled mb-0">
                   {{ paginationMeta(options, totalCours) }}
                 </p>
@@ -225,7 +244,11 @@ watch(
                 <VPagination
                   :model-value="options.page"
                   :length="Math.ceil(totalCours / options.itemsPerPage)"
-                  :total-visible="$vuetify.display.xs ? 1 : Math.ceil(totalCours / options.itemsPerPage)"
+                  :total-visible="
+                    $vuetify.display.xs
+                      ? 1
+                      : Math.ceil(totalCours / options.itemsPerPage)
+                  "
                   @update:model-value="options = { ...options, page: $event }"
                 />
               </div>
@@ -241,12 +264,6 @@ watch(
     </VRow>
   </section>
 </template>
-
-<route lang="yaml">
-meta:
-  redirectIfNotLoggedIn: true
-  redirectIfNotVerified: true
-</route>
 
 <style lang="scss">
 .app-user-search-filter {

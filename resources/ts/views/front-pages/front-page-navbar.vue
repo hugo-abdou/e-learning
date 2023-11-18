@@ -2,7 +2,6 @@
 import type { RouteLocationRaw } from "vue-router/auto";
 import { useDisplay } from "vuetify";
 
-import navImg from "@images/front-pages/misc/nav-item-col-img.png";
 import { useWindowScroll } from "@vueuse/core";
 
 import NavbarThemeSwitcher from "@/layouts/components/NavbarThemeSwitcher.vue";
@@ -43,46 +42,7 @@ watch(
 const isMenuOpen = ref(false);
 const isMegaMenuOpen = ref(false);
 
-const menuItems: MenuItem[] = [
-    {
-        listTitle: "Page",
-        listIcon: "tabler-layout-grid",
-        navItems: [
-            // { name: 'Pricing', to: { name: 'front-pages-pricing' } },
-            // { name: "Payment", to: { name: "front-pages-payment" } },
-            // { name: "Checkout", to: { name: "front-pages-checkout" } },
-            // { name: "Help Center", to: { name: "front-pages-help-center" } }
-        ]
-    },
-    {
-        listTitle: "Auth Demo",
-        listIcon: "tabler-lock-open",
-        navItems: [
-            // { name: "Login (Basic)", to: { name: "pages-authentication-login-v1" } },
-            // { name: "Login (Cover)", to: { name: "pages-authentication-login-v2" } },
-            // { name: "Register (Basic)", to: { name: "pages-authentication-register-v1" } },
-            // { name: "Register (Cover)", to: { name: "pages-authentication-register-v2" } },
-            // { name: "Register (Multi-steps)", to: { name: "pages-authentication-register-multi-steps" } },
-            // { name: "Forgot Password (Basic)", to: { name: "pages-authentication-forgot-password-v1" } },
-            // { name: "Forgot Password (Cover)", to: { name: "pages-authentication-forgot-password-v2" } },
-            // { name: "Reset Password (Basic)", to: { name: "pages-authentication-reset-password-v1" } },
-            // { name: "Reset Password (cover  )", to: { name: "pages-authentication-reset-password-v2" } }
-        ]
-    },
-    {
-        listTitle: "Other",
-        listIcon: "tabler-photo",
-        navItems: [
-            // { name: "Under Maintenance", to: { name: "pages-misc-under-maintenance" } },
-            // { name: "Coming Soon", to: { name: "pages-misc-coming-soon" } },
-            // { name: "Not Authorized", to: { path: "/not-authorized" } },
-            // { name: "Verify Email (Basic)", to: { name: "pages-authentication-verify-email-v1" } },
-            // { name: "Verify Email (Cover)", to: { name: "pages-authentication-verify-email-v2" } },
-            // { name: "Two Steps (Basic)", to: { name: "pages-authentication-two-steps-v1" } },
-            // { name: "Two Steps (Cover)", to: { name: "pages-authentication-two-steps-v2" } }
-        ]
-    }
-];
+const menuItems: MenuItem[] = [];
 
 const isCurrentRoute = (to: RouteLocationRaw) => {
     return route.matched.some(_route => _route.path === router.resolve(to).path);
@@ -181,8 +141,9 @@ const isPageActive = computed(() => menuItems.some(item => item.navItems.some(li
 
                 <!-- landing page sections -->
                 <div class="text-base align-center d-none d-md-flex">
+                    <RouterLink :to="{ name: 'dashboard' }" class="nav-link font-weight-medium px-2 px-lg-4 py-2"> Dashboard </RouterLink>
                     <RouterLink
-                        v-for="(item, index) in ['Home', 'Features', 'Team', 'FAQ', 'Contact us']"
+                        v-for="(item, index) in ['Home', 'Features', 'Team', 'FAQ', 'Pricing Plan', 'Contact us']"
                         :key="index"
                         :to="{ name: 'root', hash: `#${item.toLowerCase().replace(' ', '-')}` }"
                         class="nav-link font-weight-medium py-2 px-2 px-lg-4"
@@ -190,72 +151,6 @@ const isPageActive = computed(() => menuItems.some(item => item.navItems.some(li
                     >
                         {{ item }}
                     </RouterLink>
-
-                    <!-- Pages Menu -->
-                    <span
-                        class="font-weight-medium cursor-pointer px-2 px-lg-4 py-2"
-                        :class="isPageActive || isMegaMenuOpen ? 'active-link' : ''"
-                        style="color: rgba(var(--v-theme-on-surface))"
-                    >
-                        Pages
-                        <VIcon icon="tabler-chevron-down" size="12" />
-                        <VMenu
-                            v-model="isMegaMenuOpen"
-                            open-on-hover
-                            activator="parent"
-                            transition="slide-y-transition"
-                            location="bottom center"
-                            offset="16"
-                            content-class="mega-menu"
-                            location-strategy="static"
-                            close-on-content-click
-                        >
-                            <VCard max-width="1000">
-                                <VCardText class="pa-8">
-                                    <div class="nav-menu">
-                                        <div v-for="(item, index) in menuItems" :key="index">
-                                            <div class="d-flex align-center gap-x-3 mb-6">
-                                                <VAvatar variant="tonal" color="primary" rounded :icon="item.listIcon" />
-                                                <div class="text-body-1 text-high-emphasis font-weight-medium">
-                                                    {{ item.listTitle }}
-                                                </div>
-                                            </div>
-                                            <ul>
-                                                <li
-                                                    v-for="listItem in item.navItems"
-                                                    :key="listItem.name"
-                                                    style="list-style: none"
-                                                    class="text-body-1 mb-4 text-no-wrap"
-                                                >
-                                                    <RouterLink
-                                                        class="mega-menu-item"
-                                                        :to="listItem.to"
-                                                        :target="item.listTitle === 'Page' ? '_self' : '_blank'"
-                                                        :class="isCurrentRoute(listItem.to) ? 'active-link' : 'text-high-emphasis'"
-                                                    >
-                                                        <div class="d-flex align-center">
-                                                            <VIcon icon="tabler-circle" color="primary" :size="10" class="me-2" />
-                                                            <span>{{ listItem.name }}</span>
-                                                        </div>
-                                                    </RouterLink>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <img
-                                            :src="navImg"
-                                            alt="Navigation Image"
-                                            class="d-inline-block rounded-lg"
-                                            style="border: 10px solid rgb(var(--v-theme-background))"
-                                            :width="$vuetify.display.lgAndUp ? '330' : '250'"
-                                            :height="$vuetify.display.lgAndUp ? '330' : '250'"
-                                        />
-                                    </div>
-                                </VCardText>
-                            </VCard>
-                        </VMenu>
-                    </span>
-
-                    <RouterLink to="/" target="_blank" class="nav-link font-weight-medium px-2 px-lg-4 py-2"> Admin </RouterLink>
                 </div>
             </div>
 

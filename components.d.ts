@@ -38,6 +38,7 @@ declare module 'vue' {
     Banner: typeof import('./resources/ts/views/front-pages/landing-page/banner.vue')['default']
     BillingHistoryTable: typeof import('./resources/ts/views/pages/account-settings/BillingHistoryTable.vue')['default']
     BuyNow: typeof import('./resources/ts/@core/components/BuyNow.vue')['default']
+    CalendarEventHandler: typeof import('./resources/ts/views/calendar/CalendarEventHandler.vue')['default']
     CardAddEditDialog: typeof import('./resources/ts/components/dialogs/CardAddEditDialog.vue')['default']
     CardStatisticsHorizontal: typeof import('./resources/ts/@core/components/cards/CardStatisticsHorizontal.vue')['default']
     CardStatisticsVertical: typeof import('./resources/ts/@core/components/cards/CardStatisticsVertical.vue')['default']

@@ -67,6 +67,7 @@ export default defineConfig({
             imports: ["vue", VueRouterAutoImports, "@vueuse/core", "@vueuse/math", "vue-i18n", "pinia"],
             dirs: [
                 "./resources/ts/@core/utils",
+                "./resources/ts/stores",
                 "./resources/ts/@core/composable/",
                 "./resources/ts/composables/",
                 "./resources/ts/utils/",

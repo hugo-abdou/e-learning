@@ -24,7 +24,6 @@ const router = createRouter({
         return { top: 0 };
     },
     extendRoutes: pages => {
-        console.log(pages);
         return [...[...pages].map(route => recursiveLayouts(route))];
     }
 });

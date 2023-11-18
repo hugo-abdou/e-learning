@@ -33,7 +33,7 @@ const onSubmit = async () => {
         const { valid } = await refVForm.value.validate();
         if (valid) {
             await user.login(form.value.email, form.value.password);
-            router.replace(route.query.to ? String(route.query.to) : "/");
+            window.location.href = route.query.to ? String(route.query.to) : "/dashboard";
         }
     } catch (e: any) {
         if (!e.response) throw e;
