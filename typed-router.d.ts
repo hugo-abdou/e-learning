@@ -51,6 +51,7 @@ declare module 'vue-router/auto/routes' {
     'course-components-course-chapters-form': RouteRecordInfo<'course-components-course-chapters-form', '/course/components/CourseChaptersForm', Record<never, never>, Record<never, never>>,
     'course-components-course-details-form': RouteRecordInfo<'course-components-course-details-form', '/course/components/CourseDetailsForm', Record<never, never>, Record<never, never>>,
     'course-components-course-play-list': RouteRecordInfo<'course-components-course-play-list', '/course/components/CoursePlayList', Record<never, never>, Record<never, never>>,
+    'course-components-course-quizzes-form': RouteRecordInfo<'course-components-course-quizzes-form', '/course/components/CourseQuizzesForm', Record<never, never>, Record<never, never>>,
     'course-components-course-schedule-dialog': RouteRecordInfo<'course-components-course-schedule-dialog', '/course/components/CourseScheduleDialog', Record<never, never>, Record<never, never>>,
     'course-components-responsive-text': RouteRecordInfo<'course-components-responsive-text', '/course/components/ResponsiveText', Record<never, never>, Record<never, never>>,
     'course-create': RouteRecordInfo<'course-create', '/course/create', Record<never, never>, Record<never, never>>,

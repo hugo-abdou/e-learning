@@ -48,6 +48,7 @@ declare module 'vue' {
     CourseChaptersForm: typeof import('./resources/ts/pages/course/components/CourseChaptersForm.vue')['default']
     CourseDetailsForm: typeof import('./resources/ts/pages/course/components/CourseDetailsForm.vue')['default']
     CoursePlayList: typeof import('./resources/ts/pages/course/components/CoursePlayList.vue')['default']
+    CourseQuizzesForm: typeof import('./resources/ts/pages/course/components/CourseQuizzesForm.vue')['default']
     CourseScheduleDialog: typeof import('./resources/ts/pages/course/components/CourseScheduleDialog.vue')['default']
     CreateAppDialog: typeof import('./resources/ts/components/dialogs/CreateAppDialog.vue')['default']
     CustomCheckboxe: typeof import('./resources/ts/@core/components/app-form-elements/CustomCheckboxe.vue')['default']

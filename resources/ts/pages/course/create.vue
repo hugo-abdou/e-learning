@@ -1,117 +1,130 @@
 <script setup lang="ts">
-import type { VForm } from 'vuetify/components/VForm'
-import { useCourseStore } from '@/stores/useCourseStore'
-import type { Chapter, ChapterForm, Course, CourseForm } from '@/types'
-import { CourseStatus } from '@/@core/enums'
+import { CourseStatus } from "@/@core/enums";
+import { useCourseStore } from "@/stores/useCourseStore";
+import type { Chapter, ChapterForm, Course, CourseForm } from "@/types";
+import type { VForm } from "vuetify/components/VForm";
 
-const currentStep = ref(0)
+const currentStep = ref(2);
 
-const visibility = ref<'publish' | 'schedule'>('publish')
-const publishStatus = ref<'private' | 'published'>('private')
+const visibility = ref<"publish" | "schedule">("publish");
+const publishStatus = ref<"private" | "published">("private");
 
 const publishStatusList = [
   {
-    title: 'Private',
-    desc: 'Only you and people you choose can watch your video',
+    title: "Private",
+    desc: "Only you and people you choose can watch your video",
     value: CourseStatus.Private,
-    icon: { icon: 'carbon:virtual-private-cloud', size: '28' },
+    icon: { icon: "carbon:virtual-private-cloud", size: "28" },
   },
   {
-    title: 'Publish',
-    desc: 'Everyone can watch your video',
+    title: "Publish",
+    desc: "Everyone can watch your video",
     value: CourseStatus.Published,
-    icon: { icon: 'mdi-public', size: '28' },
+    icon: { icon: "mdi-public", size: "28" },
   },
-]
+];
 
-const scheduleDate = ref(new Date().toISOString())
+const scheduleDate = ref(new Date().toISOString());
 
 const steps = ref([
   {
     id: 1,
-    icon: 'tabler-clipboard',
-    title: 'course.steps.details.title',
-    subtitle: 'course.steps.details.subtitle',
+    icon: "tabler-clipboard",
+    title: "course.steps.details.title",
+    subtitle: "course.steps.details.subtitle",
     component: null as { formEl: VForm; validate: () => Promise<any> } | null,
   },
   {
     id: 2,
-    icon: 'grommet-icons:chapter-add',
-    title: 'course.steps.chapters.title',
-    subtitle: 'course.steps.chapters.subtitle',
+    icon: "grommet-icons:chapter-add",
+    title: "course.steps.chapters.title",
+    subtitle: "course.steps.chapters.subtitle",
     component: null as { formEl: VForm; validate: () => Promise<any> } | null,
   },
   {
     id: 3,
-    icon: 'mdi-publish',
-    title: 'course.steps.visibility.title',
-    subtitle: 'course.steps.visibility.subtitle',
+    icon: "fluent:quiz-new-20-regular",
+    title: "course.steps.quizzes.title",
+    subtitle: "course.steps.quizzes.subtitle",
+    component: null as { formEl: VForm; validate: () => Promise<any> } | null,
+  },
+  {
+    id: 4,
+    icon: "mdi-publish",
+    title: "course.steps.visibility.title",
+    subtitle: "course.steps.visibility.subtitle",
     component: null,
   },
-])
+]);
 
-const course = ref<Course>()
+const course = ref<Course>();
 
-const gridType = ref<'list' | 'grid'>('list')
-const router = useRouter()
-const courseStore = useCourseStore()
+const gridType = ref<"list" | "grid">("list");
+const router = useRouter();
+const courseStore = useCourseStore();
 
 const nextStep = async () => {
-  const step = steps.value[currentStep.value]
+  const step = steps.value[currentStep.value];
   try {
     if (step.id === 1) {
-      const data: CourseForm = await step.component?.validate()
+      const data: CourseForm = await step.component?.validate();
 
-      course.value = await courseStore.createCourse(data)
+      course.value = await courseStore.createCourse(data);
     }
     if (step.id === 2 && course.value) {
-      const data: Chapter[] = await step.component?.validate()
+      const data: Chapter[] = await step.component?.validate();
 
       // @ts-expect-error
       const chaptersForm: ChapterForm[] = data.map((item, i) => {
-        const attachments: { [key: number]: any } = {}
+        const attachments: { [key: number]: any } = {};
 
-        item.attachments.forEach(({ name, id, type, download, visibility, watermark }) => {
-          attachments[id] = { name, type, download, visibility: JSON.stringify(visibility), watermark }
-        })
+        item.attachments.forEach(
+          ({ name, id, type, download, visibility, watermark }) => {
+            attachments[id] = {
+              name,
+              type,
+              download,
+              visibility: JSON.stringify(visibility),
+              watermark,
+            };
+          }
+        );
 
-        return { ...item, attachments, order: i }
-      })
+        return { ...item, attachments, order: i };
+      });
 
-      const courseId = course.value.id
+      const courseId = course.value.id;
 
-      await Promise.all(chaptersForm.map(form => courseStore.createChapter(courseId, form)))
+      await Promise.all(
+        chaptersForm.map((form) => courseStore.createChapter(courseId, form))
+      );
     }
-    if (steps.value.length - 1 > currentStep.value)
-      currentStep.value++
+    if (steps.value.length - 1 > currentStep.value) currentStep.value++;
+  } catch (error) {
+    console.error(error);
   }
-  catch (error) {
-    console.error(error)
-  }
-}
+};
 
 const submit = async () => {
   try {
-    if (!course.value)
-      throw new Error('Course not Found')
-    if (visibility.value === 'schedule')
-      await courseStore.scheduleCourse(course.value.id, scheduleDate.value)
+    if (!course.value) throw new Error("Course not Found");
+    if (visibility.value === "schedule")
+      await courseStore.scheduleCourse(course.value.id, scheduleDate.value);
 
-    if (visibility.value === 'publish')
-      await courseStore.publishCourse(course.value.id, publishStatus.value)
+    if (visibility.value === "publish")
+      await courseStore.publishCourse(course.value.id, publishStatus.value);
 
-    router.push({ name: 'course' })
+    router.push({ name: "course" });
+  } catch (error) {
+    throw error;
   }
-  catch (error) {
-    throw error
-  }
-}
+};
 </script>
 
 <template>
   <VContainer>
     <VRow align="center">
-      <VCol cols="8">
+      <VCol>
         <AppStepper
           :current-step="currentStep"
           direction="horizontal"
@@ -128,14 +141,8 @@ const submit = async () => {
           variant="outlined"
           class="mx-auto"
         >
-          <VBtn
-            value="list"
-            icon="mdi-list-box-outline"
-          />
-          <VBtn
-            value="grid"
-            icon="mdi-grid-large"
-          />
+          <VBtn value="list" icon="mdi-list-box-outline" />
+          <VBtn value="grid" icon="mdi-grid-large" />
         </VBtnToggle>
       </VCol>
       <VCol cols="12">
@@ -147,7 +154,12 @@ const submit = async () => {
             <CourseDetailsForm :ref="el => (steps[0].component = el as null)" />
           </VWindowItem>
           <VWindowItem>
-            <CourseChaptersForm :ref="el => (steps[1].component = el as null)" />
+            <CourseChaptersForm
+              :ref="el => (steps[1].component = el as null)"
+            />
+          </VWindowItem>
+          <VWindowItem>
+            <CourseQuizzesForm />
           </VWindowItem>
           <VWindowItem>
             <VExpansionPanels
@@ -178,7 +190,11 @@ const submit = async () => {
                   <DateTimePicker
                     v-model="scheduleDate"
                     style="width: min-content"
-                    :config="{ inline: true, enableTime: true, dateFormat: 'Z' }"
+                    :config="{
+                      inline: true,
+                      enableTime: true,
+                      dateFormat: 'Z',
+                    }"
                   />
                 </VExpansionPanelText>
               </VExpansionPanel>
@@ -193,11 +209,7 @@ const submit = async () => {
             :disabled="currentStep === 0"
             @click="currentStep--"
           >
-            <VIcon
-              icon="tabler-arrow-left"
-              start
-              class="flip-in-rtl"
-            />
+            <VIcon icon="tabler-arrow-left" start class="flip-in-rtl" />
             {{ $t("previous") }}
           </VBtn>
 
@@ -210,17 +222,9 @@ const submit = async () => {
             {{ $t(visibility) }}
           </VBtn>
 
-          <VBtn
-            v-else
-            variant="plain"
-            @click="nextStep"
-          >
+          <VBtn v-else variant="plain" @click="nextStep">
             {{ $t("next") }}
-            <VIcon
-              icon="tabler-arrow-right"
-              end
-              class="flip-in-rtl"
-            />
+            <VIcon icon="tabler-arrow-right" end class="flip-in-rtl" />
           </VBtn>
         </div>
       </VCol>
@@ -230,21 +234,21 @@ const submit = async () => {
 
 <style lang="scss">
 .stepper-content .card-list {
-    --v-card-list-gap: 24px;
+  --v-card-list-gap: 24px;
 }
 
 .list-enter,
 .list-leave-to {
-    opacity: 0;
+  opacity: 0;
 }
 
 .list-enter-active,
 .list-leave-active {
-    transition: opacity 0.5s ease;
+  transition: opacity 0.5s ease;
 }
 
 .list-move {
-    transition: transform 0.5s ease-out;
+  transition: transform 0.5s ease-out;
 }
 </style>
 
