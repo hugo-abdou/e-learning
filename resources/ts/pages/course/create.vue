@@ -4,7 +4,7 @@ import { useCourseStore } from "@/stores/useCourseStore";
 import type { Chapter, ChapterForm, Course, CourseForm } from "@/types";
 import type { VForm } from "vuetify/components/VForm";
 
-const currentStep = ref(2);
+const currentStep = ref(0);
 
 const visibility = ref<"publish" | "schedule">("publish");
 const publishStatus = ref<"private" | "published">("private");
