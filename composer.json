@@ -19,6 +19,7 @@
         "laravel/tinker": "^2.8",
         "nwidart/laravel-modules": "^10.0",
         "php-ffmpeg/php-ffmpeg": "^1.1",
+        "platformcommunity/flysystem-bunnycdn": "3.0",
         "tightenco/ziggy": "^1.0"
     },
     "require-dev": {
