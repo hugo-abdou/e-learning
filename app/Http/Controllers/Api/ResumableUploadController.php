@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Enums\MediaResolutions;
 use App\Enums\MediaStatus;
+use App\Facades\Storage;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\MediaResource;
 use App\Jobs\ProcessImageMediaJob;
@@ -14,7 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\File as HttpFile;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Storage as FacadesStorage;
 use Illuminate\Support\Str;
 
 
@@ -27,7 +28,7 @@ class ResumableUploadController extends Controller
     {
         // $tmpPath    = sys_get_temp_dir() . DIRECTORY_SEPARATOR . env('APP_NAME', 'laravel');
         $tmpPath    = 'tmp';
-        if (!Storage::directoryExists($tmpPath)) {
+        if (!FacadesStorage::directoryExists($tmpPath)) {
             File::makeDirectory($tmpPath, $mode = 0777, true, true);
         }
 
@@ -56,13 +57,13 @@ class ResumableUploadController extends Controller
     {
         $file = new HttpFile(storage_path('app/'  . DIRECTORY_SEPARATOR . $uploadPath));
         $directionPath = 'media/' . auth()->id() . "/" . uniqid() . "_" . time();
-        $path = Storage::disk('public')->putFileAs($directionPath, $file, "original." . $file->getExtension());
+        $path = Storage::putFileAs($directionPath, $file, "original." . $file->getExtension());
         $media = Media::create([
             'name' => pathinfo($file->getFilename(), PATHINFO_FILENAME),
             'mime_type' => $file->getMimeType(),
             'size' => $file->getSize(),
             'size_total' => $file->getSize(),
-            'disk' => 'public',
+            'disk' =>  disk(),
             'path' => $path,
             'status' => MediaStatus::Pending->value,
             'data->width' => "1080",
@@ -79,30 +80,44 @@ class ResumableUploadController extends Controller
         if ($type === 'application') {
             $media->update([
                 'status' => MediaStatus::Completed->value,
-                'conversions' => [
+                'conversions' => [[
                     'engine' => 'pdf',
                     'path' => '/assets/pdf-placeholder.png',
                     'disk' => 'public',
                     'size' => $media->size,
                     'name' => 'thumb',
+                ]]
+            ]);
+        }
+        if ($type === 'image') {
+            $media->update([
+                'status' => MediaStatus::Completed->value,
+                'conversions' => [
+                    [
+                        'engine' => 'ImageResizer',
+                        'path' => $media->path,
+                        'disk' => $media->disk,
+                        'size' => $media->size,
+                        'name' => 'thumb',
+                    ]
                 ]
             ]);
         }
 
         // process Image and extract thumbnails and large images
-        ProcessImageMediaJob::dispatchIf(
-            $type === 'image',
-            $media->id,
-            ["thumb" => 500, "large" => 800],
-            ['disk' => 'public', 'path' => 'media/' . auth()->id()]
-        );
+        // ProcessImageMediaJob::dispatchIf(
+        //     $type === 'image',
+        //     $media->id,
+        //     ["thumb" => 500, "large" => 800],
+        //     ['disk' => disk(), 'path' => 'media/' . auth()->id()]
+        // );
 
         // convert  Video to HLS format and extract thumbnails and qualities [360,720,1080]
-        ProcessVideoMediaJob::dispatchIf(
-            $type === 'video',
-            $media->id,
-            [MediaResolutions::RESOLUTION_240P->value, MediaResolutions::RESOLUTION_720P->value],
-            ['disk' => 'public', 'path' => 'media/' . auth()->id()]
-        );
+        // ProcessVideoMediaJob::dispatchIf(
+        //     $type === 'video',
+        //     $media->id,
+        //     [MediaResolutions::RESOLUTION_240P->value, MediaResolutions::RESOLUTION_720P->value],
+        //     ['disk' => disk(), 'path' => 'media/' . auth()->id()]
+        // );
     }
 }

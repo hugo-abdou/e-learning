@@ -13,20 +13,21 @@ use Illuminate\Support\Facades\Storage;
 
 class MediaUploadFile extends FormRequest
 {
+
+    private $disk = 'public';
+
     public function rules(): array
     {
-        // if ($this->has('isUrl')) {
-        //     return [
-        //         'type' => 'required|string',
-        //         'url' => 'required|string',
-        //         'meta.name' => 'required|string',
-        //     ];
-        // }
         $mimes = collect(Media::$types)->map(fn ($mime) => Str::after($mime, '/'))->implode(',');
         $maxFileSize = 1024 * 1024 * 200; // 200MB
         return [
             'file' => ['required', 'file', "mimes:$mimes", "max:$maxFileSize"],
         ];
+    }
+
+    public function setDisk($disk)
+    {
+        $this->disk = $disk;
     }
 
 
@@ -55,13 +56,13 @@ class MediaUploadFile extends FormRequest
     {
         $file = $this->validated('file');
         $uniqueFileFolder = Str::random(20) . '_' . uniqid();
-        $path = Storage::disk('public')->putFileAs("media/" . auth()->id() . "/$uniqueFileFolder", $file, 'original.' . $file->getClientOriginalExtension());
+        $path = filesystem($this->disk)->putFileAs("media/" . auth()->id() . "/$uniqueFileFolder", $file, 'original.' . $file->getClientOriginalExtension());
         return Media::create([
             'name' => pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
             'mime_type' => $file->getMimeType(),
             'size' => $file->getSize(),
             'size_total' => 0,
-            'disk' => 'public',
+            'disk' => $this->disk,
             'path' => $path,
             'status' => MediaStatus::Pending->value,
             'data->width' => "1080",
@@ -73,7 +74,7 @@ class MediaUploadFile extends FormRequest
     protected function handleFile(UploadedFile $file): Media
     {
         return MediaUploader::fromFile($file)
-            ->disk('public')
+            ->disk($this->disk)
             ->path("media/" . auth()->id())
             ->conversions([
                 MediaImageResizeConversion::name('thumb')->width(430),

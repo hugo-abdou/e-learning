@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Abstracts\StorageUploadedFile;
+use App\Storage\Storage as MyStorage;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
@@ -17,7 +17,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind('storage', function () {
+            return new MyStorage();
+        });
     }
 
     /**

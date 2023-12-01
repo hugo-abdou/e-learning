@@ -48,6 +48,7 @@ class MediaImageResizeConversion extends MediaConversion
 
     public function handle(): MediaConversionData|null
     {
+
         $image = Image::make($this->filesystem($this->getFromDisk())->url($this->getFilepath()));
 
         $convert = $image->resize($this->width, $this->height, function ($constraint) {
@@ -55,9 +56,10 @@ class MediaImageResizeConversion extends MediaConversion
             $constraint->upsize();
         })->encode();
 
-        $this->filesystem()->put($this->getPath(), $convert->getEncoded(), 'public');
-        $sizeInBytes = filesize(storage_path('app/public/') . $this->getPath());
-        $this->size = $sizeInBytes;
+
+
+        $this->filesystem()->put($this->getPath(), $convert->getEncoded(), disk());
+        $this->size = $image->getSize();
 
         return MediaConversionData::conversion($this);
     }

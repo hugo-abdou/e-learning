@@ -19,9 +19,9 @@ class MediaUploader
     protected string $path = '';
     protected array $conversions;
 
-    public function __construct(UploadedFile $file)
+    public function __construct()
     {
-        $this->setFile($file);
+        // $this->setFile($file);
         $this->disk('public');
     }
 

@@ -2,10 +2,9 @@
 
 namespace App\Models;
 
+use App\Facades\Storage;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class Media extends Model
@@ -30,13 +29,13 @@ class Media extends Model
 
     public function getFullPath(): string
     {
-        return $this->filesystem()->path($this->path);
+        return $this->filesystem($this->disk)->path($this->path);
     }
 
     public function getUrl(): string
     {
         if ($this->disk === 'remote') return $this->path;
-        return $this->filesystem()->url($this->path);
+        return $this->filesystem($this->disk)->url($this->path);
     }
 
     public function getMasterUrl(): ?string
@@ -76,7 +75,7 @@ class Media extends Model
         return null;
     }
 
-    public function filesystem(string $disk = ''): Filesystem
+    public function filesystem(string $disk = '')
     {
         return Storage::disk($disk ?: $this->disk);
     }

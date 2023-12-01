@@ -2,10 +2,9 @@
 
 namespace App\Abstracts;
 
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Contracts\MediaConversion as MediaConversionContract;
+use App\Facades\Storage;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use App\Support\MediaConversionData;
 
@@ -110,7 +109,7 @@ abstract class MediaConversion implements MediaConversionContract
         return $this;
     }
 
-    protected function filesystem($disk = ''): Filesystem
+    protected function filesystem($disk = '')
     {
         return Storage::disk($disk ?: $this->getToDisk());
     }

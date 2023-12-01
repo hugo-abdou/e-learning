@@ -1,8 +1,7 @@
 <?php
 
-use App\Services\VideoProcesseurService;
+use App\Facades\Storage;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Process;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,5 +16,8 @@ use Illuminate\Support\Facades\Process;
 
 
 Route::get('{any?}', function () {
+
+    // return  Storage::disk('bunnycdn')->url('/media/11/65674dd10866c_1701268945/original.png');
+    // dd();
     return view('application');
 })->where('any', '^(?!api|storage|build\/).*');

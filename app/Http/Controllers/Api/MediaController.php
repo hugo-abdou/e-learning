@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Enums\MediaResolutions;
 use App\Enums\MediaStatus;
+use App\Facades\Storage;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MediaUploadFile;
 use App\Http\Resources\MediaResource;
@@ -128,6 +129,7 @@ class MediaController extends Controller
 
     function destroy(Media $media)
     {
+        Storage::disk($media->disk)->deleteDirectory(pathinfo($media->path, PATHINFO_DIRNAME));
         $media->delete();
         return response()->json(['message' => 'Media deleted successfully']);
     }

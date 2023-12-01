@@ -54,3 +54,9 @@ if (!function_exists('getMediaIcon')) {
         return $iconUrl;
     }
 }
+if (!function_exists('disk')) {
+    function disk($defualt = 'public')
+    {
+        return env('STORAGE_DRIVER', $defualt);
+    }
+}
