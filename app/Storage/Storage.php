@@ -18,8 +18,8 @@ class Storage
             case 'bunnycdn':
                 $this->storage = new BunnyStorage();
                 break;
-
             default:
+                // LaravelStorage::forgetDisk();
                 $this->storage = LaravelStorage::disk($this->disk);
                 break;
         }

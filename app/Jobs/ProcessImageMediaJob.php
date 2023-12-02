@@ -3,9 +3,7 @@
 namespace App\Jobs;
 
 use App\Enums\MediaStatus;
-use App\Facades\Storage;
 use App\MediaConversions\MediaImageResizeConversion;
-use App\Models\Media;
 use App\Support\MediaUploader;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -13,8 +11,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-
 use Intervention\Image\Facades\Image;
 
 class ProcessImageMediaJob
@@ -37,22 +35,24 @@ class ProcessImageMediaJob
      */
     public function handle(): void
     {
+
         if ($media = \App\Models\Media::findOrFail($this->mediaId)) {
             if (Str::before($media->mime_type, '/') !== 'image') throw new \Exception("Media is not a image");
             $media->update(['status' => MediaStatus::Processing->value]);
             $data = [];
-            $conversions = collect($this->resolutions)->map(function ($width, $name) {
-                return  MediaImageResizeConversion::name($name)->width($width);
-            })->toArray();
+            $conversions = collect($this->resolutions)
+                ->map(fn ($width, $name) => MediaImageResizeConversion::name($name)->width($width))->toArray();
             try {
-                $data = (new MediaUploader())->disk($this->config['disk'])
+                $mediaUploader = MediaUploader::fromPath('tmp/' . $media->path);
+                $data = $mediaUploader->disk($this->config['disk'])
                     ->path($this->config['path'])
-                    ->conversions($conversions)->upload();
-
-                // $image = Image::make(Storage::disk($this->config['disk'])->url($media->path));
-                // $data['status'] = MediaStatus::Completed->value;
-                // $data['data->width'] = $image->getWidth();
-                // $data['data->height'] = $image->getHeight();
+                    ->conversions($conversions)
+                    ->upload();
+                $image = Image::make(storage_path('app/tmp/' . $media->path));
+                $data['status'] = MediaStatus::Completed->value;
+                $data['data->width'] = $image->getWidth();
+                $data['data->height'] = $image->getHeight();
+                Storage::disk('tmp')->delete($media->path);
             } catch (\Throwable $th) {
                 $data['data->error'] =  $th->getMessage();
                 $data['data->width'] = "1080";

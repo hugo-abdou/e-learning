@@ -32,6 +32,11 @@ class BunnyStorage implements StorageInterface
         $this->filesystem = new Filesystem($adapter);
     }
 
+    public function __call($key, $data)
+    {
+        return $this->filesystem->$key(...$data);
+    }
+
     /**
      * Put data into the Bunny Storage.
      *

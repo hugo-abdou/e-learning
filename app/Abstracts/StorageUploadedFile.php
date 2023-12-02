@@ -19,8 +19,8 @@ class StorageUploadedFile extends UploadedFile
         parent::__construct($this->storagePath, basename($path), $mimeType);
     }
 
-    static function createFromPath(string $path, string $disk = 'public')
+    static function createFromPath(string $path)
     {
-        return new static("$disk/$path");
+        return new static($path);
     }
 }

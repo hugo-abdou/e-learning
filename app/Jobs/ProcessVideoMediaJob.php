@@ -62,6 +62,13 @@ class ProcessVideoMediaJob implements ShouldQueue
                 $data['data->height'] = "720";
                 $data['status'] = MediaStatus::Error->value;
             }
+            // $conversions[] = [
+            //     'engine' => '',
+            //     'path' => str_replace($name, 'master.m3u8', $path),
+            //     'disk' => $this->disk,
+            //     'size' => 0,
+            //     'name' => 'master',
+            // ];
             $media->update($data);
             $this->delete();
             return;

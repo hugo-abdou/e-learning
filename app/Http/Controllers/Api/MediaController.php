@@ -11,7 +11,6 @@ use App\Http\Resources\MediaResource;
 use App\Jobs\ProcessImageMediaJob;
 use App\Jobs\ProcessVideoMediaJob;
 use App\MediaConversions\MediaImageResizeConversion;
-use App\MediaConversions\MediaVideoThumbConversion;
 use App\Models\Media;
 use App\Support\MediaUploader;
 use Illuminate\Http\Request;
@@ -105,31 +104,15 @@ class MediaController extends Controller
     {
         return new MediaResource($media);
     }
-    ////////////////////////////////////////////////////////////////////////
-
-
-    protected function handleFile(UploadedFile $file): Media
-    {
-        $now = now()->timestamp;
-        $fileType = Media::checkFileType($file->getMimeType());
-        $disk = $fileType === 'video' ? 'uploads' : 'public';
-
-        return MediaUploader::fromFile($file)
-            ->disk($disk)
-            ->path("media/" . $now)
-            ->conversions([
-                MediaImageResizeConversion::name('sm')->width(150),
-                MediaImageResizeConversion::name('thumb')->width(430),
-                MediaImageResizeConversion::name('large')->width(2000),
-                MediaVideoThumbConversion::name('thumb')->atSecond(5),
-                // MediaVideoResizeConversion::name('low')->setKiloBitrate(500),
-            ])
-            ->uploadAndInsert();
-    }
 
     function destroy(Media $media)
     {
-        Storage::disk($media->disk)->deleteDirectory(pathinfo($media->path, PATHINFO_DIRNAME));
+        foreach ($media->conversions as $conversion) {
+            if ($conversion['disk'] !== 'remote') {
+                Storage::disk($conversion['disk'])->delete($conversion['path']);
+            }
+        }
+        Storage::disk($media->disk)->delete($media->path);
         $media->delete();
         return response()->json(['message' => 'Media deleted successfully']);
     }

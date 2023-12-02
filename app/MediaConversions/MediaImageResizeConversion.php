@@ -3,6 +3,7 @@
 namespace App\MediaConversions;
 
 use App\Abstracts\MediaConversion;
+use App\Facades\Storage;
 use App\Support\MediaConversionData;
 use Intervention\Image\Facades\Image;
 
@@ -48,18 +49,12 @@ class MediaImageResizeConversion extends MediaConversion
 
     public function handle(): MediaConversionData|null
     {
-
-        $image = Image::make($this->filesystem($this->getFromDisk())->url($this->getFilepath()));
-
+        $image = Image::make(storage_path('app/' . $this->getFromDisk() . '/' . $this->getFilepath()));
         $convert = $image->resize($this->width, $this->height, function ($constraint) {
             $constraint->aspectRatio();
             $constraint->upsize();
         })->encode();
-
-
-
-        $this->filesystem()->put($this->getPath(), $convert->getEncoded(), disk());
-        $this->size = $image->getSize();
+        Storage::disk($this->getToDisk())->put($this->getPath(), $convert->getEncoded());
 
         return MediaConversionData::conversion($this);
     }

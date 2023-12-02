@@ -269,10 +269,14 @@ class Resumable
             $this->log('Append ', ['chunk file' => $chunkFile]);
         }
 
-        Storage::put($destFile, $destFileContents);
+        $fileInfo = pathinfo($destFile, PATHINFO_ALL);
+        $this->originalFilename = uniqid(time()) . '.' . $fileInfo['extension'];
+        $path = $fileInfo['dirname'] . DIRECTORY_SEPARATOR . $this->originalFilename;
+
+        Storage::put($path, $destFileContents);
 
         $this->log('End of create files from chunks');
-        return Storage::exists($destFile);
+        return Storage::exists($path);
     }
 
     public function moveUploadedFile($file, $destFile)

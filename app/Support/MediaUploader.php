@@ -8,9 +8,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Media;
 use App\Contracts\MediaConversion;
-use App\Services\VideoProcesseurService;
 use Illuminate\Support\Str;
-use SplFileInfo;
 
 class MediaUploader
 {
@@ -19,9 +17,9 @@ class MediaUploader
     protected string $path = '';
     protected array $conversions;
 
-    public function __construct()
+    public function __construct(UploadedFile $file)
     {
-        // $this->setFile($file);
+        $this->setFile($file);
         $this->disk('public');
     }
 
@@ -64,28 +62,14 @@ class MediaUploader
 
     public function upload(): array
     {
-        $uniqueFileFolder = Str::random(20) . '_' . uniqid();
-        $name = 'original.' . $this->file->getClientOriginalExtension();
-        $path = $this->file->getExtension() === 'tmp'
-            ? $this->filesystem()->putFileAs($this->path . "/$uniqueFileFolder", $this->file, $name)
-            :   str_replace(storage_path('app/public'), '', $this->file->getFileInfo());
-
+        $path = $this->file->getFileInfo();
         if (!$path)  throw new \Exception("The file was not uploaded. Check your $this->disk driver configuration.");
-
         $fileSize = $this->file->getSize();
         $conversions = $this->performConversions($path);
-        $conversions[] = [
-            'engine' => '',
-            'path' => str_replace($name, 'master.m3u8', $path),
-            'disk' => $this->disk,
-            'size' => 0,
-            'name' => 'master',
-        ];
+        Storage::disk($this->disk)->put($this->path . '/' . $this->file->getClientOriginalName(), $this->file->getContent());
         $totalSize = collect($conversions)->sum('size');
-
-
         return [
-            'size_total' => $fileSize  + $totalSize,
+            'size_total' => $fileSize + $totalSize,
             'conversions' => $conversions
         ];
     }
@@ -98,15 +82,15 @@ class MediaUploader
     protected function performConversions(string $filepath): array
     {
         if (empty($this->conversions)) return [];
-
         return collect($this->conversions)->map(function ($conversion) use ($filepath) {
             if (!$conversion instanceof MediaConversion) {
                 throw new \Exception('The conversion must be an instance of MediaConversion');
             }
-            $perform = $conversion->filepath($filepath)->fromDisk($this->disk)->perform();
-
+            $perform = $conversion->filepath($filepath)
+                ->fromDisk('tmp')
+                ->toDisk($this->disk)
+                ->perform();
             if (!$perform) return null;
-
             return $perform->get();
         })->filter()->values()->toArray();
     }

@@ -2,20 +2,17 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Enums\MediaResolutions;
 use App\Enums\MediaStatus;
-use App\Facades\Storage;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\MediaResource;
 use App\Jobs\ProcessImageMediaJob;
-use App\Jobs\ProcessVideoMediaJob;
 use App\Models\Media;
 use App\Services\Resumable;
 use Illuminate\Http\Request;
 use Illuminate\Http\File as HttpFile;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage as FacadesStorage;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 
@@ -26,9 +23,11 @@ class ResumableUploadController extends Controller
      */
     public function __invoke(Request $request)
     {
-        // $tmpPath    = sys_get_temp_dir() . DIRECTORY_SEPARATOR . env('APP_NAME', 'laravel');
-        $tmpPath    = 'tmp';
-        if (!FacadesStorage::directoryExists($tmpPath)) {
+        $separator = DIRECTORY_SEPARATOR;
+        $tmpPath =  str_replace('/', $separator, 'tmp/media/' . auth()->id());
+
+
+        if (!Storage::directoryExists($tmpPath)) {
             File::makeDirectory($tmpPath, $mode = 0777, true, true);
         }
 
@@ -55,22 +54,20 @@ class ResumableUploadController extends Controller
 
     private function completedResponce(string $uploadPath): Media
     {
-        $file = new HttpFile(storage_path('app/'  . DIRECTORY_SEPARATOR . $uploadPath));
-        $directionPath = 'media/' . auth()->id() . "/" . uniqid() . "_" . time();
-        $path = Storage::putFileAs($directionPath, $file, "original." . $file->getExtension());
+        $file = new HttpFile(storage_path('app'  . DIRECTORY_SEPARATOR . $uploadPath));
         $media = Media::create([
             'name' => pathinfo($file->getFilename(), PATHINFO_FILENAME),
             'mime_type' => $file->getMimeType(),
             'size' => $file->getSize(),
             'size_total' => $file->getSize(),
             'disk' =>  disk(),
-            'path' => $path,
+            'path' => str_replace('tmp' . DIRECTORY_SEPARATOR, '', $uploadPath),
             'status' => MediaStatus::Pending->value,
             'data->width' => "1080",
             'data->height' => "720",
             'conversions' => []
         ]);
-        if (file_exists($uploadPath)) unlink($uploadPath);
+
         return $media;
     }
 
@@ -78,39 +75,28 @@ class ResumableUploadController extends Controller
     {
         $type = Str::before($media->mime_type, '/');
         if ($type === 'application') {
+            $content = Storage::disk('tmp')->get($media->path);
+            Storage::disk($media->disk)->put($media->path, $content);
             $media->update([
                 'status' => MediaStatus::Completed->value,
                 'conversions' => [[
                     'engine' => 'pdf',
-                    'path' => '/assets/pdf-placeholder.png',
-                    'disk' => 'public',
+                    'path' => '/assets/pdf_placeholder.png',
+                    'disk' => 'remote',
                     'size' => $media->size,
                     'name' => 'thumb',
                 ]]
             ]);
-        }
-        if ($type === 'image') {
-            $media->update([
-                'status' => MediaStatus::Completed->value,
-                'conversions' => [
-                    [
-                        'engine' => 'ImageResizer',
-                        'path' => $media->path,
-                        'disk' => $media->disk,
-                        'size' => $media->size,
-                        'name' => 'thumb',
-                    ]
-                ]
-            ]);
+            Storage::disk('tmp')->delete($media->path);
         }
 
         // process Image and extract thumbnails and large images
-        // ProcessImageMediaJob::dispatchIf(
-        //     $type === 'image',
-        //     $media->id,
-        //     ["thumb" => 500, "large" => 800],
-        //     ['disk' => disk(), 'path' => 'media/' . auth()->id()]
-        // );
+        ProcessImageMediaJob::dispatchIf(
+            $type === 'image',
+            $media->id,
+            ["thumb" => 500],
+            ['disk' => disk(), 'path' => 'media' . DIRECTORY_SEPARATOR . auth()->id()]
+        );
 
         // convert  Video to HLS format and extract thumbnails and qualities [360,720,1080]
         // ProcessVideoMediaJob::dispatchIf(
@@ -119,5 +105,6 @@ class ResumableUploadController extends Controller
         //     [MediaResolutions::RESOLUTION_240P->value, MediaResolutions::RESOLUTION_720P->value],
         //     ['disk' => disk(), 'path' => 'media/' . auth()->id()]
         // );
+        // if (file_exists($uploadPath)) unlink($uploadPath);
     }
 }

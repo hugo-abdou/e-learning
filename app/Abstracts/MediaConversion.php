@@ -4,9 +4,8 @@ namespace App\Abstracts;
 
 use Illuminate\Support\Str;
 use App\Contracts\MediaConversion as MediaConversionContract;
-use App\Facades\Storage;
-use Illuminate\Contracts\Filesystem\Filesystem;
 use App\Support\MediaConversionData;
+use Illuminate\Support\Facades\Storage;
 
 abstract class MediaConversion implements MediaConversionContract
 {
@@ -63,7 +62,7 @@ abstract class MediaConversion implements MediaConversionContract
 
     public function getFilepath(): string
     {
-        return $this->filepath;
+        return str_replace(storage_path('app/' . $this->getFromDisk() . '/'), '', $this->filepath);
     }
 
     public function getFromDisk(): string
@@ -79,8 +78,8 @@ abstract class MediaConversion implements MediaConversionContract
     public function getFilePathWithSuffix($extension = null, $filepath = ''): string
     {
         $extension = $extension ?: $this->getFileExtension();
-
-        return str_replace('original.' . $this->getFileExtension(), '', $filepath ?: $this->getFilePath()) . "$this->name.$extension";
+        $fileInfo = pathinfo($this->getFilepath(), PATHINFO_ALL);
+        return str_replace($fileInfo['basename'], '', $filepath ?: $this->getFilePath()) . $fileInfo['filename'] . '-' . "$this->name.$extension";
     }
 
     public function isImage(): bool
