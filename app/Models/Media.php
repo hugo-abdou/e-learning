@@ -92,19 +92,41 @@ class Media extends Model
 
     public static function getExtensionFromMime($mime)
     {
+        // Convert MIME type to lowercase for case-insensitive comparison
+        $mime = strtolower($mime);
+
+        // Define MIME type to extension mappings
         $extensions = [
-            'image/jpeg' => 'jpg',
-            'image/png' => 'png',
-            'image/gif' => 'gif',
-            'video/mp4' => 'mp4',
-            'video/avi' => 'avi',
-            'video/webm' => 'webm',
-            'video/x-ms-wmv' => 'wmv',
-            'video/quicktime' => 'mov',
-            'application/pdf' => 'pdf',
+            'image' => [
+                'jpeg' => ['image/jpeg', 'image/pjpeg'],
+                'png' => ['image/png'],
+                'gif' => ['image/gif'],
+            ],
+            'video' => [
+                'mp4' => ['video/mp4'],
+                'avi' => ['video/avi'],
+                'webm' => ['video/webm'],
+                'wmv' => ['video/x-ms-wmv'],
+                'mov' => ['video/quicktime', 'video/x-matroska'],
+            ],
+            'application' => [
+                'pdf' => ['application/pdf'],
+            ],
         ];
-        return isset($extensions[$mime]) ? $extensions[$mime] : null;
+
+        // Search for the MIME type in the configuration
+        foreach ($extensions as $category => $types) {
+            foreach ($types as $extension => $mimeTypes) {
+                if (in_array($mime, $mimeTypes, true)) {
+                    return $extension;
+                }
+            }
+        }
+
+        // If no match is found
+        return null;
     }
+
 
     public static function checkFileType($mime)
     {
