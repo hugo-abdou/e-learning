@@ -27,6 +27,7 @@ use Laravel\Jetstream\Jetstream;
 |
 */
 
+Route::post('/media/bunny_webhook', [MediaController::class, 'bunny_webhook'])->name('bunny_webhook');
 Route::get('media/upload', ResumableUploadController::class);
 Route::post('media/upload', ResumableUploadController::class);
 Route::middleware(['auth:sanctum'])->get('/auth', fn (Request $request) => AuthResource::make($request->user())->resolve());

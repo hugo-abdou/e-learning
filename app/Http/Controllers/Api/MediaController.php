@@ -12,9 +12,11 @@ use App\Jobs\ProcessImageMediaJob;
 use App\Jobs\ProcessVideoMediaJob;
 use App\MediaConversions\MediaImageResizeConversion;
 use App\Models\Media;
+use App\Services\BunnyVideoManager;
 use App\Support\MediaUploader;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 
@@ -97,7 +99,11 @@ class MediaController extends Controller
             'path' => 'required|string',
             'conversions' => 'required|array',
         ]);
-        return new MediaResource(Media::create($data));
+
+        return new MediaResource(Media::create(array_merge($data, [
+            'data->width' => "1080",
+            'data->height' => "720",
+        ])));
     }
 
     public function show(Media $media)
@@ -115,5 +121,35 @@ class MediaController extends Controller
         Storage::disk($media->disk)->delete($media->path);
         $media->delete();
         return response()->json(['message' => 'Media deleted successfully']);
+    }
+
+    public function bunny_webhook(Request $request, BunnyVideoManager $bunnyVideoManager)
+    {
+        $data = $request->validate([
+            "VideoLibraryId" => 'required|integer',
+            "VideoGuid" => 'required|string',
+            "Status" => 'required|integer',
+        ]);
+
+        if ($media = Media::where('uuid', $data['VideoLibraryId'] . '-' . $data['VideoGuid'])->first()) {
+            $videoData = $bunnyVideoManager->getVideo($data['VideoLibraryId'], $data['VideoGuid']);
+            $path = "https://" . env("VITE_PULL_ZONE") . ".b-cdn.net/" . $videoData['guid'] . "/play_480p.mp4";
+            $themb = "https://" . env("VITE_PULL_ZONE") . ".b-cdn.net/" . $videoData['guid'] . "/preview.webp";
+            $low = "https://" . env("VITE_PULL_ZONE") . ".b-cdn.net/" . $videoData['guid'] . "/playlist.m3u8";
+            $media->update([
+                'disk' => 'remote',
+                "name" => $videoData['title'],
+                "data->duration" => $videoData['length'] / 60,
+                "data->width" => $videoData['width'] / 60,
+                "data->height" => $videoData['height'] / 60,
+                "status" => $videoData['status'],
+                "path" => $path,
+                "conversions" => [
+                    ["engine" => "ImageResize", "path" => $themb, "disk" => 'remote', "name" => "thumb"],
+                    ["engine" => "VideoResize", "path" => $low, "disk" => 'remote', "name" => "master"],
+                ]
+            ]);
+        }
+        return response('ok');
     }
 }
