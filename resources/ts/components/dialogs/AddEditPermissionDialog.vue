@@ -1,34 +1,34 @@
 <script setup lang="ts">
 interface Props {
-  isDialogVisible: boolean
-  permissionName?: string
+  isDialogVisible: boolean;
+  permissionName?: string;
 }
 interface Emit {
-  (e: 'update:isDialogVisible', value: boolean): void
-  (e: 'update:permissionName', value: string): void
+  (e: "update:isDialogVisible", value: boolean): void;
+  (e: "update:permissionName", value: string): void;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  permissionName: '',
-})
+  permissionName: "",
+});
 
-const emit = defineEmits<Emit>()
+const emit = defineEmits<Emit>();
 
-const currentPermissionName = ref('')
+const permissionName = ref("");
 
 const onReset = () => {
-  emit('update:isDialogVisible', false)
-  currentPermissionName.value = ''
-}
+  emit("update:isDialogVisible", false);
+  permissionName.value = "";
+};
 
 const onSubmit = () => {
-  emit('update:isDialogVisible', false)
-  emit('update:permissionName', currentPermissionName.value)
-}
+  emit("update:isDialogVisible", false);
+  emit("update:permissionName", permissionName.value);
+};
 
 watch(props, () => {
-  currentPermissionName.value = props.permissionName
-})
+  permissionName.value = props.permissionName;
+});
 </script>
 
 <template>
@@ -44,37 +44,33 @@ watch(props, () => {
       <!-- 👉 Title -->
       <VCardItem class="text-center">
         <VCardTitle class="text-h5">
-          {{ props.permissionName ? 'Edit' : 'Add' }} Permission
+          {{ props.permissionName ? "Edit" : "Add" }} Permission
         </VCardTitle>
         <VCardSubtitle>
-          {{ props.permissionName ? 'Edit' : 'Add' }}  permission as per your requirements.
+          {{ props.permissionName ? "Edit" : "Add" }} permission as per your
+          requirements.
         </VCardSubtitle>
       </VCardItem>
 
       <VCardText class="mt-1">
         <!-- 👉 Form -->
         <VForm>
-          <VAlert
-            type="warning"
-            title="Warning!"
-            variant="tonal"
-            class="mb-6"
-          >
-            By editing the permission name, you might break the system permissions functionality. Please ensure you're absolutely certain before proceeding.
+          <VAlert type="warning" title="Warning!" variant="tonal" class="mb-6">
+            By editing the permission name, you might break the system
+            permissions functionality. Please ensure you're absolutely certain
+            before proceeding.
           </VAlert>
 
           <!-- 👉 Role name -->
           <div class="d-flex align-end gap-3 mb-3">
             <AppTextField
-              v-model="currentPermissionName"
+              v-model="permissionName"
               density="compact"
               label="Permission Name"
               placeholder="Enter Permission Name"
             />
 
-            <VBtn @click="onSubmit">
-              Update
-            </VBtn>
+            <VBtn @click="onSubmit"> Update </VBtn>
           </div>
 
           <VCheckbox label="Set as core permission" />
@@ -87,7 +83,8 @@ watch(props, () => {
 <style lang="scss">
 .permission-table {
   td {
-    border-block-end: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+    border-block-end: 1px solid
+      rgba(var(--v-border-color), var(--v-border-opacity));
     padding-block: 0.5rem;
     padding-inline: 0;
   }

@@ -12,9 +12,9 @@ import PricingPlans from "@/views/front-pages/landing-page/pricing-plans.vue";
 import ProductStats from "@/views/front-pages/landing-page/product-stats.vue";
 
 definePage({
-    meta: {
-        layout: "blank"
-    }
+  meta: {
+    layout: "blank",
+  },
 });
 
 const activeSectionId = ref();
@@ -27,68 +27,68 @@ const refFaq = ref();
 const refPricing = ref();
 
 useIntersectionObserver(
-    [refHome, refFeatures, refTeam, refContact, refPricing, refFaq],
-    ([{ isIntersecting, target }]) => {
-        if (isIntersecting) activeSectionId.value = target.id;
-    },
-    {
-        threshold: 0.25
-    }
+  [refHome, refFeatures, refTeam, refContact, refPricing, refFaq],
+  ([{ isIntersecting, target }]) => {
+    if (isIntersecting) activeSectionId.value = target.id;
+  },
+  {
+    threshold: 0.25,
+  }
 );
 </script>
 
 <template>
-    <div class="landing-page-wrapper">
-        <Navbar :active-id="activeSectionId" />
+  <div class="landing-page-wrapper">
+    <Navbar :active-id="activeSectionId" />
 
-        <!-- 👉 Hero Section  -->
-        <HeroSection ref="refHome" />
+    <!-- 👉 Hero Section  -->
+    <HeroSection ref="refHome" />
 
-        <!-- 👉 Useful features  -->
-        <div :style="{ 'background-color': 'rgb(var(--v-theme-surface))' }">
-            <Features ref="refFeatures" />
-        </div>
-
-        <!-- 👉 Customer Review -->
-        <div :style="{ 'background-color': 'rgb(var(--v-theme-surface))' }">
-            <CustomersReview />
-        </div>
-
-        <!-- 👉 Our Team -->
-        <div :style="{ 'background-color': 'rgb(var(--v-theme-surface))' }">
-            <OurTeam ref="refTeam" />
-        </div>
-
-        <!-- 👉 Pricing Plans -->
-        <div :style="{ 'background-color': 'rgb(var(--v-theme-surface))' }">
-            <PricingPlans ref="refPricing" />
-        </div>
-
-        <!-- 👉 Product stats -->
-        <ProductStats />
-
-        <!-- 👉 FAQ Section -->
-        <div :style="{ 'background-color': 'rgb(var(--v-theme-surface))' }">
-            <FaqSection ref="refFaq" />
-        </div>
-
-        <!-- 👉 Banner  -->
-        <Banner />
-
-        <!-- 👉 Contact Us  -->
-        <ContactUs ref="refContact" />
-
-        <!-- 👉 Footer -->
-        <Footer />
+    <!-- 👉 Useful features  -->
+    <div :style="{ 'background-color': 'rgb(var(--v-theme-surface))' }">
+      <Features ref="refFeatures" />
     </div>
+
+    <!-- 👉 Customer Review -->
+    <div :style="{ 'background-color': 'rgb(var(--v-theme-surface))' }">
+      <CustomersReview />
+    </div>
+
+    <!-- 👉 Our Team -->
+    <div :style="{ 'background-color': 'rgb(var(--v-theme-surface))' }">
+      <OurTeam ref="refTeam" />
+    </div>
+
+    <!-- 👉 Pricing Plans -->
+    <div :style="{ 'background-color': 'rgb(var(--v-theme-surface))' }">
+      <PricingPlans ref="refPricing" />
+    </div>
+
+    <!-- 👉 Product stats -->
+    <ProductStats />
+
+    <!-- 👉 FAQ Section -->
+    <div :style="{ 'background-color': 'rgb(var(--v-theme-surface))' }">
+      <FaqSection ref="refFaq" />
+    </div>
+
+    <!-- 👉 Banner  -->
+    <Banner />
+
+    <!-- 👉 Contact Us  -->
+    <ContactUs ref="refContact" />
+
+    <!-- 👉 Footer -->
+    <Footer />
+  </div>
 </template>
 
 <style lang="scss">
 @media (max-width: 960px) and (min-width: 600px) {
-    .landing-page-wrapper {
-        .v-container {
-            padding-inline: 2rem !important;
-        }
+  .landing-page-wrapper {
+    .v-container {
+      padding-inline: 2rem !important;
     }
+  }
 }
 </style>

@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\MediaController;
 use App\Http\Controllers\Api\MediaRetryController;
 use App\Http\Controllers\Api\PublishCourseController;
 use App\Http\Controllers\Api\ResumableUploadController;
+use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\ScheduleCourseController;
 use App\Http\Controllers\Api\SessionsController;
 use App\Http\Controllers\Api\UsersController;
@@ -66,4 +67,12 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::patch('courses/{course}/schedule', ScheduleCourseController::class);
     Route::apiResource('chapters', ChapterController::class);
     Route::apiResource('analytics', AnalyticController::class);
+    ////////////////////////////////////////////////////////////////////////////////
+});
+
+Route::prefix('admin')->middleware(['auth:sanctum'])->group(function () {
+    Route::get('roles', [RoleController::class, 'roles']);
+    Route::post('roles', [RoleController::class, 'store']);
+    Route::put('roles/{role}', [RoleController::class, 'update']);
+    Route::get('permissions', [RoleController::class, 'permissions']);
 });

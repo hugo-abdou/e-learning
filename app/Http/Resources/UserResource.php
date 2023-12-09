@@ -19,7 +19,7 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             "avatar" => $this->profile_photo_url,
-            "role" => ['user'],
+            "role" => $this->getRoleNames(),
             "whitelabel" => $this->whitelabel_id,
             'created_at' => $this->created_at,
         ];

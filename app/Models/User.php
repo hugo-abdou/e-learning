@@ -10,6 +10,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -18,6 +19,7 @@ class User extends Authenticatable implements MustVerifyEmail
     use HasProfilePhoto;
     use Notifiable;
     use TwoFactorAuthenticatable;
+    use HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -83,5 +85,14 @@ class User extends Authenticatable implements MustVerifyEmail
     public function courses(): HasMany
     {
         return $this->hasMany(Course::class, 'author_id');
+    }
+
+    public function getPlanFeaturesAttribute()
+    {
+        return json_decode(json_encode($this->roles->filter(fn ($role) => $role->type === 'plan')->reduce(function ($result, $role) {
+            if ($role->data) {
+            }
+            return $result;
+        }, [])));
     }
 }

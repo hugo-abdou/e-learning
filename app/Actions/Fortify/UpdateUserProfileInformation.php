@@ -27,6 +27,8 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             $user->updateProfilePhoto($input['avatar']);
         }
 
+        $user->syncRoles(json_decode($input['role']));
+
         if (
             $input['email'] !== $user->email &&
             $user instanceof MustVerifyEmail

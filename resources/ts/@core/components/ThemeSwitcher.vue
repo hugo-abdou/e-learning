@@ -23,7 +23,11 @@ const changeTheme = () => {
 
 <template>
   <IconBtn @click="changeTheme">
-    <VIcon size="26" :icon="props.themes[currentThemeIndex].icon" />
+    <VIcon
+      size="26"
+      color="rgba(var(--v-theme-on-surface))"
+      :icon="props.themes[currentThemeIndex].icon"
+    />
     <VTooltip activator="parent" open-delay="1000" scroll-strategy="close">
       <span class="text-capitalize">{{ currentThemeName }}</span>
     </VTooltip>

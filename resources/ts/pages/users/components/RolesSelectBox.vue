@@ -1,23 +1,19 @@
 <script setup lang="ts">
 interface Role {
-  title: string
-  value: string
+  title: string;
+  value: string;
 }
-const props = defineProps<{ defaultRoles?: Role[] }>()
+const props = defineProps<{ defaultRoles?: Role[] }>();
 
 // 👉 search filters
-const roles = ref<Role[]>(props.defaultRoles || [])
-
-onMounted(() => {
-  roles.value = [{ title: 'user', value: 'user' }]
-})
+const roles = ref<Role[]>(props.defaultRoles || []);
+const roleStore = useRolesStore();
+onMounted(async () => {
+  const res = await roleStore.fetchRoles();
+  roles.value = res.data.map(({ id, name }) => ({ title: name, value: name }));
+});
 </script>
 
 <template>
-  <AppSelect
-    :items="roles"
-    multiple
-    chips
-    clear-icon="tabler-x"
-  />
+  <AppSelect :items="roles" multiple chips clear-icon="tabler-x" />
 </template>

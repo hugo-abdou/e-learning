@@ -6,29 +6,44 @@ export default [
     to: { name: "dashboard" },
     icon: { icon: "tabler-layout-dashboard" },
   },
-  {
-    title: "Calendar",
-    to: { name: "calendar" },
-    icon: { icon: "tabler-calendar" },
-  },
-  {
-    title: "Users",
-    to: { name: "users" },
-    icon: { icon: "tabler-users" },
-  },
+
   {
     title: "Courses",
     icon: { icon: "fluent:flash-play-20-regular" },
     to: { name: "course" },
   },
+
+  { heading: "Applications" },
   {
     title: "Storage",
     icon: { icon: "mdi-image-multiple-outline" },
     to: { name: "gallery" },
   },
   {
-    title: "Browse",
-    to: { name: "browse" },
-    icon: { icon: "fluent:flash-play-20-regular" },
+    title: "Calendar",
+    to: { name: "calendar" },
+    icon: { icon: "tabler-calendar" },
+  },
+  { heading: "Admin Section" },
+  {
+    title: "Users",
+    subject: "user",
+    action: "show",
+    to: { name: "users" },
+    icon: { icon: "tabler-users" },
+  },
+  {
+    title: "Roles",
+    subject: "role",
+    action: "show",
+    to: { name: "roles" },
+    icon: { icon: "mdi-card-account-details-star-outline" },
+  },
+  {
+    title: "Permissions",
+    subject: "role",
+    action: "show",
+    to: { name: "permissions" },
+    icon: { icon: "mdi-badge-account-outline" },
   },
 ] as VerticalNavItems;

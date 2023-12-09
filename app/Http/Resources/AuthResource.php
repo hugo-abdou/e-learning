@@ -20,7 +20,9 @@ class AuthResource extends JsonResource
             "email" => $this->email,
             "verified" => !!$this->email_verified_at,
             "avatar" => $this->ProfilePhotoUrl,
-            "role" => ['user'],
+            "role" => $this->getRoleNames(),
+            "planFeatures" => $this->plan_features,
+            "permissions" => $this->getPermissionsViaRoles()->pluck('name'),
         ];
     }
 }
