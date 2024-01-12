@@ -1,18 +1,23 @@
 <script setup lang="ts">
-import { useUserStore } from '@/stores/user'
-import authV1BottomShape from '@images/svg/auth-v1-bottom-shape.svg?raw'
-import authV1TopShape from '@images/svg/auth-v1-top-shape.svg?raw'
-import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
-import { themeConfig } from '@themeConfig'
-
-const authStore = useUserStore()
-const isLinkSent = ref(false)
+import { useUserStore } from "@/stores/user";
+import authV1BottomShape from "@images/svg/auth-v1-bottom-shape.svg?raw";
+import authV1TopShape from "@images/svg/auth-v1-top-shape.svg?raw";
+import { VNodeRenderer } from "@layouts/components/VNodeRenderer";
+import { themeConfig } from "@themeConfig";
+definePage({
+  meta: {
+    layout: "blank",
+    redirectIfNotLoggedIn: true,
+    redirectIfVerified: true,
+  },
+});
+const authStore = useUserStore();
+const isLinkSent = ref(false);
 
 function verifyEmail() {
-  authStore.verifyEmail().then(res => {
-    if (res.status === 202)
-      isLinkSent.value = true
-  })
+  authStore.verifyEmail().then((res) => {
+    if (res.status === 202) isLinkSent.value = true;
+  });
 }
 </script>
 
@@ -32,10 +37,7 @@ function verifyEmail() {
       />
 
       <!-- 👉 Auth card -->
-      <VCard
-        class="auth-card pa-4"
-        max-width="448"
-      >
+      <VCard class="auth-card pa-4" max-width="448">
         <VCardItem class="justify-center">
           <template #prepend>
             <div class="d-flex">
@@ -52,25 +54,19 @@ function verifyEmail() {
           <h5 class="text-h5 mb-1">
             {{ $t("account_activation_title") }}
           </h5>
-          <p>{{ $t("account_activation_subtitle", { email: authStore.user.email }) }}</p>
+          <p>
+            {{
+              $t("account_activation_subtitle", { email: authStore.user.email })
+            }}
+          </p>
 
-          <VBtn
-            block
-            :disabled="isLinkSent"
-            class="mb-6"
-            @click="verifyEmail"
-          >
+          <VBtn block :disabled="isLinkSent" class="mb-6" @click="verifyEmail">
             {{ isLinkSent ? $t("Check your inbox") : $t("Verify") }}
           </VBtn>
 
-          <div
-            v-if="isLinkSent"
-            class="d-flex align-center justify-center"
-          >
-            <span class="me-1">{{ $t("Didn't get the mail?") }} </span><a
-              href="#"
-              @click="verifyEmail"
-            >{{ $t("Resend") }}</a>
+          <div v-if="isLinkSent" class="d-flex align-center justify-center">
+            <span class="me-1">{{ $t("Didn't get the mail?") }} </span
+            ><a href="#" @click="verifyEmail">{{ $t("Resend") }}</a>
           </div>
         </VCardText>
       </VCard>
@@ -81,10 +77,3 @@ function verifyEmail() {
 <style lang="scss">
 @use "@core-scss/template/pages/page-auth.scss";
 </style>
-
-<route lang="yaml">
-meta:
-  layout: blank
-  redirectIfNotLoggedIn: true
-  redirectIfVerified: true
-</route>

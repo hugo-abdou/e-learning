@@ -1,23 +1,30 @@
 <script setup lang="ts">
-import authV1BottomShape from '@images/svg/auth-v1-bottom-shape.svg?raw'
-import authV1TopShape from '@images/svg/auth-v1-top-shape.svg?raw'
-import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
-import { themeConfig } from '@themeConfig'
-import { useUserStore } from '@/stores/user'
+import { useUserStore } from "@/stores/user";
+import authV1BottomShape from "@images/svg/auth-v1-bottom-shape.svg?raw";
+import authV1TopShape from "@images/svg/auth-v1-top-shape.svg?raw";
+import { VNodeRenderer } from "@layouts/components/VNodeRenderer";
+import { themeConfig } from "@themeConfig";
 
-const email = ref('')
-const authStore = useUserStore()
-const message = ref('')
+definePage({
+  meta: {
+    layout: "blank",
+    redirectIfLoggedIn: true,
+  },
+});
+
+const email = ref("");
+const authStore = useUserStore();
+const message = ref("");
 
 function forgotPassword() {
   authStore
     .forgotPassword(email.value)
-    .then(res => {
-      message.value = res.data.message
+    .then((res) => {
+      message.value = res.data.message;
     })
-    .catch(error => {
-      message.value = error.response.data.message
-    })
+    .catch((error) => {
+      message.value = error.response.data.message;
+    });
 }
 </script>
 
@@ -37,10 +44,7 @@ function forgotPassword() {
       />
 
       <!-- 👉 Auth card -->
-      <VCard
-        class="auth-card pa-4"
-        max-width="448"
-      >
+      <VCard class="auth-card pa-4" max-width="448">
         <VCardItem class="justify-center">
           <template #prepend>
             <div class="d-flex">
@@ -54,11 +58,10 @@ function forgotPassword() {
         </VCardItem>
 
         <VCardText class="pt-2">
-          <h5 class="text-h5 mb-1">
-            Forgot Password? 🔒
-          </h5>
+          <h5 class="text-h5 mb-1">Forgot Password? 🔒</h5>
           <p class="mb-0">
-            Enter your email and we'll send you instructions to reset your password
+            Enter your email and we'll send you instructions to reset your
+            password
           </p>
         </VCardText>
 
@@ -80,12 +83,7 @@ function forgotPassword() {
 
               <!-- reset password -->
               <VCol cols="12">
-                <VBtn
-                  block
-                  type="submit"
-                >
-                  Send Reset Link
-                </VBtn>
+                <VBtn block type="submit"> Send Reset Link </VBtn>
               </VCol>
 
               <!-- back to login -->
@@ -94,10 +92,7 @@ function forgotPassword() {
                   class="d-flex align-center justify-center"
                   :to="{ name: 'login' }"
                 >
-                  <VIcon
-                    icon="tabler-chevron-left"
-                    class="flip-in-rtl"
-                  />
+                  <VIcon icon="tabler-chevron-left" class="flip-in-rtl" />
                   <span>Back to login</span>
                 </RouterLink>
               </VCol>
@@ -112,9 +107,3 @@ function forgotPassword() {
 <style lang="scss">
 @use "@core-scss/template/pages/page-auth.scss";
 </style>
-
-<route lang="yaml">
-meta:
-  layout: blank
-  redirectIfLoggedIn: true
-</route>

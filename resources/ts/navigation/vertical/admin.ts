@@ -7,12 +7,6 @@ export default [
     icon: { icon: "tabler-layout-dashboard" },
   },
 
-  {
-    title: "Courses",
-    icon: { icon: "fluent:flash-play-20-regular" },
-    to: { name: "course" },
-  },
-
   { heading: "Applications" },
   {
     title: "Storage",
@@ -27,22 +21,16 @@ export default [
   { heading: "Admin Section" },
   {
     title: "Users",
-    subject: "user",
-    action: "show",
     to: { name: "users" },
     icon: { icon: "tabler-users" },
   },
   {
     title: "Roles",
-    subject: "role",
-    action: "show",
     to: { name: "roles" },
     icon: { icon: "mdi-card-account-details-star-outline" },
   },
   {
     title: "Permissions",
-    subject: "role",
-    action: "show",
     to: { name: "permissions" },
     icon: { icon: "mdi-badge-account-outline" },
   },

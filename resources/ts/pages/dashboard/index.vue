@@ -1,12 +1,18 @@
 <script lang="ts" setup>
+definePage({
+  meta: {
+    redirectIfNotLoggedIn: true,
+    redirectIfNotVerified: true,
+  },
+});
 const userListMeta = Array(4).fill({
-  icon: 'tabler-user-exclamation',
-  color: 'warning',
-  title: 'Pending Users',
-  stats: '237',
+  icon: "tabler-user-exclamation",
+  color: "warning",
+  title: "Pending Users",
+  stats: "237",
   percentage: +42,
-  subtitle: 'Last week analytics',
-})
+  subtitle: "Last week analytics",
+});
 </script>
 
 <template>
@@ -26,7 +32,9 @@ const userListMeta = Array(4).fill({
               <h6 class="text-h4">
                 {{ meta.stats }}
               </h6>
-              <span :class="meta.percentage > 0 ? 'text-success' : 'text-error'">
+              <span
+                :class="meta.percentage > 0 ? 'text-success' : 'text-error'"
+              >
                 ( {{ meta.percentage > 0 ? "+" : "" }} {{ meta.percentage }}%)
               </span>
             </div>
@@ -44,9 +52,3 @@ const userListMeta = Array(4).fill({
     </VCol>
   </VRow>
 </template>
-
-<route lang="yaml">
-meta:
-  redirectIfNotLoggedIn: true
-  redirectIfNotVerified: true
-</route>

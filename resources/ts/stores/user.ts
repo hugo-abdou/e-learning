@@ -2,6 +2,7 @@
 import { base642file } from "@/helpers";
 import type { UserForm, UserProperties } from "@/types";
 import axiosIns from "@/utils/axios";
+import { UserAbility } from "@/utils/casl/AppAbility";
 import { useStorage } from "@vueuse/core";
 import { acceptHMRUpdate, defineStore } from "pinia";
 
@@ -24,22 +25,27 @@ const defaultUser: UserProperties = {
   role: ["user"],
   created_at: "",
 };
+const defaultAbilities: UserAbility[] = [];
 
 export const useUserStore = defineStore({
   id: "user",
   state: () => ({
     user: useStorage("user", defaultUser),
+    userAbilities: useStorage("userAbilities", defaultAbilities),
     upgradeDialogShow: false,
     upgradeMessage: "",
   }),
   getters: {
     isSupperAdmin: (state) => state.user.role.includes("super_admin"),
+    isInstructor: (state) => state.user.role.includes("instructor"),
+    isStudent: (state) => state.user.role.includes("student"),
     isAdmin: (state) => state.user.role.includes("admin"),
   },
   actions: {
     async logout() {
       await axiosIns.post("/logout", {}, { baseURL: window.location.origin });
       this.$patch({ user: defaultUser });
+      localStorage.removeItem("userAbilities");
       Promise.resolve();
     },
     async login(email: string, password: string) {
@@ -51,7 +57,6 @@ export const useUserStore = defineStore({
         );
         await this.refreshUser();
       } catch (e: any) {
-        console.log(e);
         throw e;
       }
     },
@@ -74,16 +79,13 @@ export const useUserStore = defineStore({
     async getUser(): Promise<UserProperties> {
       if (this.user.id) return Promise.resolve(this.$state.user);
       const auth = await this.refreshUser();
-
       return Promise.resolve(auth);
     },
     async refreshUser(): Promise<UserProperties> {
-      // await axiosIns.get("/sanctum/csrf-cookie", { baseURL: window.location.origin });
       const { data } = await axiosIns.get("/auth");
       this.$patch({ user: data });
       return Promise.resolve(data);
     },
-
     // 👉 Update User
     async updateUser(id: number, data: UserForm) {
       try {
@@ -100,9 +102,9 @@ export const useUserStore = defineStore({
             form.append(key, value as string);
           });
         form.append("_method", "PUT");
-        if (data.avatar && data.avatar.includes("data:image"))
+        if (data.avatar && data.avatar.includes("data:image")) {
           form.append("avatar", base642file(data.avatar, "avatar"));
-
+        }
         await axiosIns.post(`/user/${id}/update`, form);
       } catch (error) {
         throw error;
@@ -154,8 +156,6 @@ export const useUserStore = defineStore({
       );
     },
     setNewPassword(form: any) {
-      console.log(form);
-
       return axiosIns.post("/reset-password", form, {
         baseURL: window.location.origin,
       });

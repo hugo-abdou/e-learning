@@ -7,7 +7,13 @@ import { useCourseStore } from "@/stores/useCourseStore";
 import { useUserStore } from "@/stores/user";
 import type { Attachment, Course } from "@/types";
 import { VSkeletonLoader } from "vuetify/labs/VSkeletonLoader";
-
+definePage({
+  meta: {
+    navActiveLink: "course",
+    redirectIfNotLoggedIn: true,
+    redirectIfNotVerified: true,
+  },
+});
 const route = useRoute();
 const router = useRouter();
 const loading = ref(false);
@@ -245,10 +251,3 @@ onBeforeMount(async () => {
     </VCol>
   </VRow>
 </template>
-
-<route lang="yaml">
-meta:
-  navActiveLink: course
-  redirectIfNotLoggedIn: true
-  redirectIfNotVerified: true
-</route>

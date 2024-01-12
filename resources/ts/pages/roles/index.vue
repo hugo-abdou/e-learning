@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import { useRolesStore } from "@/stores/useRolesStore";
-import { useUserStore } from "@/stores/user";
 import { Role } from "@/types";
 import girlUsingMobile from "@images/pages/girl-using-mobile.png";
-
+definePage({
+  meta: {
+    redirectIfNotLoggedIn: true,
+    action: "read",
+    subject: "Role",
+  },
+});
 const rolesStore = useRolesStore();
 
 // 👉 Roles List
@@ -229,9 +234,3 @@ const addRole = (type: "plan" | "role") => {
     />
   </VRow>
 </template>
-<route lang="yaml">
-meta:
-  redirectIfNotLoggedIn: true
-  action: show
-  subject: role
-</route>

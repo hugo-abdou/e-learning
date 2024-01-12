@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import StorageStatistics from "@/views/pages/analytics/StorageStatistics.vue";
-
+definePage({
+  meta: {
+    redirectIfNotLoggedIn: true,
+  },
+});
 const isAddMediaDialogOpen = ref(false);
 
 const gallery = ref<{ init: Function; loadMore: Function }>();
@@ -40,8 +44,3 @@ const uploadDone = () => {
     />
   </div>
 </template>
-
-<route lang="yaml">
-meta:
-  redirectIfNotLoggedIn: true
-</route>

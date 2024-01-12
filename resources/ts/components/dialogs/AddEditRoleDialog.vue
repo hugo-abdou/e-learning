@@ -122,7 +122,7 @@ const onSubmit = async (validate: SubmitEventPromise, action: string) => {
       await rolesStore.updateRole(props.rolePermissions.id || 0, form.value);
     emit("roleCreated", form.value);
     emit("update:isDialogVisible", false);
-    refPermissionForm.value?.reset();
+    // refPermissionForm.value?.reset();
   } catch (error) {
     console.error(error);
   }

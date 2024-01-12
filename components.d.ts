@@ -7,6 +7,12 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AcademyAssignmentProgress: typeof import('./resources/ts/views/academy/AcademyAssignmentProgress.vue')['default']
+    AcademyCardPopularInstructors: typeof import('./resources/ts/views/academy/AcademyCardPopularInstructors.vue')['default']
+    AcademyCardTopCourses: typeof import('./resources/ts/views/academy/AcademyCardTopCourses.vue')['default']
+    AcademyCourseTable: typeof import('./resources/ts/views/academy/AcademyCourseTable.vue')['default']
+    AcademyMyCourses: typeof import('./resources/ts/views/academy/AcademyMyCourses.vue')['default']
+    AcademyUpcomingWebinar: typeof import('./resources/ts/views/academy/AcademyUpcomingWebinar.vue')['default']
     AccountSettingsAccount: typeof import('./resources/ts/views/pages/account-settings/AccountSettingsAccount.vue')['default']
     AccountSettingsBillingAndPlans: typeof import('./resources/ts/views/pages/account-settings/AccountSettingsBillingAndPlans.vue')['default']
     AccountSettingsConnections: typeof import('./resources/ts/views/pages/account-settings/AccountSettingsConnections.vue')['default']

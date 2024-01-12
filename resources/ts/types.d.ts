@@ -281,7 +281,7 @@ export interface Course {
   author: Author;
   prerequisite_id?: number | null;
   status: "draft" | "published";
-  thumbnail?: string | null;
+  thumbnail?: string;
   duration: number;
   difficulty: "beginner" | "intermediate" | "advanced";
   chapters: Chapter[];

@@ -1,48 +1,50 @@
 <script setup lang="ts">
-import { VForm } from 'vuetify/components'
-import { useUserStore } from '@/stores/user'
-import authV1BottomShape from '@images/svg/auth-v1-bottom-shape.svg?raw'
-import authV1TopShape from '@images/svg/auth-v1-top-shape.svg?raw'
-import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
-import { themeConfig } from '@themeConfig'
-import { confirmedValidator, requiredValidator } from '@validators'
-
-const route = useRoute()
+import { useUserStore } from "@/stores/user";
+import authV1BottomShape from "@images/svg/auth-v1-bottom-shape.svg?raw";
+import authV1TopShape from "@images/svg/auth-v1-top-shape.svg?raw";
+import { VNodeRenderer } from "@layouts/components/VNodeRenderer";
+import { themeConfig } from "@themeConfig";
+import { confirmedValidator, requiredValidator } from "@validators";
+import { VForm } from "vuetify/components";
+definePage({
+  meta: {
+    redirectIfLoggedIn: true,
+    layout: "blank",
+  },
+});
+const route = useRoute();
 
 const form = ref({
   token: route.params.token,
   email: route.query.email,
-  password: '',
-  password_confirmation: '',
-})
+  password: "",
+  password_confirmation: "",
+});
 
 const errors = ref<Record<string, string | undefined>>({
   password_confirmation: undefined,
   password: undefined,
-})
+});
 
-const isPasswordVisible = ref(false)
-const isConfirmPasswordVisible = ref(false)
-const authStore = useUserStore()
-const refVForm = ref<VForm>()
-const router = useRouter()
+const isPasswordVisible = ref(false);
+const isConfirmPasswordVisible = ref(false);
+const authStore = useUserStore();
+const refVForm = ref<VForm>();
+const router = useRouter();
 async function setNewPassword() {
-  if (!refVForm.value)
-    return
+  if (!refVForm.value) return;
   try {
-    const { valid } = await refVForm.value.validate()
+    const { valid } = await refVForm.value.validate();
 
     if (valid) {
-      await authStore.setNewPassword(form.value)
-      router.push({ name: 'login' })
+      await authStore.setNewPassword(form.value);
+      router.push({ name: "login" });
     }
-  }
-  catch (e: any) {
-    if (!e.response)
-      throw e
-    const { errors: formErrors } = e.response.data
+  } catch (e: any) {
+    if (!e.response) throw e;
+    const { errors: formErrors } = e.response.data;
 
-    errors.value = formErrors
+    errors.value = formErrors;
   }
 }
 </script>
@@ -63,10 +65,7 @@ async function setNewPassword() {
       />
 
       <!-- 👉 Auth Card -->
-      <VCard
-        class="auth-card pa-4"
-        max-width="448"
-      >
+      <VCard class="auth-card pa-4" max-width="448">
         <VCardItem class="justify-center">
           <template #prepend>
             <div class="d-flex">
@@ -80,9 +79,7 @@ async function setNewPassword() {
         </VCardItem>
 
         <VCardText class="pt-2">
-          <h5 class="text-h5 mb-1">
-            Reset Password 🔒
-          </h5>
+          <h5 class="text-h5 mb-1">Reset Password 🔒</h5>
 
           <p class="mb-0">
             for <span class="font-weight-bold">{{ form.email }}</span>
@@ -90,10 +87,7 @@ async function setNewPassword() {
         </VCardText>
 
         <VCardText>
-          <VForm
-            ref="refVForm"
-            @submit.prevent="setNewPassword"
-          >
+          <VForm ref="refVForm" @submit.prevent="setNewPassword">
             <VRow>
               <!-- password -->
               <VCol cols="12">
@@ -104,7 +98,9 @@ async function setNewPassword() {
                   autofocus
                   label="New Password"
                   :type="isPasswordVisible ? 'text' : 'password'"
-                  :append-inner-icon="isPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'"
+                  :append-inner-icon="
+                    isPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'
+                  "
                   @click:append-inner="isPasswordVisible = !isPasswordVisible"
                 />
               </VCol>
@@ -114,22 +110,27 @@ async function setNewPassword() {
                 <AppTextField
                   v-model="form.password_confirmation"
                   label="Confirm Password"
-                  :rules="[requiredValidator, confirmedValidator(form.password_confirmation, form.password)]"
+                  :rules="[
+                    requiredValidator,
+                    confirmedValidator(
+                      form.password_confirmation,
+                      form.password
+                    ),
+                  ]"
                   :error-messages="errors.password_confirmation"
                   :type="isConfirmPasswordVisible ? 'text' : 'password'"
-                  :append-inner-icon="isConfirmPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'"
-                  @click:append-inner="isConfirmPasswordVisible = !isConfirmPasswordVisible"
+                  :append-inner-icon="
+                    isConfirmPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'
+                  "
+                  @click:append-inner="
+                    isConfirmPasswordVisible = !isConfirmPasswordVisible
+                  "
                 />
               </VCol>
 
               <!-- reset password -->
               <VCol cols="12">
-                <VBtn
-                  block
-                  type="submit"
-                >
-                  Set New Password
-                </VBtn>
+                <VBtn block type="submit"> Set New Password </VBtn>
               </VCol>
 
               <!-- back to login -->
@@ -138,10 +139,7 @@ async function setNewPassword() {
                   class="d-flex align-center justify-center"
                   :to="{ name: 'login' }"
                 >
-                  <VIcon
-                    icon="tabler-chevron-left"
-                    class="flip-in-rtl"
-                  />
+                  <VIcon icon="tabler-chevron-left" class="flip-in-rtl" />
                   <span>Back to login</span>
                 </RouterLink>
               </VCol>
@@ -156,9 +154,3 @@ async function setNewPassword() {
 <style lang="scss">
 @use "@core-scss/template/pages/page-auth.scss";
 </style>
-
-<route lang="yaml">
-meta:
-  layout: blank
-  redirectIfLoggedIn: true
-</route>

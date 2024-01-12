@@ -4,7 +4,13 @@ import { Permission } from "@/types";
 import { paginationMeta } from "@/utils";
 import type { Options } from "@core/types";
 import { VDataTableServer } from "vuetify/labs/VDataTable";
-
+definePage({
+  meta: {
+    redirectIfNotLoggedIn: true,
+    action: "read",
+    subject: "Role",
+  },
+});
 // 👉 headers
 const headers = [
   { title: "Name", key: "name" },
@@ -163,9 +169,3 @@ watch(() => options.value.itemsPerPage, fetchPermissions, { immediate: true });
     </VCol>
   </VRow>
 </template>
-<route lang="yaml">
-meta:
-  redirectIfNotLoggedIn: true
-  action: show
-  subject: role
-</route>

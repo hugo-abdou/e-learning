@@ -19,7 +19,7 @@ const hideTitleAndBadge = configStore.isVerticalNavMini();
 
 <template>
   <li
-    v-if="item.action ? can(item.action, item.subject) : true"
+    v-if="can(item.action, item.subject)"
     class="nav-link"
     :class="{ disabled: item.disable }"
   >

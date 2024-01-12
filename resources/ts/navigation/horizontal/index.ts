@@ -1,3 +1,11 @@
-import type { HorizontalNavItems } from '@layouts/types'
+import type { HorizontalNavItems } from "@/@layouts/types";
 
-export default [] as HorizontalNavItems
+import student from "./student";
+
+export default function useHorizontalNavItems() {
+  const auth = useUserStore();
+  const defaultLinks: HorizontalNavItems = [];
+  if (auth.isStudent) return student;
+
+  return defaultLinks;
+}

@@ -14,10 +14,7 @@ const shallRenderIcon = configStore.isVerticalNavMini();
 </script>
 
 <template>
-  <li
-    v-if="item.action ? can(item.action, item.subject) : true"
-    class="nav-section-title"
-  >
+  <li v-if="can(item.action, item.subject)" class="nav-section-title">
     <div class="title-wrapper">
       <Transition name="vertical-nav-section-title" mode="out-in">
         <Component

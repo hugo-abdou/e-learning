@@ -3,7 +3,13 @@ import useSnackBarStore from "@/components/SnackBar/useSnackBarStore";
 import { useCourseStore } from "@/stores/useCourseStore";
 import type { Chapter, ChapterForm, Course, CourseForm } from "@/types";
 import type { VForm } from "vuetify/components/VForm";
-
+definePage({
+  meta: {
+    navActiveLink: "course",
+    redirectIfNotLoggedIn: true,
+    redirectIfNotVerified: true,
+  },
+});
 const snackbarStore = useSnackBarStore();
 const route = useRoute();
 const router = useRouter();
@@ -149,11 +155,3 @@ const save = async () => {
     </VRow>
   </VContainer>
 </template>
-
-<route lang="yaml">
-meta:
-  beforeResolve: getCourse
-  navActiveLink: course
-  redirectIfNotLoggedIn: true
-  redirectIfNotVerified: true
-</route>

@@ -20,8 +20,9 @@ const loading = ref<boolean>(false);
 
 definePage({
   // beforeEnter: async () => {
-  //     const store = (await import("@/stores/useCourseStore")).useCourseStore();
-  //     console.log(await store.getCourses({}));
+  //   console.log("test");
+  //   const store = (await import("@/stores/useCourseStore")).useCourseStore();
+  //   console.log(await store.getCourses({}));
   // },
   meta: {
     redirectIfNotLoggedIn: true,

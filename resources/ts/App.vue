@@ -11,7 +11,6 @@ import { UserAbility } from "./utils/casl/AppAbility";
 import { useAppAbility } from "./utils/casl/useAppAbility";
 
 const { global } = useTheme();
-
 // ℹ️ Sync current theme with initial loader theme
 initCore();
 initConfigStore();
@@ -20,22 +19,30 @@ const configStore = useConfigStore();
 
 const authUser = useUserStore();
 const ability = useAppAbility();
+
+const updateAbilities = (auth: UserProperties) => {
+  if (auth.permissions) {
+    const rules: UserAbility[] = [];
+    auth.permissions.forEach((name) => {
+      const subject = getName(name);
+      const action = getAction(name);
+      if (subject && action) rules.push({ subject, action });
+    });
+    authUser.userAbilities = rules;
+    ability.update(rules);
+  }
+};
+
 authUser.$onAction(({ after, args, name }) => {
   after((resolvedValue) => {
-    if (name === "refreshUser") {
-      const auth = resolvedValue as UserProperties;
-      if (auth.permissions) {
-        const rules: UserAbility[] = [];
-        auth.permissions.forEach((name) => {
-          const subject = getName(name);
-          const action = getAction(name);
-          if (subject && action) rules.push({ subject, action });
-        });
-        localStorage.setItem("userAbilities", JSON.stringify(rules));
-        ability.update(rules);
-      }
-    }
+    if (name === "refreshUser")
+      updateAbilities(resolvedValue as UserProperties);
   });
+});
+onMounted(() => {
+  if (authUser.isStudent) {
+    configStore.appContentLayoutNav = "horizontal";
+  }
 });
 </script>
 

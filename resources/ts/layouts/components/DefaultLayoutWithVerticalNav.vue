@@ -1,31 +1,34 @@
 <script lang="ts" setup>
-import { themeConfig } from '@themeConfig'
+import useVerticalNavItems from "@/navigation/vertical";
+import { themeConfig } from "@themeConfig";
 
 // Components
-import Footer from '@/layouts/components/Footer.vue'
-import NavbarThemeSwitcher from '@/layouts/components/NavbarThemeSwitcher.vue'
-import UserProfile from '@/layouts/components/UserProfile.vue'
-import NavBarI18n from '@core/components/I18n.vue'
+import Footer from "@/layouts/components/Footer.vue";
+import NavbarThemeSwitcher from "@/layouts/components/NavbarThemeSwitcher.vue";
+import UserProfile from "@/layouts/components/UserProfile.vue";
+import NavBarI18n from "@core/components/I18n.vue";
 
 // @layouts plugin
-import useNavigation from '@/navigation'
-import { VerticalNavLayout } from '@layouts'
+import { VerticalNavLayout } from "@layouts";
 
 // SECTION: Loading Indicator
-const isFallbackStateActive = ref(false)
-const refLoadingIndicator = ref<any>(null)
+const isFallbackStateActive = ref(false);
+const refLoadingIndicator = ref<any>(null);
 
 // watching if the fallback state is active and the refLoadingIndicator component is available
-watch([isFallbackStateActive, refLoadingIndicator], () => {
-  if (isFallbackStateActive.value && refLoadingIndicator.value)
-    refLoadingIndicator.value.fallbackHandle()
+watch(
+  [isFallbackStateActive, refLoadingIndicator],
+  () => {
+    if (isFallbackStateActive.value && refLoadingIndicator.value)
+      refLoadingIndicator.value.fallbackHandle();
 
-  if (!isFallbackStateActive.value && refLoadingIndicator.value)
-    refLoadingIndicator.value.resolveHandle()
-}, { immediate: true })
+    if (!isFallbackStateActive.value && refLoadingIndicator.value)
+      refLoadingIndicator.value.resolveHandle();
+  },
+  { immediate: true }
+);
 // !SECTION
-
-const navItems = useNavigation()
+const navItems = useVerticalNavItems();
 </script>
 
 <template>
@@ -38,10 +41,7 @@ const navItems = useNavigation()
           class="ms-n3 d-lg-none"
           @click="toggleVerticalOverlayNavActive(true)"
         >
-          <VIcon
-            size="26"
-            icon="tabler-menu-2"
-          />
+          <VIcon size="26" icon="tabler-menu-2" />
         </IconBtn>
 
         <NavbarThemeSwitcher />
@@ -49,7 +49,10 @@ const navItems = useNavigation()
         <VSpacer />
 
         <NavBarI18n
-          v-if="themeConfig.app.i18n.enable && themeConfig.app.i18n.langConfig?.length"
+          v-if="
+            themeConfig.app.i18n.enable &&
+            themeConfig.app.i18n.langConfig?.length
+          "
           :languages="themeConfig.app.i18n.langConfig"
         />
         <UserProfile />

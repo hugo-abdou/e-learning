@@ -35,7 +35,6 @@ export const useRolesStore = defineStore("useRolesStore", {
     // 👉 update Roles data
     updateRole(id: number, data: { name: string; permissions: string[] }) {
       return new Promise<JsonResponse<Role>>((resolve, reject) => {
-        // console.log(data);
         axiosIns
           .put(`/admin/roles/${id}`, data)
           .then((response) => resolve(response.data))
