@@ -1,6 +1,5 @@
 <?php
 
-use App\Facades\Storage;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,9 +14,4 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::get('{any?}', function () {
-
-    // return  Storage::disk('bunnycdn')->url('/media/11/65674dd10866c_1701268945/original.png');
-    // dd();
-    return view('application');
-})->where('any', '^(?!api|storage|build\/).*');
+Route::get('{any?}', fn () => view('application'))->where('any', '^(?!api|storage|build\/).*');

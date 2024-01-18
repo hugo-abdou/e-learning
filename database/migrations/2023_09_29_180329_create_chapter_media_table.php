@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('chapter_media', function (Blueprint $table) {
+        Schema::create('resource_media', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('chapter_id')->constrained()->cascadeOnDelete();
+            $table->integer('resource_id');
             $table->foreignId('attachment_id')->constrained('media')->cascadeOnDelete();
+            $table->string('resource_type');
             $table->string('type');
             $table->string('name')->nullable();
             $table->string('watermark')->nullable();

@@ -1,69 +1,73 @@
 <script setup lang="ts">
-import { formatBytes } from '@/helpers'
-import useAnalyticsStore from '@/stores/useAnalyticsStore'
-import { hexToRgb } from '@layouts/utils'
-import VueApexCharts from 'vue3-apexcharts'
-import { useTheme } from 'vuetify/lib/framework.mjs'
+import { formatBytes } from "@/helpers";
+import useAnalyticsStore from "@/stores/useAnalyticsStore";
+import { hexToRgb } from "@layouts/utils";
+import VueApexCharts from "vue3-apexcharts";
+import { useTheme } from "vuetify/lib/framework.mjs";
 
 interface State {
-  count: number
-  icon: string
-  name: string
+  count: number;
+  icon: string;
+  name: string;
 }
 interface StorageDataResponce {
   data: {
-    max_storage: number
-    used_storage: number
-    states: State[]
-  }
+    max_storage: number;
+    used_storage: number;
+    states: State[];
+  };
 }
-const vuetifyTheme = useTheme()
+const vuetifyTheme = useTheme();
 
-const series = ref<number[]>([0])
-const total_storage = ref('0Mb')
+const series = ref<number[]>([0]);
+const total_storage = ref("0Mb");
 
 const chartOptions = computed(() => {
-  const currentTheme = vuetifyTheme.current.value.colors
-  const variableTheme = vuetifyTheme.current.value.variables
+  const currentTheme = vuetifyTheme.current.value.colors;
+  const variableTheme = vuetifyTheme.current.value.variables;
 
   return {
-    labels: ['Used Storage'],
-    chart: { type: 'radialBar' },
+    labels: ["Used Storage"],
+    chart: { type: "radialBar" },
     plotOptions: {
       radialBar: {
         offsetY: 10,
         startAngle: -140,
         endAngle: 130,
         hollow: {
-          size: '65%',
+          size: "65%",
         },
         track: {
           background: currentTheme.background,
-          strokeWidth: '100%',
+          strokeWidth: "100%",
         },
         dataLabels: {
           name: {
             offsetY: -20,
-            color: `rgba(${hexToRgb(currentTheme['on-background'])},${variableTheme['disabled-opacity']})`,
-            fontSize: '13px',
-            fontWeight: '400',
-            fontFamily: 'Public Sans',
+            color: `rgba(${hexToRgb(currentTheme["on-background"])},${
+              variableTheme["disabled-opacity"]
+            })`,
+            fontSize: "13px",
+            fontWeight: "400",
+            fontFamily: "Public Sans",
           },
           value: {
             offsetY: 10,
-            color: `rgba(${hexToRgb(currentTheme['on-background'])},${variableTheme['high-emphasis-opacity']})`,
-            fontSize: '38px',
-            fontWeight: '400',
-            fontFamily: 'Public Sans',
+            color: `rgba(${hexToRgb(currentTheme["on-background"])},${
+              variableTheme["high-emphasis-opacity"]
+            })`,
+            fontSize: "38px",
+            fontWeight: "400",
+            fontFamily: "Public Sans",
           },
         },
       },
     },
     colors: [currentTheme.primary],
     fill: {
-      type: 'gradient',
+      type: "gradient",
       gradient: {
-        shade: 'dark',
+        shade: "dark",
         shadeIntensity: 0.5,
         gradientToColors: [currentTheme.primary],
         inverseColors: true,
@@ -75,34 +79,37 @@ const chartOptions = computed(() => {
     stroke: { dashArray: 0 },
     grid: { padding: { top: -20, bottom: 5 } },
     states: {
-      hover: { filter: { type: 'none' } },
-      active: { filter: { type: 'none' } },
+      hover: { filter: { type: "none" } },
+      active: { filter: { type: "none" } },
     },
-  }
-})
+  };
+});
 
-const states = ref<State[]>([])
-const isLoading = ref(false)
-const analyticsStore = useAnalyticsStore()
+const states = ref<State[]>([]);
+const isLoading = ref(false);
+const analyticsStore = useAnalyticsStore();
 
 const fetch = () => {
-  series.value[0] = 0
-  isLoading.value = true
+  series.value[0] = 0;
+  isLoading.value = true;
   analyticsStore
     .fetchStorageAnalytics()
     .then(({ data }: StorageDataResponce) => {
-      total_storage.value = formatBytes(data.used_storage, 1)
-      states.value = data.states
+      total_storage.value = formatBytes(data.used_storage, 1);
+      states.value = data.states;
       if (data.max_storage && data.used_storage) {
-        const useage = data.max_storage >= 0 ? (data.used_storage / data.max_storage) * 100 : 0
+        const useage =
+          data.max_storage >= 0
+            ? (data.used_storage / data.max_storage) * 100
+            : 0;
 
-        series.value[0] = Number(useage.toFixed(2))
+        series.value[0] = Number(useage.toFixed(2));
       }
     })
-    .finally(() => (isLoading.value = false))
-}
+    .finally(() => (isLoading.value = false));
+};
 
-onBeforeMount(fetch)
+onBeforeMount(fetch);
 </script>
 
 <template>
@@ -114,21 +121,12 @@ onBeforeMount(fetch)
   >
     <template #append>
       <IconBtn @click="fetch">
-        <VIcon
-          size="20"
-          icon="tabler-refresh"
-        />
+        <VIcon size="20" icon="tabler-refresh" />
       </IconBtn>
     </template>
     <VCardText>
       <VRow align="center">
-        <VCol
-          v-if="states.length"
-          cols="12"
-          sm="6"
-          order="2"
-          order-sm="1"
-        >
+        <VCol v-if="states.length" cols="12" sm="6" order="2" order-sm="1">
           <VList class="card-list d-flex flex-wrap">
             <VCol
               v-for="state in states"
@@ -144,10 +142,7 @@ onBeforeMount(fetch)
                   count: {{ state.count }}
                 </VListItemSubtitle>
                 <template #prepend>
-                  <VAvatar
-                    rounded
-                    size="34"
-                  >
+                  <VAvatar rounded size="34">
                     <VImg :src="state.icon" />
                   </VAvatar>
                 </template>

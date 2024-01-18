@@ -16,6 +16,7 @@ class Media extends Model
         'image/jpeg',
         'image/gif',
         'image/png',
+        'image/webp',
         'video/mp4',
         'video/quicktime',
         'video/webm',
@@ -101,6 +102,7 @@ class Media extends Model
                 'jpeg' => ['image/jpeg', 'image/pjpeg'],
                 'png' => ['image/png'],
                 'gif' => ['image/gif'],
+                'webp' => ['image/webp'],
             ],
             'video' => [
                 'mp4' => ['video/mp4'],
@@ -130,7 +132,7 @@ class Media extends Model
 
     public static function checkFileType($mime)
     {
-        if (in_array(self::getExtensionFromMime($mime), ['jpg', 'jpeg', 'png', 'gif'])) {
+        if (in_array(self::getExtensionFromMime($mime), ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
             return 'image';
         } elseif (in_array(self::getExtensionFromMime($mime), ['mp4', 'avi', 'wmv', 'mov'])) {
             return 'video';

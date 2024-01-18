@@ -29,7 +29,9 @@ class MediaController extends Controller
     {
         $query = Media::query()->orderByDesc('created_at');
 
-        if ($types = $request->get('types')) {
+        // dd($request->all());
+
+        if ($types = json_decode($request->get('types', '[]'))) {
             foreach ($types as $type) {
                 $type = rtrim($type, '*') . '%';
                 $query->orWhere('mime_type', 'like', $type);

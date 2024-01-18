@@ -2,6 +2,7 @@
 import { requiredValidator, urlValidator } from "@/@core/utils/validators";
 import { getAction, getName } from "@/helpers";
 import { useRolesStore } from "@/stores/useRolesStore";
+import { OutputData } from "@editorjs/editorjs";
 import { VForm } from "vuetify/components/VForm";
 import { SubmitEventPromise } from "vuetify/lib/framework.mjs";
 
@@ -83,7 +84,7 @@ const form = ref({
   max_subusers: 0,
   storage: 0,
   email_subject: null,
-  email_content: {},
+  email_content: {} as OutputData,
 });
 
 const storage = computed({
@@ -201,7 +202,7 @@ const close = () => emit("update:isDialogVisible", false);
               <VLabel class="ml-3">Email Content</VLabel>
               <EditorJs
                 class="border rounded py-2"
-                :content="form.email_content"
+                :data="form.email_content"
                 @change="handelEditorChange"
               />
             </VCol>

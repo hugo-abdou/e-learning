@@ -49,13 +49,6 @@ const steps = ref([
   },
   {
     id: 3,
-    icon: "fluent:quiz-new-20-regular",
-    title: "course.steps.quizzes.title",
-    subtitle: "course.steps.quizzes.subtitle",
-    component: null as { formEl: VForm; validate: () => Promise<any> } | null,
-  },
-  {
-    id: 4,
     icon: "mdi-publish",
     title: "course.steps.visibility.title",
     subtitle: "course.steps.visibility.subtitle",
@@ -85,7 +78,7 @@ const nextStep = async () => {
         const attachments: { [key: number]: any } = {};
 
         item.attachments.forEach(
-          ({ name, id, type, download, visibility, watermark }) => {
+          ({ watermark, name, id, type, download, visibility }) => {
             attachments[id] = {
               name,
               type,
@@ -100,10 +93,16 @@ const nextStep = async () => {
       });
 
       const courseId = course.value.id;
-
       await Promise.all(
         chaptersForm.map((form) => courseStore.createChapter(courseId, form))
       );
+    }
+    if (step.id === 3) {
+      const data: any = await step.component?.validate();
+
+      // course.value = await courseStore.createCourse(data);
+      console.log(data);
+      return;
     }
     if (steps.value.length - 1 > currentStep.value) currentStep.value++;
   } catch (error) {
@@ -163,9 +162,6 @@ const submit = async () => {
             <CourseChaptersForm
               :ref="el => (steps[1].component = el as null)"
             />
-          </VWindowItem>
-          <VWindowItem>
-            <CourseQuizzesForm />
           </VWindowItem>
           <VWindowItem>
             <VExpansionPanels

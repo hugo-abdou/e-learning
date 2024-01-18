@@ -115,7 +115,7 @@ const addRole = (type: "plan" | "role") => {
           </VCard>
         </VCol>
 
-        <!-- 👉 Add New Role -->
+        <!-- 👉 New Role -->
         <VCol cols="12" sm="6" lg="4">
           <VCard class="h-100" :ripple="false" @click="addRole('role')">
             <VRow no-gutters class="h-100">
@@ -131,7 +131,7 @@ const addRole = (type: "plan" | "role") => {
                   class="d-flex flex-column align-end justify-end gap-2 h-100"
                   style="text-align: end"
                 >
-                  <VBtn>Add New Role</VBtn>
+                  <VBtn>New Role</VBtn>
                   <span>Add role, if it doesn't exist.</span>
                 </VCardText>
               </VCol>
@@ -195,7 +195,7 @@ const addRole = (type: "plan" | "role") => {
           </VCard>
         </VCol>
 
-        <!-- 👉 Add New Role -->
+        <!-- 👉 New Role -->
         <VCol cols="12" sm="6" lg="4">
           <VCard class="h-100" :ripple="false" @click="addRole('plan')">
             <VRow no-gutters class="h-100">
@@ -211,7 +211,7 @@ const addRole = (type: "plan" | "role") => {
                   class="d-flex flex-column align-end justify-end gap-2 h-100"
                   style="text-align: end"
                 >
-                  <VBtn>Add New Plan</VBtn>
+                  <VBtn>New Plan</VBtn>
                   <span>Add plan, if it doesn't exist.</span>
                 </VCardText>
               </VCol>

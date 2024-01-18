@@ -15,10 +15,13 @@ return new class extends Migration
     {
         Schema::create('quizzes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('chapter_id')->constrained('chapters')->onDelete('cascade');
+            $table->foreignId('author_id')->constrained('users')->onDelete('cascade');
             $table->string('title');
             $table->text('description')->nullable();
-            $table->enum('status', ['draft', 'published'])->default('draft');
+            $table->integer('duration')->default(0);
+            $table->enum('status', ['draft', 'private', 'published', 'scheduled', 'error', 'closed'])->default('draft');
+            $table->timestamp('schedule_at')->nullable();
+            $table->timestamp('close_at')->nullable();
             $table->timestamps();
         });
 
@@ -34,6 +37,7 @@ return new class extends Migration
             $table->foreignId('question_id')->constrained('questions')->onDelete('cascade');
             $table->text('option');
             $table->boolean('is_correct')->default(false);
+            $table->smallInteger('points')->default(0);
             $table->timestamps();
         });
 

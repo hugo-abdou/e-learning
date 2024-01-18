@@ -5,6 +5,8 @@
   "Add Chapter": "Add Chapter",
   "media": {
     "thumbnale": "Thumbnale",
+    "attachment": "Attachment",
+
     "upload": {
       "label": "Upload",
       "description": "Upload a file from your desktop or choose one from your gallery"
@@ -39,7 +41,7 @@
   "Select Role": "Select Role",
   "Items Per Page": "Items Per Page",
   "Search": "Search",
-  "Add New User": "Add New User",
+  "New User": "New User",
   "Previous": "Previous",
   "Next": "Next",
   "Change Password": "Change Password",

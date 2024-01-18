@@ -1,5 +1,4 @@
 /** @jsx h */
-import axiosIns from "@axios";
 import EventTracker from "@uppy/utils/lib/EventTracker";
 import XhrUploadParent from "@uppy/xhr-upload";
 import BunnyStreem from "./bunny";
@@ -29,7 +28,7 @@ export default class XhrUpload extends XhrUploadParent {
       this.uppy.emit("upload-started", file);
       if (file.remote.provider === "gallery") {
         try {
-          const res = await axiosIns.get(file.remote.url);
+          const res = await $api.get(file.remote.url);
           const uploadResp = { status: res.status, body: res.data };
 
           this.uppy.emit("upload-success", file, uploadResp);
@@ -61,7 +60,7 @@ export default class XhrUpload extends XhrUploadParent {
         const data = opts.formData
           ? this.createFormDataUpload(file, opts)
           : file.data;
-        const res = await axiosIns.post("/media/upload", data);
+        const res = await $api.post("/media/upload", data);
         const uploadResp = { status: 200, body: res.data };
 
         this.uppy.emit("upload-success", file, uploadResp);

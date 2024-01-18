@@ -1,6 +1,5 @@
 import { canNavigate } from "@layouts/plugins/casl";
 import type { Router } from "vue-router";
-import { isUserLoggedIn } from "./utils";
 
 export const setupGuards = (router: Router) => {
   // 👉 router.beforeEach
@@ -16,16 +15,20 @@ export const setupGuards = (router: Router) => {
      * Check if user is logged in by checking if token & user data exists in local storage
      * Feel free to update this logic to suit your needs
      */
-    const isLoggedIn = isUserLoggedIn();
+    const isLoggedIn = !!(
+      useCookie("userData").value && useCookie("access_token").value
+    );
 
     const auth = useUserStore();
     if (to.query.verified === "1") await auth.refreshUser();
 
-    if (to.meta.redirectIfLoggedIn && isUserLoggedIn()) return "/";
-    if (to.meta.redirectIfNotLoggedIn && !isUserLoggedIn()) return "/login";
-    if (to.meta.redirectIfNotVerified && !auth.user.verified)
-      return "/verify-email";
-    if (to.meta.redirectIfVerified && auth.user.verified) return "/";
+    if (to.meta.redirectIfLoggedIn && isLoggedIn) return { name: "dashboard" };
+    if (to.meta.redirectIfNotLoggedIn && !isLoggedIn) return { name: "login" };
+    // TODO: apply this check
+    // if (to.meta.redirectIfNotVerified && !auth.user.verified)
+    //   return "/verify-email";
+    if (to.meta.redirectIfVerified && auth.user.verified)
+      return { name: "dashboard" };
 
     /*
       If user is logged in and is trying to access login like page, redirect to home

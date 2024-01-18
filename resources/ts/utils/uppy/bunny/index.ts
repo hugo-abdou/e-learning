@@ -1,7 +1,5 @@
 import axios, { AxiosInstance } from "axios";
 
-import appClient from "@/utils/axios";
-
 export const VIDEO_STATUS = {
   0: "Queued",
   1: "Processing",
@@ -66,7 +64,7 @@ export default class BunnyStreem {
     );
   }
   private storeMedia(data: { videoId: string; file: File }) {
-    return appClient.post("/media/store", {
+    return $api.post("/media/store", {
       name: this.feilds.title || data.file.name,
       uuid: data.videoId,
       status: 1,
@@ -93,16 +91,15 @@ export default class BunnyStreem {
           library,
           name: file.name,
         });
-        const { data: uploadData } = await $this.upload({
+        const uploadData = await $this.upload({
           library,
           videoId: presignedData.guid,
           file,
         });
-        const { data: mediaData } = await $this.storeMedia({
+        const mediaData = await $this.storeMedia({
           file,
           videoId: `${library}-${presignedData.guid}`,
         });
-        console.log(uploadData);
         return resolve(mediaData);
       } catch (error) {
         return reject(error);

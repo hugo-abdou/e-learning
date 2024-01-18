@@ -11,7 +11,6 @@ class Sort
         if (!request()->has('sortBy')) return $next($request);
         $sortField = request()->input('sortBy.0.key', 'created_at');
         $sortDirection = request()->input('sortBy.0.order', 'desc');
-
-        return $next($request)->orderBy($sortField, $sortDirection);
+        return $request->orderBy($sortField, $sortDirection);
     }
 }

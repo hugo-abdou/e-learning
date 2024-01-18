@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import StorageStatistics from "@/views/pages/analytics/StorageStatistics.vue";
 definePage({
   meta: {
     redirectIfNotLoggedIn: true,
@@ -13,6 +12,7 @@ const uploadDone = () => {
   gallery.value?.init();
   isAddMediaDialogOpen.value = false;
 };
+const { width: windowWidth } = useWindowSize();
 </script>
 
 <template>
@@ -25,7 +25,11 @@ const uploadDone = () => {
         <StorageStatistics class="mb-5" />
       </VCol>
       <VCol cols="12">
-        <GalleryView ref="gallery" deletable search-posisions="90px">
+        <GalleryView
+          ref="gallery"
+          deletable
+          :search-posisions="windowWidth > 769 ? '90px' : '10px'"
+        >
           <template #actions>
             <VBtn
               prepend-icon="mdi-image-plus-outline"

@@ -80,20 +80,21 @@ watch(activeAttachment, (val) => {
 });
 
 onBeforeMount(async () => {
-  loading.value = true;
+  // loading.value = true;
   try {
-    course.value = await courseStore.getCourse(Number(route.params.id), {
+    // @ts-ignore
+    course.value = await courseStore.getCourse(route.params.id as number, {
       additional: { chapters: true },
     });
   } catch (error) {
     router.push({ name: "course" });
   }
-  loading.value = false;
+  // loading.value = false;
 });
 </script>
 
 <template>
-  <VRow class="mx-n10 mx-md-0">
+  <VRow>
     <VCol cols="12" md="8">
       <VCard>
         <VCardText v-if="!loading && activeAttachment" class="py-0 px-0">

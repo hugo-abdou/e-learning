@@ -65,7 +65,7 @@ const onUserAdded = () => {
   authStore.refreshUser();
 };
 
-// 👉 Add new user
+// 👉 New user
 const isAddNewUserDrawerVisible = ref(false);
 
 // 👉 Delete user
@@ -124,7 +124,7 @@ watch(
                     prepend-icon="tabler-plus"
                     @click="isAddNewUserDrawerVisible = true"
                   >
-                    {{ $t("Add New User") }}
+                    {{ $t("New User") }}
                   </VBtn>
                 </div>
               </VCol>
@@ -284,7 +284,7 @@ watch(
           <!-- SECTION -->
         </VCard>
 
-        <!-- 👉 Add New User -->
+        <!-- 👉 New User -->
         <AddNewUserDrawer
           v-model:isDrawerOpen="isAddNewUserDrawerVisible"
           @user-data="onUserAdded"

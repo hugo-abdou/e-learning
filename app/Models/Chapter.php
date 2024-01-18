@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasAttachment;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Chapter extends Model
 {
     use HasFactory;
+    use HasAttachment;
 
     protected $guarded = [];
     protected $casts = [];
@@ -33,9 +35,4 @@ class Chapter extends Model
     // {
     //     return $this->belongsToMany(Media::class, relatedPivotKey: 'attachment_id', foreignPivotKey: 'chapter_id');
     // }
-
-    public function attachments(): BelongsToMany
-    {
-        return $this->belongsToMany(Media::class, relatedPivotKey: 'attachment_id', foreignPivotKey: 'chapter_id')->withPivot(['type', 'download', 'visibility', 'watermark', 'name']);
-    }
 }

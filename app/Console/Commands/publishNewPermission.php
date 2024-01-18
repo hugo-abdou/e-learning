@@ -19,7 +19,7 @@ class publishNewPermission extends Command
      *
      * @var string
      */
-    protected $description = 'add new permission resource';
+    protected $description = 'New permission resource';
 
     /**
      * Execute the console command.
@@ -28,11 +28,10 @@ class publishNewPermission extends Command
     {
         $resource = $this->argument('resource');
 
-        Permission::create(['guard_name' => 'api', 'name' => "read_$resource"]);
-        Permission::create(['guard_name' => 'api', 'name' => "create_$resource"]);
-        Permission::create(['guard_name' => 'api', 'name' => "update_$resource"]);
-        Permission::create(['guard_name' => 'api', 'name' => "delete_$resource"]);
-        Permission::create(['guard_name' => 'api', 'name' => "manage_$resource"]);
+        Permission::create(['guard_name' => 'sanctum', 'name' => "read_$resource"]);
+        Permission::create(['guard_name' => 'sanctum', 'name' => "create_$resource"]);
+        Permission::create(['guard_name' => 'sanctum', 'name' => "update_$resource"]);
+        Permission::create(['guard_name' => 'sanctum', 'name' => "delete_$resource"]);
 
         $this->info("permissions for $resource created");
     }

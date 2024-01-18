@@ -54,7 +54,7 @@ const handleSubmit = () => {
     if (valid) {
       // If id exist on id => Update event
       if ("id" in event.value) emit("updateEvent", event.value);
-      // Else => add new event
+      // Else => New event
       else emit("addEvent", event.value);
 
       // Close drawer

@@ -8,6 +8,7 @@ use Laravel\Jetstream\Http\Controllers\Inertia\OtherBrowserSessionsController;
 use Laravel\Jetstream\Http\Controllers\Inertia\ProfilePhotoController;
 use Laravel\Jetstream\Jetstream;
 
+
 Route::group(['middleware' => ['auth:api']], function () {
     Route::get('/user/other-browser-sessions', SessionsController::class);
     Route::delete('/user/other-browser-sessions', [OtherBrowserSessionsController::class, 'destroy'])->name('other-browser-sessions.destroy');

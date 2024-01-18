@@ -35,10 +35,19 @@ const updateAbilities = (auth: UserProperties) => {
 
 authUser.$onAction(({ after, args, name }) => {
   after((resolvedValue) => {
-    if (name === "refreshUser")
-      updateAbilities(resolvedValue as UserProperties);
+    // if (name === "refreshUser")
+    // updateAbilities(resolvedValue as UserProperties);
   });
 });
+const { width } = useWindowSize();
+watch(
+  width,
+  (val) => {
+    if (val < 769) configStore.navbarType = "static";
+    if (val > 769) configStore.navbarType = "sticky";
+  },
+  { immediate: true }
+);
 onMounted(() => {
   if (authUser.isStudent) {
     configStore.appContentLayoutNav = "horizontal";
@@ -55,7 +64,7 @@ onMounted(() => {
       )}`"
     >
       <ServerErrorLogger />
-      <RouterView />
+      <RouterView class="mx-n5 mt-n3 mt-sm-0 mx-sm-0" />
       <ScrollToTop />
       <MediaPlayerDialog />
       <SnackBar />

@@ -22,8 +22,6 @@ import {
 definePage({
   meta: {
     layout: "blank",
-    action: "read",
-    subject: "Auth",
     redirectIfLoggedIn: true,
   },
 });
@@ -47,16 +45,16 @@ const errors = ref<Record<string, string | undefined>>({
   email: undefined,
   password: undefined,
 });
-
+const user = useUserStore();
 const register = async () => {
   try {
-    await userStore.register(form.value);
-    router.push("/");
+    await $api.post("/oauth/register", form.value);
+    await $api.getAccessToken(form.value.email, form.value.password);
+    await user.refreshUser();
+    router.push({ name: "dashboard" });
   } catch (e: any) {
-    const { errors: formErrors } = e.response.data;
-
+    const { errors: formErrors } = e._data;
     errors.value = formErrors;
-    console.error(e.response.data);
   }
 };
 
@@ -114,6 +112,7 @@ const onSubmit = () => {
                   v-model="form.name"
                   :rules="[requiredValidator, alphaDashValidator]"
                   label="Username"
+                  :error-messages="errors.name"
                 />
               </VCol>
 
@@ -124,6 +123,7 @@ const onSubmit = () => {
                   :rules="[requiredValidator, emailValidator]"
                   label="Email"
                   type="email"
+                  :error-messages="errors.email"
                 />
               </VCol>
               <!-- password -->
@@ -137,6 +137,7 @@ const onSubmit = () => {
                     isPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'
                   "
                   @click:append-inner="isPasswordVisible = !isPasswordVisible"
+                  :error-messages="errors.password"
                 />
               </VCol>
               <!-- password_confirmation -->

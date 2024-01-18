@@ -1,0 +1,1 @@
+import{ar as s,es as t,ac as o,b as p,v as l,et as i}from"./main-2d2efdef.js";const m=s()({name:"VAppBarTitle",props:t(),setup(e,a){let{slots:r}=a;return o(()=>p(i,l(e,{class:"v-app-bar-title"}),r)),{}}});export{m as V};

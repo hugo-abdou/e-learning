@@ -1270,7 +1270,7 @@
                     });
                     availableQualities.unshift(0) //prepend 0 to quality array;
 
-                    // Add new qualities to option
+                    // New qualities to option
                     defaultOptions.quality = {
                         default: 0,
                         options: availableQualities,
@@ -1424,8 +1424,6 @@
             </symbol>
         </defs>
     </svg>
-
-
 </body>
 
 </html>

@@ -12,8 +12,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command('course:publish')->everyMinute()->appendOutputTo('your-command.log');
-        $schedule->command('course:close')->everyMinute()->appendOutputTo('your-command.log');
+        $schedule->command('course:publish')->everyMinute()->appendOutputTo('publish.log');
+        // $schedule->command('course:close')->everyMinute()->appendOutputTo('close.log');
+        $schedule->command('quiz:publish')->everyMinute()->appendOutputTo('publish.log');
     }
 
     /**

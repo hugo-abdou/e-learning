@@ -37,16 +37,14 @@ const onSubmit = async () => {
   try {
     const { valid } = await refVForm.value.validate();
     if (valid) {
-      await user.login(form.value.email, form.value.password);
-      window.location.href = route.query.to
-        ? String(route.query.to)
-        : "/dashboard";
+      await $api.getAccessToken(form.value.email, form.value.password);
+      await user.refreshUser();
+
+      router.push({ name: "dashboard" });
     }
   } catch (e: any) {
-    if (!e.response) throw e;
-    const { errors: formErrors } = e.response.data;
-    errors.value = formErrors;
-    console.error(e.response.data);
+    if (!e?.status) throw e;
+    errors.value.email = e._data.message;
   }
 };
 </script>

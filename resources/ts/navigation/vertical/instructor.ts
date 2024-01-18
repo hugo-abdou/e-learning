@@ -11,6 +11,11 @@ export default [
     icon: { icon: "fluent:flash-play-20-regular" },
     to: { name: "course" },
   },
+  {
+    title: "Quizzes",
+    icon: { icon: "fluent:quiz-new-20-regular" },
+    to: { name: "quizzes" },
+  },
 
   { heading: "Applications" },
   {

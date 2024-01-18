@@ -1,48 +1,48 @@
 <script setup lang="ts">
 interface Details {
-  number: string
-  name: string
-  expiry: string
-  cvv: string
-  isPrimary: boolean
-  type: string
+  number: string;
+  name: string;
+  expiry: string;
+  cvv: string;
+  isPrimary: boolean;
+  type: string;
 }
 interface Emit {
-  (e: 'submit', value: Details): void
-  (e: 'update:isDialogVisible', value: boolean): void
+  (e: "submit", value: Details): void;
+  (e: "update:isDialogVisible", value: boolean): void;
 }
 
 interface Props {
-  cardDetails?: Details
-  isDialogVisible: boolean
+  cardDetails?: Details;
+  isDialogVisible: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   cardDetails: () => ({
-    number: '',
-    name: '',
-    expiry: '',
-    cvv: '',
+    number: "",
+    name: "",
+    expiry: "",
+    cvv: "",
     isPrimary: false,
-    type: '',
+    type: "",
   }),
-})
+});
 
-const emit = defineEmits<Emit>()
+const emit = defineEmits<Emit>();
 
-const cardDetails = ref<Details>(structuredClone(toRaw(props.cardDetails)))
+const cardDetails = ref<Details>(structuredClone(toRaw(props.cardDetails)));
 
 watch(props, () => {
-  cardDetails.value = structuredClone(toRaw(props.cardDetails))
-})
+  cardDetails.value = structuredClone(toRaw(props.cardDetails));
+});
 
 const formSubmit = () => {
-  emit('submit', cardDetails.value)
-}
+  emit("submit", cardDetails.value);
+};
 
 const dialogModelValueUpdate = (val: boolean) => {
-  emit('update:isDialogVisible', val)
-}
+  emit("update:isDialogVisible", val);
+};
 </script>
 
 <template>
@@ -58,10 +58,14 @@ const dialogModelValueUpdate = (val: boolean) => {
       <!-- 👉 Title -->
       <VCardItem class="text-center">
         <VCardTitle class="text-h3 font-weight-medium mb-3">
-          {{ props.cardDetails.name ? 'Edit Card' : 'Add New Card' }}
+          {{ props.cardDetails.name ? "Edit Card" : "New Card" }}
         </VCardTitle>
         <p class="mb-0">
-          {{ props.cardDetails.name ? 'Edit your saved card details' : 'Add your saved card details' }}
+          {{
+            props.cardDetails.name
+              ? "Edit your saved card details"
+              : "Add your saved card details"
+          }}
         </p>
       </VCardItem>
 
@@ -79,10 +83,7 @@ const dialogModelValueUpdate = (val: boolean) => {
             </VCol>
 
             <!-- 👉 Card Name -->
-            <VCol
-              cols="12"
-              md="6"
-            >
+            <VCol cols="12" md="6">
               <AppTextField
                 v-model="cardDetails.name"
                 label="Name"
@@ -91,10 +92,7 @@ const dialogModelValueUpdate = (val: boolean) => {
             </VCol>
 
             <!-- 👉 Card Expiry -->
-            <VCol
-              cols="6"
-              md="3"
-            >
+            <VCol cols="6" md="3">
               <AppTextField
                 v-model="cardDetails.expiry"
                 label="Expiry Date"
@@ -103,10 +101,7 @@ const dialogModelValueUpdate = (val: boolean) => {
             </VCol>
 
             <!-- 👉 Card CVV -->
-            <VCol
-              cols="6"
-              md="3"
-            >
+            <VCol cols="6" md="3">
               <AppTextField
                 v-model="cardDetails.cvv"
                 type="number"
@@ -124,15 +119,8 @@ const dialogModelValueUpdate = (val: boolean) => {
             </VCol>
 
             <!-- 👉 Card actions -->
-            <VCol
-              cols="12"
-              class="text-center"
-            >
-              <VBtn
-                class="me-3"
-                type="submit"
-                @click="formSubmit"
-              >
+            <VCol cols="12" class="text-center">
+              <VBtn class="me-3" type="submit" @click="formSubmit">
                 Submit
               </VBtn>
               <VBtn

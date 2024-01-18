@@ -39,6 +39,6 @@ class PublishScheduledCourse extends Command
                     $this->error($th->getMessage());
                 }
             });
-        $this->info("Courses Publishe scheduled finished");
+        $this->info("Publishe scheduled Courses finished");
     }
 }

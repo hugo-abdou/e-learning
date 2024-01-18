@@ -2,19 +2,24 @@
 
 use App\Http\Controllers\Api\AnalyticController;
 use App\Http\Controllers\Api\ApiTokenController;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ChapterController;
 use App\Http\Controllers\Api\CoursesController;
 use App\Http\Controllers\Api\MediaController;
 use App\Http\Controllers\Api\MediaRetryController;
 use App\Http\Controllers\Api\PublishCourseController;
+use App\Http\Controllers\Api\PublishQuizController;
+use App\Http\Controllers\Api\QuizController;
 use App\Http\Controllers\Api\ResumableUploadController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\ScheduleCourseController;
+use App\Http\Controllers\Api\ScheduleQuizController;
 use App\Http\Controllers\Api\SessionsController;
 use App\Http\Controllers\Api\UsersController;
 use App\Http\Resources\AuthResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Laravel\Fortify\Http\Controllers\RegisteredUserController;
 use Laravel\Jetstream\Jetstream;
 
 /*
@@ -28,11 +33,13 @@ use Laravel\Jetstream\Jetstream;
 |
 */
 
+Route::post('/oauth/register', [RegisteredUserController::class, 'store']);
+
 Route::post('/media/bunny_webhook', [MediaController::class, 'bunny_webhook'])->name('bunny_webhook');
 Route::get('media/upload', ResumableUploadController::class);
 Route::post('media/upload', ResumableUploadController::class);
-Route::middleware(['auth:sanctum'])->get('/auth', fn (Request $request) => AuthResource::make($request->user())->resolve());
-Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+Route::middleware(['auth:api'])->get('/auth', fn (Request $request) => AuthResource::make($request->user())->resolve());
+Route::middleware(['auth:api', 'verified'])->group(function () {
     Route::put('/user/{user}/update', [UsersController::class, 'edit']);
     Route::put('/user/{user}/password', [UsersController::class, 'password']);
     Route::get('/user/{user}/other-browser-sessions', SessionsController::class);
@@ -47,8 +54,6 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::delete('/{media}', [MediaController::class, 'destroy'])->name('destroy');
         Route::post('/{media}/retry', MediaRetryController::class)->name('retry');
     });
-    Route::post('/upload_chunk',  [MediaController::class, 'uploadChunk'])->name('upload_chunk');
-    Route::post('/merge_video',  [MediaController::class, 'mergeVideo'])->name('merge_video');
     /////////////////////////////////////////////////////////////////////////////////////////////////////
     if (Jetstream::hasAccountDeletionFeatures()) Route::delete('/user/{user}/destroy', [UsersController::class, 'destroyAccount']);
     if (Jetstream::hasApiFeatures()) {
@@ -68,9 +73,13 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::apiResource('chapters', ChapterController::class);
     Route::apiResource('analytics', AnalyticController::class);
     ////////////////////////////////////////////////////////////////////////////////
+    Route::apiResource('quizzes', QuizController::class);
+    Route::patch('quizzes/{quiz}/publish', PublishQuizController::class);
+    Route::patch('quizzes/{quiz}/schedule', ScheduleQuizController::class);
+    ////////////////////////////////////////////////////////////////////////////////
 });
 
-Route::prefix('admin')->middleware(['auth:sanctum'])->group(function () {
+Route::prefix('admin')->middleware(['auth:api'])->group(function () {
     Route::get('roles', [RoleController::class, 'roles']);
     Route::post('roles', [RoleController::class, 'store']);
     Route::put('roles/{role}', [RoleController::class, 'update']);

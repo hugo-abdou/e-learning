@@ -1,4 +1,5 @@
 import type { UserAbility } from "@/utils/casl/AppAbility";
+import { CourseDifficulty, CourseStatus, QuizStatus } from "./@core/enums";
 
 // 👉 Help center
 export type HelpCenterSubcategoryArticlesType = {
@@ -26,12 +27,12 @@ export type HelpCenterArticlesOverviewType = {
   subtitle: string;
 };
 
-export interface Faq {
+interface Faq {
   question: string;
   answer: string;
 }
 
-export interface FaqCategory {
+interface FaqCategory {
   faqTitle: string;
   faqIcon: string;
   faqSubtitle: string;
@@ -152,7 +153,7 @@ export type ProfileTab = {
 
 // SECTION
 // 👉 JWT
-export interface Role {
+interface Role {
   id?: number;
   name: string;
   type?: string;
@@ -160,11 +161,11 @@ export interface Role {
   payment_link?: string;
   users?: UserProperties[];
 }
-export interface Permission {
+interface Permission {
   id: number;
   name: string;
 }
-export interface Action {
+interface Action {
   type: string;
   title: string;
   category: string;
@@ -172,7 +173,7 @@ export interface Action {
   icon: string;
 }
 
-export interface User {
+interface User {
   id: number;
   fullName?: string;
   username: string;
@@ -183,20 +184,14 @@ export interface User {
   abilities: UserAbility[];
 }
 
-export interface UserOut {
+interface UserOut {
   userAbilities: User["abilities"];
-  accessToken: string;
+  access_token: string;
   userData: Omit<User, "abilities" | "password">;
 }
 
-export interface LoginResponse {
-  accessToken: string;
-  userData: AuthUserOut;
-  userAbilities: UserAbility[];
-}
-
-export interface RegisterResponse {
-  accessToken: string;
+interface RegisterResponse {
+  access_token: string;
   userData: AuthUserOut;
   userAbilities: UserAbility[];
 }
@@ -205,7 +200,7 @@ export interface RegisterResponse {
 
 // SECTION
 // App: User
-export interface UserProperties {
+interface UserProperties {
   id: number;
   name: string;
   email: string;
@@ -216,7 +211,7 @@ export interface UserProperties {
   created_at?: string;
 }
 // User Form
-export interface UserForm extends Omit<UserProperties, "id" | "verified"> {
+interface UserForm extends Omit<UserProperties, "id" | "verified"> {
   password?: string;
   password_confirmation?: string;
   terms?: boolean;
@@ -236,7 +231,7 @@ export type DataTableHeader = {
   sort?: DataTableCompareFunction;
 };
 
-export interface BaseMedia {
+interface BaseMedia {
   id: number;
   mime_type: string;
   name: string;
@@ -274,40 +269,79 @@ type Author = {
   name: string;
   profile_photo_url: string;
 };
-export interface Course {
+interface Course {
   id: number;
   title: string;
   description: string;
   author: Author;
   prerequisite_id?: number | null;
-  status: "draft" | "published";
+  status: keyof typeof CourseStatus;
   thumbnail?: string;
   duration: number;
-  difficulty: "beginner" | "intermediate" | "advanced";
+  difficulty: keyof typeof CourseDifficulty;
   chapters: Chapter[];
   chaptersCount?: number;
-  media?: string[];
+  // media?: string[];
   schedule_at: string;
   closed_at: string;
 }
-export interface Chapter {
+
+interface Quiz {
+  id: number | string;
+  title: string;
+  description: string;
+  status: keyof typeof QuizStatus;
+  duration: number;
+  questions: Question[];
+  attachments: Attachment[];
+  schedule_at?: string;
+  closed_at?: string;
+}
+interface Question {
+  id: number | string;
+  question: string;
+  options: Options[];
+}
+interface Options {
+  id: number | string;
+  option: string;
+  points: number;
+  is_correct: boolean;
+}
+
+interface QuizForm
+  extends Omit<
+    Quiz,
+    "id" | "schedule_at" | "closed_at" | "questions" | "attachments"
+  > {
+  // questions: number[];
+  attachments: { [key: number]: any };
+}
+
+interface Chapter {
   id: number;
   order: number;
   course_id?: number;
   title: string;
   attachments: Attachment[];
 }
-export interface CourseForm
+interface CourseForm
   extends Omit<
     Course,
-    "id" | "duration" | "author" | "chapters" | "schedule_at" | "closed_at"
+    | "id"
+    | "duration"
+    | "author"
+    | "chapters"
+    | "chaptersCount"
+    | "schedule_at"
+    | "closed_at"
   > {}
-export interface ChapterForm extends Omit<Chapter, "id"> {
+interface ChapterForm extends Omit<Chapter, "id"> {
   id?: number;
   attachments: Attachment[];
 }
 
-export interface PaginationResponse<T> {
+interface PaginationResponse<T> {
   data: T[];
   meta: PaginationMeta;
 }
@@ -330,7 +364,7 @@ interface PaginationLink {
 // !SECTION
 
 // SECTION App: Calendar
-export interface CalendarEvent {
+interface CalendarEvent {
   id: string;
   url: string;
   title: string;
@@ -345,7 +379,7 @@ export interface CalendarEvent {
 // SECTION App: Invoice
 
 // 👉 Client
-export interface Client {
+interface Client {
   address: string;
   company: string;
   companyEmail: string;
@@ -355,7 +389,7 @@ export interface Client {
 }
 
 // 👉 Invoice
-export interface Invoice {
+interface Invoice {
   id: number;
   issuedDate: string;
   client: Client;
@@ -368,7 +402,7 @@ export interface Invoice {
 }
 
 // 👉 PaymentDetails
-export interface PaymentDetails {
+interface PaymentDetails {
   totalDue: string;
   bankName: string;
   country: string;
@@ -384,18 +418,18 @@ export type EmailFolder = "inbox" | "sent" | "draft" | "spam";
 export type EmailFilter = EmailFolder | "trashed" | "starred";
 export type EmailLabel = "personal" | "company" | "important" | "private";
 
-export interface EmailTo {
+interface EmailTo {
   email: string;
   name: string;
 }
 
-export interface EmailFrom {
+interface EmailFrom {
   email: string;
   name: string;
   avatar: any;
 }
 
-export interface EmailAttachment {
+interface EmailAttachment {
   fileName: string;
   thumbnail: any;
   url: string;
@@ -424,7 +458,7 @@ export interface EmailAttachment {
   folders => inbox, sent, draft, spam
   flags: starred, trash
 */
-export interface Email {
+interface Email {
   id: number;
   to: EmailTo[];
   from: EmailFrom;
@@ -446,7 +480,7 @@ export interface Email {
   isDeleted: boolean;
 }
 
-export interface FetchEmailsPayload {
+interface FetchEmailsPayload {
   q?: string;
   filter?: EmailFilter;
   label?: EmailLabel;
@@ -457,7 +491,7 @@ export interface FetchEmailsPayload {
 // SECTION App: Chat
 export type ChatStatus = "online" | "offline" | "busy" | "away";
 
-export interface ChatContact {
+interface ChatContact {
   id: number;
   fullName: string;
   role: string;
@@ -466,7 +500,7 @@ export interface ChatContact {
   status: ChatStatus;
 }
 
-export interface ChatMessage {
+interface ChatMessage {
   message: string;
   time: string;
   senderId: number;
@@ -477,7 +511,7 @@ export interface ChatMessage {
   };
 }
 
-export interface Chat {
+interface Chat {
   id: number;
   userId: number;
   unseenMsgs: number;
@@ -485,14 +519,14 @@ export interface Chat {
 }
 
 // ℹ️ This is chat type received in response of user chat
-export interface ChatOut {
+interface ChatOut {
   id: Chat["id"];
   unseenMsgs: Chat["unseenMsgs"];
   messages: ChatMessage[];
   lastMessage: ChatMessage[number];
 }
 
-export interface ChatContactWithChat extends ChatContact {
+interface ChatContactWithChat extends ChatContact {
   chat: ChatOut;
 }
 // !SECTION App: Chat
@@ -513,7 +547,7 @@ export type SearchHeader = {
 };
 
 // SECTION Dashboard: Analytics
-export interface ProjectsAnalytics {
+interface ProjectsAnalytics {
   logo: string;
   name: string;
   date: string;
@@ -525,7 +559,7 @@ export interface ProjectsAnalytics {
 // !SECTION
 
 // SECTION Dashboard: Analytics
-export interface ProjectsAnalytics {
+interface ProjectsAnalytics {
   logo: string;
   name: string;
   date: string;
@@ -558,7 +592,7 @@ export type Data = {
   status: number;
 };
 
-export interface Product {
+interface Product {
   id: number;
   name: string;
   slug: string;
@@ -571,32 +605,32 @@ export interface Product {
   description: string;
 }
 
-export interface Buyer {
+interface Buyer {
   name: string;
   avatar: string | null;
 }
 
-export interface Payment {
+interface Payment {
   total: number;
   received_payment_status: string;
   paid_amount: number;
   status: string;
 }
 
-export interface SalesDetails {
+interface SalesDetails {
   product: Product;
   buyer: Buyer;
   date: string;
   payment: Payment;
 }
 
-export interface LinkData {
+interface LinkData {
   url: string | null;
   label: string;
   active: boolean;
 }
 
-export interface MetaData {
+interface MetaData {
   current_page: number;
   from: number;
   last_page: number;
@@ -607,7 +641,7 @@ export interface MetaData {
   total: number;
 }
 
-export interface PaginatedResource<T> {
+interface PaginatedResource<T> {
   data: T[];
   links: {
     first: string;
@@ -618,11 +652,11 @@ export interface PaginatedResource<T> {
   meta: MetaData;
 }
 
-export interface JsonResponse<T> {
+interface JsonResponse<T> {
   message?: string;
   data: T;
 }
-export interface ResourceResponse<T> {
+interface ResourceResponse<T> {
   meta?: PaginationMeta;
   links?: PaginationLink[];
   data: T;
@@ -642,4 +676,11 @@ interface PaginationLink {
   url: string | null;
   label: string;
   active: boolean;
+}
+
+export interface LoginResponse {
+  access_token: string;
+  expires_in: number;
+  refresh_token: string;
+  token_type: string;
 }

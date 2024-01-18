@@ -9,10 +9,13 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
-use Laravel\Sanctum\HasApiTokens;
+use Laravel\Passport\HasApiTokens;
+// use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements MustVerifyEmail
+
+// implements MustVerifyEmail
+class User extends Authenticatable
 {
     use HasApiTokens;
     use HasFactory;
@@ -94,5 +97,15 @@ class User extends Authenticatable implements MustVerifyEmail
             }
             return $result;
         }, [])));
+    }
+
+    /**
+     * Get all of the quizzes for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function quizzes(): HasMany
+    {
+        return $this->hasMany(Quiz::class, 'author_id');
     }
 }

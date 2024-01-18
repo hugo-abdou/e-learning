@@ -1,157 +1,182 @@
 <template>
-    <div ref="editorContainer" :id="id"></div>
+  <div ref="editorEl" class="py-5"></div>
 </template>
-
-<script lang="ts">
-import EditorJS from "@editorjs/editorjs";
-import Header from "@editorjs/header";
-import List from "@editorjs/list";
-import CodeTool from "@editorjs/code";
-import Paragraph from "@editorjs/paragraph";
-import Embed from "@editorjs/embed";
-import Table from "@editorjs/table";
+<script setup lang="ts">
 import Checklist from "@editorjs/checklist";
-import Marker from "@editorjs/marker";
-import Warning from "@editorjs/warning";
-import RawTool from "@editorjs/raw";
-import Quote from "@editorjs/quote";
-import InlineCode from "@editorjs/inline-code";
+import CodeTool from "@editorjs/code";
 import Delimiter from "@editorjs/delimiter";
-import SimpleImage from "@editorjs/simple-image";
+import EditorJS, { EditorConfig } from "@editorjs/editorjs";
+import Embed from "@editorjs/embed";
+import Header from "@editorjs/header";
 import BookCoverToolfrom from "@editorjs/image";
+import InlineCode from "@editorjs/inline-code";
+import List from "@editorjs/list";
+import Marker from "@editorjs/marker";
+import Paragraph from "@editorjs/paragraph";
+import Quote from "@editorjs/quote";
+import RawTool from "@editorjs/raw";
+import Table from "@editorjs/table";
+import Warning from "@editorjs/warning";
+import MathTex from "editorjs-math";
+interface Props {}
+const props = withDefaults(defineProps<EditorConfig & Props>(), {
+  minHeight: 250,
+  placeholder: "Type Here",
+  inlineToolbar: true,
+});
 
-import _ from "lodash";
-import axiosIns from "@axios";
+const emit = defineEmits<{ (e: "change", val: EditorJS): void }>();
 
-export default {
-    props: { readOnly: Boolean, content: Object, id: { type: String, default: "editorjs" } },
-    data() {
-        return {
-            editor: {} as EditorJS,
-            config: {
-                tools: {
-                    header: {
-                        class: Header,
-                        config: {
-                            placeholder: "Enter a header",
-                            levels: [1, 2, 3, 4, 5, 6],
-                            defaultLevel: 1,
-                            inlineToolbar: true
-                        }
-                    },
-                    image: {
-                        class: BookCoverToolfrom,
-                        config: {
-                            uploader: {
-                                async uploadByFile(file: File) {
-                                    const formPost = new FormData();
-                                    formPost.append("file", file, file.name);
-                                    // your own uploading logic here
-                                    try {
-                                        const res = await axiosIns.post("/media", formPost);
-                                        return {
-                                            success: 1,
-                                            file: {
-                                                url: res.data.url
-                                            }
-                                        };
-                                    } catch (error) {
-                                        throw error;
-                                    }
-                                },
-                                async uploadByUrl(url: string) {
-                                    console.log(url);
-                                }
-                            }
-                        }
-                    },
-                    list: {
-                        class: List,
-                        inlineToolbar: true
-                    },
-                    code: {
-                        class: CodeTool
-                    },
-                    paragraph: {
-                        class: Paragraph,
-                        inlineToolbar: true
-                    },
-                    embed: {
-                        class: Embed,
-                        config: {
-                            services: {
-                                youtube: true,
-                                coub: true,
-                                imgur: true,
-                                vimeo: true
-                            }
-                        }
-                    },
-                    table: {
-                        class: Table,
-                        inlineToolbar: true,
-                        config: {
-                            rows: 2,
-                            cols: 3
-                        }
-                    },
-                    checklist: {
-                        class: Checklist
-                    },
-                    Marker: {
-                        class: Marker,
-                        shortcut: "CMD+SHIFT+M"
-                    },
-                    warning: {
-                        class: Warning,
-                        inlineToolbar: true,
-                        shortcut: "CMD+SHIFT+W",
-                        config: {
-                            titlePlaceholder: "Title",
-                            messagePlaceholder: "Message"
-                        }
-                    },
-                    raw: RawTool,
-                    quote: {
-                        class: Quote,
-                        inlineToolbar: true,
-                        shortcut: "CMD+SHIFT+O",
-                        config: {
-                            quotePlaceholder: "Enter a quote",
-                            captionPlaceholder: "Quote's author"
-                        }
-                    },
-                    inlineCode: {
-                        class: InlineCode,
-                        shortcut: "CMD+SHIFT+M"
-                    },
-                    delimiter: Delimiter
-                }
-            }
-        };
+const editor = ref<EditorJS>();
+const editorEl = ref<HTMLElement>();
+const editorTools = {
+  math: {
+    class: MathTex,
+  },
+  header: {
+    class: Header,
+    config: {
+      placeholder: props.placeholder || "Enter a header",
+      levels: [1, 2, 3, 4, 5, 6],
+      defaultLevel: 1,
+      inlineToolbar: true,
     },
-    unmounted() {
-        this.editor.destroy();
+  },
+  image: {
+    class: BookCoverToolfrom,
+    config: {
+      uploader: {
+        async uploadByFile(file: File) {
+          const formPost = new FormData();
+          formPost.append("file", file, file.name);
+          // your own uploading logic here
+          try {
+            const res = await $api.post<{ url: string }>("/media", formPost);
+            return {
+              success: 1,
+              file: {
+                url: res.url,
+              },
+            };
+          } catch (error) {
+            throw error;
+          }
+        },
+        async uploadByUrl(url: string) {
+          console.log(url);
+        },
+      },
     },
-    mounted() {
-        this.editor = new EditorJS({
-            readOnly: this.readOnly,
-            holder: this.id,
-            ...this.config,
-            minHeight: 210,
-            placeholder: "Type Here",
-            data: this.content as any,
-            inlineToolbar: true,
-            onChange: args => {
-                this.$emit("change", this.editor);
-            }
-        });
-    }
+  },
+  list: {
+    class: List,
+    inlineToolbar: true,
+  },
+  code: {
+    class: CodeTool,
+  },
+  paragraph: {
+    class: Paragraph,
+    inlineToolbar: true,
+  },
+  embed: {
+    class: Embed,
+    config: {
+      services: {
+        youtube: true,
+        coub: true,
+        imgur: true,
+        vimeo: true,
+      },
+    },
+  },
+  table: {
+    class: Table,
+    inlineToolbar: true,
+    config: {
+      rows: 2,
+      cols: 3,
+    },
+  },
+  checklist: {
+    class: Checklist,
+  },
+  Marker: {
+    class: Marker,
+    shortcut: "CMD+SHIFT+M",
+  },
+  warning: {
+    class: Warning,
+    inlineToolbar: true,
+    shortcut: "CMD+SHIFT+W",
+    config: {
+      titlePlaceholder: "Title",
+      messagePlaceholder: "Message",
+    },
+  },
+  raw: RawTool,
+  quote: {
+    class: Quote,
+    inlineToolbar: true,
+    shortcut: "CMD+SHIFT+O",
+    config: {
+      quotePlaceholder: "Enter a quote",
+      captionPlaceholder: "Quote's author",
+    },
+  },
+  inlineCode: {
+    class: InlineCode,
+    shortcut: "CMD+SHIFT+M",
+  },
+  delimiter: Delimiter,
 };
+onMounted(() => {
+  editor.value = new EditorJS({
+    ...props,
+    defaultBlock: props.defaultBlock || "header",
+    tools: props.tools || editorTools,
+    holder: props.holder || editorEl.value,
+    onChange: (args) => {
+      if (editor.value) emit("change", editor.value);
+    },
+  });
+});
+
+onBeforeUnmount(() => {
+  editor.value?.destroy();
+});
+
+defineExpose({ editor: editor.value });
 </script>
 
 <style>
 .ct {
-    z-index: 99999999999;
+  z-index: 99999999999;
+}
+
+.ce-Math,
+.ce-toolbar__plus,
+.ce-toolbar__settings-btn {
+  color: rgba(
+    var(--v-theme-on-background),
+    var(--v-high-emphasis-opacity)
+  ) !important;
+}
+
+.cdx-search-field__input {
+  color: rgba(
+    var(--v-theme-background),
+    var(--v-high-emphasis-opacity)
+  ) !important;
+}
+
+@media (hover: hover) {
+  .ce-toolbar__settings-btn:hover,
+  .ce-toolbar__plus:hover {
+    color: rgba(
+      var(--v-theme-background),
+      var(--v-high-emphasis-opacity)
+    ) !important;
+  }
 }
 </style>

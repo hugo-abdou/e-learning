@@ -29,14 +29,14 @@ class CourseResource extends JsonResource
             "schedule_at" => $this->schedule_at,
         ];
 
-        if ($additional = $request->get('additional')) {
-            if (isset($additional["chaptersCount"])) {
+        if ($additional = json_decode($request->get('additional', "[]"))) {
+            if (isset($additional->chaptersCount)) {
                 $data["chaptersCount"] = $this->chapters()->count();
             }
-            if (isset($additional["chapters"])) {
+            if (isset($additional->chapters)) {
                 $data["chapters"] = ChapterResource::collection($this->whenLoaded("chapters"));
             }
-            if (isset($additional["hasMedia"]) && $chapters = $this->whenLoaded("chapters")) {
+            if (isset($additional->hasMedia) && $chapters = $this->whenLoaded("chapters")) {
                 $data["media"] = $chapters->reduce(function ($carry, $chapter) {
                     return $carry->merge($chapter->media->map(fn ($m) => $m->getThumbUrl()));
                 }, collect([]));
