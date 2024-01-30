@@ -38,9 +38,7 @@ export const useMediaStore = defineStore({
       return new Promise((resolve, reject) => {
         return $api
           .delete<Media>(`/media/${_id}`)
-          .then((res) => {
-            resolve(res);
-          })
+          .then((res) => resolve(res))
           .catch((err) => reject(err));
       });
     },

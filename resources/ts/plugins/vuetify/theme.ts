@@ -67,7 +67,7 @@ export const themes: Record<string, ThemeDefinition> = {
       "shadow-key-umbra-color": "#2F2B3D",
     },
   },
-  darkOld: {
+  dark: {
     dark: true,
     colors: {
       white: "#fff",
@@ -129,7 +129,7 @@ export const themes: Record<string, ThemeDefinition> = {
       "shadow-key-umbra-color": "#0F1422",
     },
   },
-  dark: {
+  darkOld: {
     dark: true,
     colors: {
       primary:

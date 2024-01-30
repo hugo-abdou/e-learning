@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Chapter extends Model
 {
@@ -26,13 +27,13 @@ class Chapter extends Model
         return $this->belongsTo(Course::class);
     }
 
-    // /**
-    //  * The media that belong to the Chapter
-    //  *
-    //  * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-    //  */
-    // public function media(): BelongsToMany
-    // {
-    //     return $this->belongsToMany(Media::class, relatedPivotKey: 'attachment_id', foreignPivotKey: 'chapter_id');
-    // }
+    /**
+     * The quizzes that belong to the Chapter
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function quizzes(): BelongsToMany
+    {
+        return $this->belongsToMany(Quiz::class);
+    }
 }

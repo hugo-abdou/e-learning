@@ -22,7 +22,7 @@ class QuizResource extends JsonResource
             'status' => $this->status,
             'schedule_at' => $this->schedule_at,
             'close_at' => $this->close_at,
-            'attachments' => AttachmentResource::collection($this->attachments),
+            // 'attachments' =>  AttachmentResource::collection($this->whenLoaded('attachments')),
             'created_at' => $this->created_at->diffForHumans(),
         ];
     }

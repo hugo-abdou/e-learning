@@ -1,5 +1,10 @@
 <template>
-  <div ref="editorEl" class="py-5"></div>
+  <div
+    style="--max-height: 100px"
+    ref="editorEl"
+    :id="holder"
+    class="py-5"
+  ></div>
 </template>
 <script setup lang="ts">
 import Checklist from "@editorjs/checklist";
@@ -20,12 +25,12 @@ import Warning from "@editorjs/warning";
 import MathTex from "editorjs-math";
 interface Props {}
 const props = withDefaults(defineProps<EditorConfig & Props>(), {
-  minHeight: 250,
+  minHeight: 70,
   placeholder: "Type Here",
   inlineToolbar: true,
 });
 
-const emit = defineEmits<{ (e: "change", val: EditorJS): void }>();
+const emit = defineEmits<{ (e: "editorChange", val: EditorJS): void }>();
 
 const editor = ref<EditorJS>();
 const editorEl = ref<HTMLElement>();
@@ -51,7 +56,10 @@ const editorTools = {
           formPost.append("file", file, file.name);
           // your own uploading logic here
           try {
-            const res = await $api.post<{ url: string }>("/media", formPost);
+            const res = await $api.post<{ url: string }>(
+              "/media/upload",
+              formPost
+            );
             return {
               success: 1,
               file: {
@@ -137,7 +145,7 @@ onMounted(() => {
     tools: props.tools || editorTools,
     holder: props.holder || editorEl.value,
     onChange: (args) => {
-      if (editor.value) emit("change", editor.value);
+      if (editor.value) emit("editorChange", editor.value);
     },
   });
 });
@@ -146,12 +154,25 @@ onBeforeUnmount(() => {
   editor.value?.destroy();
 });
 
-defineExpose({ editor: editor.value });
+defineExpose({ editor, id: props.holder });
 </script>
 
 <style>
-.ct {
+/* .ct {
   z-index: 99999999999;
+} */
+.ce-popover--opened {
+  --max-height: 200px;
+}
+/* .ce-toolbox,
+.ce-popover__overlay,
+.ce-popover {
+  z-index: 9999999999;
+} */
+.katex-display > .katex > .katex-html {
+  overflow: visible !important;
+  display: inline;
+  border-bottom: 1px black;
 }
 
 .ce-Math,

@@ -67,7 +67,6 @@ class ResumableUploadController extends Controller
             'data->height' => "720",
             'conversions' => []
         ]);
-
         return $media;
     }
 
@@ -89,7 +88,6 @@ class ResumableUploadController extends Controller
             ]);
             Storage::disk('tmp')->delete($media->path);
         }
-
         // process Image and extract thumbnails and large images
         ProcessImageMediaJob::dispatchIf(
             $type === 'image',
@@ -97,14 +95,5 @@ class ResumableUploadController extends Controller
             ["thumb" => 500],
             ['disk' => disk(), 'path' => 'media' . DIRECTORY_SEPARATOR . auth()->id()]
         );
-
-        // convert  Video to HLS format and extract thumbnails and qualities [360,720,1080]
-        // ProcessVideoMediaJob::dispatchIf(
-        //     $type === 'video',
-        //     $media->id,
-        //     [MediaResolutions::RESOLUTION_240P->value, MediaResolutions::RESOLUTION_720P->value],
-        //     ['disk' => disk(), 'path' => 'media/' . auth()->id()]
-        // );
-        // if (file_exists($uploadPath)) unlink($uploadPath);
     }
 }

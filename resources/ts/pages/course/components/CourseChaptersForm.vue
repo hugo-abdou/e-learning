@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { MediaTypes } from "@/@core/enums";
 import { requiredValidator } from "@/@core/utils/validators";
-import Media from "@/components/Media/index.vue";
+import Media from "@/components/Media";
 import { delay } from "@/helpers";
 import { useCourseStore } from "@/stores/useCourseStore";
-import type { ChapterForm, Media as MediaType } from "@/types";
+import type { ChapterForm, Media as MediaType, Quiz } from "@/types";
 import { UploadBunAttrs, scrollToTop } from "@/utils";
 import { VForm } from "vuetify/components/VForm";
 
@@ -15,12 +14,13 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   chapters: () => [],
-  gridType: "grid",
+  gridType: "list",
 });
 
 const courseStore = useCourseStore();
 const currentChapter = ref(0);
 const chaptersForm = ref<ChapterForm[]>(props.chapters);
+const quizzes = ref<Quiz[]>([]);
 
 // @ts-expect-error
 const formEl = ref<VForm>({});
@@ -46,9 +46,18 @@ const uploaderRules = computed(() => {
   };
 });
 
+const quizStore = useQuizzesStore();
 onMounted(() => {
   if (chaptersForm.value.length === 0)
-    chaptersForm.value.push({ title: "", attachments: [], order: 0, id: 0 });
+    chaptersForm.value.push({
+      title: "",
+      attachments: [],
+      order: 0,
+      id: 0,
+    });
+  quizStore
+    .getQuizzes({ params: { itemsPerPage: 1000 } })
+    .then(({ data }) => (quizzes.value = data));
 });
 
 const closeDialog = () => {
@@ -62,10 +71,9 @@ const openDialog = (type: string) => {
 };
 
 const setMediaFromUploader = (media: MediaType[]) => {
-  console.log(media);
   if (dialog.type === "upload-chapter-attachment") {
     chaptersForm.value[currentChapter.value].attachments.push(
-      ...media.map((m) => ({
+      ...media.map((m, i) => ({
         ...m,
         visibility: [],
         download: false,
@@ -196,7 +204,7 @@ defineExpose({ formEl, validate });
         <VExpansionPanelText class="border-t">
           <VCardText class="mb-5">
             <VRow>
-              <VCol cols="12" class="mb-3">
+              <VCol cols="12" class="mb-2">
                 <VTextField
                   v-model="chapter.title"
                   :rules="[requiredValidator]"
@@ -207,50 +215,36 @@ defineExpose({ formEl, validate });
                 v-slot="{ item: doc }"
                 class="w-100"
                 :items="chapter.attachments"
-                :grid="
-                  gridType === 'grid' ? { cols: '12', sm: '6' } : { cols: '12' }
-                "
+                :grid="{ cols: '12' }"
               >
-                <VRow
-                  :key="gridType"
-                  class="rounded-lg bg-background border w-100 ma-0"
-                >
-                  <VCol
-                    v-bind="
-                      gridType === 'list'
-                        ? { cols: '12', md: '4' }
-                        : { cols: '12' }
-                    "
+                <VCard class="bg-background">
+                  <div
+                    class="d-flex justify-space-between align-center flex-wrap flex-md-nowrap flex-column flex-md-row"
                   >
-                    <Media
-                      :media="doc"
-                      deletable
-                      is-preview
-                      aspect-ratio="2"
-                      @on-delete="
-                        chapter.attachments = chapter.attachments.filter(
-                          ({ id }) => id !== doc.id
-                        )
-                      "
-                    />
-                  </VCol>
-
-                  <VCol
-                    v-bind="
-                      gridType === 'list'
-                        ? { cols: '12', md: '8' }
-                        : { cols: '12' }
-                    "
-                  >
-                    <VRow>
-                      <VCol cols="12">
+                    <div class="v-col-md-4 pa-0 pa-md-2 h-100">
+                      <Media
+                        :media="doc"
+                        preview
+                        deletable
+                        @delete="
+                          () => {
+                            chapter.attachments = chapter.attachments.filter(
+                              ({ id }) => id !== doc.id
+                            );
+                          }
+                        "
+                      />
+                    </div>
+                    <VDivider :vertical="$vuetify.display.mdAndUp" />
+                    <div class="v-col-md-8">
+                      <VCardText>
                         <VTextField
                           v-model="doc.name"
                           :rules="[requiredValidator]"
                           :label="$t('chapter.fields.title.label')"
                         />
-                      </VCol>
-                      <VCol cols="12" md="6">
+                      </VCardText>
+                      <VCardText>
                         <VSelect
                           v-model="doc.visibility"
                           :items="['Public', 'Plan A', 'Plan B']"
@@ -267,8 +261,8 @@ defineExpose({ formEl, validate });
                             />
                           </template>
                         </VSelect>
-                      </VCol>
-                      <VCol cols="12" md="6" class="d-flex align-center gap-2">
+                      </VCardText>
+                      <VCardText class="d-flex justify-space-between">
                         <VSwitch
                           v-model="doc.download"
                           :label="$t('chapter.fields.download.label')"
@@ -276,8 +270,8 @@ defineExpose({ formEl, validate });
                         <InfoTooltip
                           :text="$t('chapter.fields.download.description')"
                         />
-                      </VCol>
-                      <VCol v-if="doc.type === MediaTypes.pdf" cols="12">
+                      </VCardText>
+                      <VCardText v-if="doc.type === 'pdf'">
                         <VTextField
                           v-model="doc.watermark"
                           :label="$t('chapter.fields.watermark.label')"
@@ -288,15 +282,16 @@ defineExpose({ formEl, validate });
                             />
                           </template>
                         </VTextField>
-                      </VCol>
-                    </VRow>
-                  </VCol>
-                </VRow>
+                      </VCardText>
+                    </div>
+                  </div>
+                </VCard>
               </Masonry>
-              <VCol cols="12">
+              <VCol cols="12" class="mb-4">
+                <VLabel :text="$t('chapter.fields.attachments.label')" />
                 <InfoTooltip
                   v-slot="{ props }"
-                  :text="$t('media.upload.description')"
+                  text="upload the course materials that you prepare for this chapter"
                 >
                   <VBtn
                     v-bind="{ ...props, ...UploadBunAttrs }"

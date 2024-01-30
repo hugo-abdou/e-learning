@@ -43,6 +43,10 @@ class Media extends Model
     {
         return $this->getConversionUrl('master');
     }
+    public function getLowUrl(): ?string
+    {
+        return $this->getConversionUrl('low');
+    }
     public function getThumbUrl(): ?string
     {
 
@@ -62,7 +66,7 @@ class Media extends Model
     public function getConversionUrl(string $name): ?string
     {
         if ($conversion = $this->getConversion($name)) {
-            if ($conversion['disk'] === 'remote')  return $conversion['path'];
+            if ($conversion['disk'] === 'remote' || Str::contains($conversion['path'], 'https://'))  return $conversion['path'];
             return $this->filesystem($conversion['disk'])->url($conversion['path']);
         }
         return null;

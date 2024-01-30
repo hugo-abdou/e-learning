@@ -7,6 +7,7 @@ import {
   MediaStatus,
   MediaTypes,
 } from "./@core/enums";
+import { Media } from "./types";
 
 export const paginateArray = (
   array: unknown[],
@@ -153,8 +154,9 @@ export const resolveAttachmentTypeIcon = (type: keyof typeof MediaTypes) => {
   }
 };
 
-export const resolveDefaultThumbnal = (type: keyof typeof MediaTypes) => {
-  switch (type) {
+export const resolveDefaultThumbnal = (media: Media) => {
+  if (media.thumb_url) return media.thumb_url;
+  switch (media.type) {
     case MediaTypes.image:
       return "/assets/image-placeholder.jpg";
     case MediaTypes.video:
@@ -173,9 +175,9 @@ export const scrollToTop = () => {
   });
 };
 export const UploadBunAttrs: any = {
-  class: "border-md border-dashed w-100 h-100",
+  class: "border-md border-dashed rounded-lg w-100 h-100",
   style: "min-height: 100px",
-  variant: "tonal",
+  variant: "text",
   color: "default",
 };
 

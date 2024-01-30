@@ -1,5 +1,5 @@
 import type { UserAbility } from "@/utils/casl/AppAbility";
-import { CourseDifficulty, CourseStatus, QuizStatus } from "./@core/enums";
+import { OutputData } from "@editorjs/editorjs";
 
 // 👉 Help center
 export type HelpCenterSubcategoryArticlesType = {
@@ -258,11 +258,12 @@ interface DocumentMedia extends BaseMedia {
 }
 
 export type Media = ImageMedia | VideoMedia | DocumentMedia;
-export type Attachment = Media & {
-  visibility: string[];
-  download: boolean;
-  name: string;
-};
+export type Attachment =
+  | Media & {
+      visibility: string[];
+      download: boolean;
+      name: string;
+    };
 
 type Author = {
   id: number;
@@ -274,11 +275,11 @@ interface Course {
   title: string;
   description: string;
   author: Author;
-  prerequisite_id?: number | null;
-  status: keyof typeof CourseStatus;
+  // prerequisite_id?: number | null;
+  status: CourseStatus;
   thumbnail?: string;
   duration: number;
-  difficulty: keyof typeof CourseDifficulty;
+  difficulty: CourseDifficulty;
   chapters: Chapter[];
   chaptersCount?: number;
   // media?: string[];
@@ -290,7 +291,7 @@ interface Quiz {
   id: number | string;
   title: string;
   description: string;
-  status: keyof typeof QuizStatus;
+  status: QuizStatus;
   duration: number;
   questions: Question[];
   attachments: Attachment[];
@@ -299,7 +300,8 @@ interface Quiz {
 }
 interface Question {
   id: number | string;
-  question: string;
+  allow_custom_answer: boolean;
+  question: OutputData;
   options: Options[];
 }
 interface Options {
@@ -344,6 +346,7 @@ interface ChapterForm extends Omit<Chapter, "id"> {
 interface PaginationResponse<T> {
   data: T[];
   meta: PaginationMeta;
+  links: { first: string; last: string; prev: string; next: string };
 }
 interface PaginationMeta {
   current_page: number;

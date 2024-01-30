@@ -10,6 +10,7 @@ use App\Http\Requests\QuizRequest;
 use App\Http\Resources\QuizResource;
 use App\Models\Quiz;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Pipeline;
 
 class QuizController extends Controller
@@ -19,14 +20,11 @@ class QuizController extends Controller
      */
     public function index(Request $request)
     {
-        $quizzes = Pipeline::send(
-            auth()->user()->quizzes()
-        )->through([
+        $quizzes =  Pipeline::send(auth()->user()->quizzes())->through([
+            new Search(['title', 'status', 'description']),
             Sort::class,
-            // new Search(['title', 'status', 'description'])
-        ])->thenReturn()->orderBy('created_at', 'asc')
-            ->paginate($request->get('itemsPerPage', 10));
-        return QuizResource::collection($quizzes);
+        ])->thenReturn();
+        return QuizResource::collection($quizzes->paginate($request->get('itemsPerPage', 10)));
     }
 
     /**
@@ -34,15 +32,30 @@ class QuizController extends Controller
      */
     public function store(QuizRequest $request)
     {
-        $course = auth()->user()->quizzes()
+        DB::beginTransaction();
+        $quiz = auth()->user()->quizzes()
             ->create([
                 "title" => $request->validated("title"),
                 "description" => $request->validated("description"),
                 "duration" => $request->validated("duration"),
                 'status' => QuizStatus::Draft->value
             ]);
-        $course->attachments()->sync($request->validated('attachments', []));
-        return QuizResource::make($course);
+        collect($request->validated('questions', []))->each(function ($question) use ($quiz) {
+            $createdQuestion = $quiz->questions()->create([
+                "allow_custom_answer" => $question['allow_custom_answer'],
+                "question" => $question['question'],
+            ]);
+            collect($question['options'])->each(function ($option) use ($createdQuestion) {
+                $createdQuestion->answers()->create([
+                    "option" => $option['option'],
+                    "is_correct" => $option['is_correct'],
+                    "points" => $option['points'],
+                ]);
+            });
+        });
+        $quiz->attachments()->sync($request->validated('attachments', []));
+        DB::commit();
+        return QuizResource::make($quiz);
     }
 
     /**

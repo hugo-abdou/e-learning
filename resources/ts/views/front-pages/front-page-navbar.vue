@@ -141,11 +141,6 @@ const auth = useUserStore();
           >
             <div class="d-flex gap-x-3 align-center">
               <VNodeRenderer :nodes="themeConfig.app.logo" />
-              <h4
-                class="text-h4 text-capitalize text-truncate font-weight-bold"
-              >
-                {{ themeConfig.app.title }}
-              </h4>
             </div>
           </RouterLink>
         </VAppBarTitle>

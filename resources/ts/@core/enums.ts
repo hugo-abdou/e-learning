@@ -67,10 +67,7 @@ export const MediaStatus = {
 export const MediaTypes = {
   video: "video",
   image: "image",
-  audio: "audio",
   pdf: "pdf",
-  document: "document",
-  youtube: "youtube",
 } as const;
 export const RouteTransitions = {
   Fade: "app-transition-fade",

@@ -2,20 +2,33 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\CourseStatus;
+use App\Filters\Search;
+use App\Filters\Sort;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ChapterRequest;
 use App\Http\Resources\ChapterResource;
 use App\Models\Chapter;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Pipeline;
 
 class ChapterController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $chapters = Pipeline::send(
+            auth()->user()->courses()->where('id', $request->get('course_id'))->firstOrFail()->chapters()
+        )->through([
+            Sort::class,
+            new Search(['title'])
+        ])->thenReturn()
+            ->paginate($request->get('itemsPerPage', 10));
+        return ChapterResource::collection($chapters);
     }
 
 
@@ -25,14 +38,19 @@ class ChapterController extends Controller
     public function store(ChapterRequest $request)
     {
         $course = auth()->user()->courses()->findOrFail($request->validated('course_id'));
-
-        $chapter = $course->chapters()->create([
-            'title' => $request->validated('title'),
-            'order' => $request->validated('order'),
-        ]);
-
-        $chapter->attachments()->sync($request->validated('attachments'));
-        return ChapterResource::make($chapter);
+        try {
+            DB::beginTransaction();
+            $chapter = $course->chapters()->create([
+                'title' => $request->validated('title'),
+                'order' => $request->validated('order'),
+            ]);
+            $chapter->attachments()->sync($request->validated('attachments'));
+            DB::commit();
+            return ChapterResource::make($chapter);
+        } catch (\Throwable $th) {
+            $course->update(['status' => CourseStatus::Error]);
+        }
+        return response()->json(['message' => 'Something went wrong'], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     /**

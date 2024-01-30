@@ -1,6 +1,8 @@
-<script lang="ts" setup>
-import type { Media, Quiz } from "@/types";
+<script setup lang="ts">
+import type { Quiz } from "@/types";
 import { UploadBunAttrs, uuid } from "@/utils";
+import EditorJS from "@editorjs/editorjs";
+
 definePage({
   meta: {
     redirectIfNotLoggedIn: true,
@@ -9,9 +11,38 @@ definePage({
     navActiveLink: "quizzes",
   },
 });
+const iconsSteps = [
+  {
+    title: "Details",
+    icon: "tabler-list-details",
+  },
+  {
+    title: "Attachments",
+    icon: "tabler-paperclip",
+  },
+  {
+    title: "Questions",
+    icon: "tabler-device-ipad-question",
+  },
+  {
+    title: "Visibility",
+    icon: "tabler-eye",
+  },
+];
+const currentStep = ref(0);
 
-const isUploaderopen = ref(false);
-const quiz = ref<Omit<Quiz, "id">>({
+// @ts-expect-error
+const formEl = ref<VForm>({});
+const validate = async () => {
+  const { valid, errors } = await formEl.value.validate();
+  if (valid) return Promise.resolve();
+  return Promise.reject(errors);
+};
+
+const next = () => {
+  validate().then(() => currentStep.value++);
+};
+const initialState: Omit<Quiz, "id"> = {
   title: "",
   description: "",
   duration: 5,
@@ -20,68 +51,56 @@ const quiz = ref<Omit<Quiz, "id">>({
   questions: [
     {
       id: uuid(),
-      question: "",
+      allow_custom_answer: false,
+      question: {} as any,
       options: [{ id: uuid(), option: "", points: 0, is_correct: false }],
     },
   ],
-});
-// @ts-expect-error
-const formEl = ref<VForm>({});
-
-const validate = async () => {
-  const { valid, errors } = await formEl.value.validate();
-  if (valid) return Promise.resolve();
-  return Promise.reject(errors);
 };
 
-const addQuestion = () => {
-  validate().then(() => {
-    quiz.value.questions.push({
-      id: uuid(),
-      question: "",
-      options: [{ id: uuid(), option: "", points: 0, is_correct: false }],
-    });
-  });
+const formData = ref<Omit<Quiz, "id">>({ ...initialState });
+
+const isUploaderopen = ref(false);
+const onDeleteAttachment = (index: number) => {
+  formData.value.attachments.splice(index, 1);
 };
 
-const addOption = (questionIndex: number) => {
-  validate().then(() => {
-    quiz.value.questions[questionIndex].options.push({
-      id: uuid(),
-      option: "",
-      points: 0,
-      is_correct: false,
-    });
-  });
-};
-
-const removeOption = (questionIndex: number, optionIndex: number) => {
-  quiz.value.questions[questionIndex].options.splice(optionIndex, 1);
-};
-
-const removeQuestion = (index: number) => {
-  quiz.value.questions.splice(index, 1);
-};
 const copyQuestion = (index: number) => {
-  quiz.value.questions.push({
+  formData.value.questions.push({
+    ...formData.value.questions[index],
     id: uuid(),
-    question: quiz.value.questions[index].question,
-    options: quiz.value.questions[index].options.map((option) => ({
+    options: formData.value.questions[index].options.map((option) => ({
       ...option,
       id: uuid(),
     })),
   });
 };
+const removeQuestion = (index: number) => {
+  formData.value.questions.splice(index, 1);
+};
+const addQuestion = () => {
+  formData.value.questions.push({
+    id: uuid(),
+    allow_custom_answer: false,
+    question: {} as any,
+    options: [{ id: uuid(), option: "", points: 0, is_correct: false }],
+  });
+};
 
-const setMedia = (media: Media[]) => {
-  // @ts-ignore
-  quiz.value.attachments.push(...media);
-  isUploaderopen.value = false;
+const removeOption = (questionIndex: number, optionIndex: number) => {
+  formData.value.questions[questionIndex].options.splice(optionIndex, 1);
+};
+const addOption = (questionIndex: number) => {
+  formData.value.questions[questionIndex].options.push({
+    id: uuid(),
+    option: "",
+    points: 0,
+    is_correct: false,
+  });
 };
 
 const visibility = ref<"publish" | "schedule">("publish");
 const publishStatus = ref<"Private" | "Published">("Private");
-
 const publishStatusList = [
   {
     title: "Private",
@@ -96,41 +115,59 @@ const publishStatusList = [
     icon: { icon: "mdi-public", size: "28" },
   },
 ];
-
 const scheduleDate = ref(new Date().toISOString());
-
-const onDeleteAttachment = (index: number) => {
-  quiz.value.attachments.splice(index, 1);
+const setMedia = (media: any[]) => {
+  formData.value.attachments.push(...media);
+  isUploaderopen.value = false;
 };
+
+const editorJs = ref([]);
 const router = useRouter();
 const quizStore = useQuizzesStore();
+const submit = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      await validate();
+      for (let i = 0; i < editorJs.value.length; i++) {
+        const { editor, id }: { editor: EditorJS; id: any } = editorJs.value[i];
+        const data = await editor.save();
+        const questionIndex = formData.value.questions.findIndex(
+          (q) => q.id === id
+        );
+        formData.value.questions[questionIndex].question = data;
+      }
+      const attachments: { [key: number]: any } = {};
+      formData.value.attachments.forEach(
+        ({ type, id, name }) => (attachments[id] = { type, name })
+      );
+      const res = await quizStore.createQuiz({
+        ...formData.value,
+        // @ts-ignore
+        questions: formData.value.questions.map(({ id, question, ...all }) => ({
+          ...all,
+          question: JSON.stringify(question) as any,
+        })),
+        attachments: attachments,
+      });
+      if (visibility.value === "schedule")
+        await quizStore.scheduleQuiz(Number(res.data.id), scheduleDate.value);
 
-const submit = async () => {
-  try {
-    await validate();
-    const attachments: { [key: number]: any } = {};
-    quiz.value.attachments.forEach(
-      ({ type, id, name }) => (attachments[id] = { type, name })
-    );
-    const res = await quizStore.createQuiz({
-      ...quiz.value,
-      attachments: attachments,
-    });
-    if (visibility.value === "schedule")
-      await quizStore.scheduleQuiz(Number(res.data.id), scheduleDate.value);
-
-    if (visibility.value === "publish")
-      await quizStore.publishQuiz(Number(res.data.id), publishStatus.value);
-    Promise.resolve();
-  } catch (error) {
-    console.log(error);
-    Promise.reject(error);
-  }
+      if (visibility.value === "publish")
+        await quizStore.publishQuiz(Number(res.data.id), publishStatus.value);
+      resolve("ok");
+    } catch (error) {
+      reject(error);
+    }
+  });
 };
-
 const saveStartOver = () => {
   submit().then(() => {
-    router.push({ name: "quizzes-create" });
+    formData.value = { ...initialState };
+    formData.value.attachments = [];
+    formData.value.questions = [];
+    formEl.value.reset();
+    currentStep.value = 0;
+    addQuestion();
   });
 };
 const save = () => {
@@ -141,23 +178,28 @@ const save = () => {
 </script>
 
 <template>
-  <VAppBarTitle>Create a New Quiz</VAppBarTitle>
+  <!-- 👉 Stepper -->
+  <div class="mb-6">
+    <AppStepper :current-step="currentStep" :items="iconsSteps" />
+  </div>
+
+  <!-- 👉 stepper content -->
   <VForm ref="formEl" class="mt-5">
-    <VRow>
-      <VCol cols="12">
-        <VCard prepend-icon="fluent:quiz-new-24-regular" title="Quiz Details">
-          <VCardItem>
+    <VWindow v-model="currentStep" class="disable-tab-transition">
+      <VWindowItem>
+        <VCard>
+          <VCardText>
             <VRow class="pt-2">
               <VCol cols="12" sm="8">
                 <VTextField
-                  v-model="quiz.title"
+                  v-model="formData.title"
                   :rules="[requiredValidator]"
                   label="Title"
                 />
               </VCol>
               <VCol cols="12" sm="4">
                 <VTextField
-                  v-model="quiz.duration"
+                  v-model="formData.duration"
                   type="number"
                   :rules="[requiredValidator]"
                   label="Duration (minutes)"
@@ -168,29 +210,26 @@ const save = () => {
                 <VTextarea
                   rows="2"
                   auto-grow
-                  v-model="quiz.description"
+                  v-model="formData.description"
                   :rules="[requiredValidator]"
                   label="Description"
                 />
               </VCol>
             </VRow>
-          </VCardItem>
+          </VCardText>
         </VCard>
-      </VCol>
-      <VCol cols="12">
-        <VCard
-          prepend-icon="teenyicons:attachment-outline"
-          title="Quiz Attachments"
-        >
-          <VCardItem>
-            <VRow align="center">
+      </VWindowItem>
+      <VWindowItem>
+        <VCard>
+          <VCardText>
+            <VRow>
               <VCol
                 cols="12"
                 sm="6"
                 md="4"
-                v-if="quiz.attachments.length"
+                v-if="formData.attachments.length"
                 class="h-100"
-                v-for="(attachment, index) in quiz.attachments"
+                v-for="(attachment, index) in formData.attachments"
                 :key="attachment.id"
               >
                 <Media
@@ -224,108 +263,146 @@ const save = () => {
                 </InfoTooltip>
               </VCol>
             </VRow>
-          </VCardItem>
+          </VCardText>
         </VCard>
-      </VCol>
-      <VCol cols="12" v-for="(question, index) in quiz.questions" :key="index">
-        <VCard
-          prepend-icon="mdi-account-question-outline"
-          :title="`${
-            question.question || 'Question ' + (index + 1)
-          } - (${question.options.reduce(
-            (prev, opt) => prev + Number(opt.points),
-            0
-          )} Points)`"
-        >
-          <template #append>
-            <VBtn
-              @click="copyQuestion(index)"
-              v-bind="{ variant: 'text', density: 'compact', color: 'default' }"
-              icon="tabler-copy"
-            />
-            <VBtn
-              @click="removeQuestion(index)"
-              v-bind="{ variant: 'text', density: 'compact', color: 'error' }"
-              icon="tabler-trash"
-            />
-          </template>
-          <VCardItem>
-            <VRow>
-              <VCol cols="12">
-                <!-- <VTextarea
-                  v-model="question.question"
-                  :label="'Question ' + (index + 1)"
-                  :rules="[requiredValidator]"
-                  class="mt-2"
-                  rows="2"
-                  auto-grow
-                /> -->
-                <EditorJs
-                  class="border rounded"
-                  :placeholder="'Type here your question ' + (index + 1)"
+      </VWindowItem>
+      <VWindowItem>
+        <VRow>
+          <VCol
+            cols="12"
+            v-for="(question, index) in formData.questions"
+            :key="index"
+          >
+            <CollapsedContent
+              prepend-icon="tabler-device-ipad-question"
+              :title="`${
+                'Question ' + (index + 1)
+              } - (${question.options.reduce(
+                (prev, opt) => prev + Number(opt.points),
+                0
+              )} Points)`"
+            >
+              <template #append>
+                <IconBtn
+                  @click="copyQuestion(index)"
+                  v-bind="{
+                    variant: 'text',
+                    density: 'compact',
+                    color: 'default',
+                  }"
+                  icon="tabler-copy"
                 />
-              </VCol>
-              <template
-                v-for="(option, optionIndex) in question.options"
-                :key="optionIndex"
-              >
-                <VCol cols="12">
-                  <div class="d-flex align-start gap-2">
-                    <VTextField
-                      :id="'option-' + (index + 1) + '-' + (optionIndex + 1)"
-                      v-model="option.option"
-                      :label="'Option ' + (optionIndex + 1)"
-                      :rules="[requiredValidator]"
-                      :base-color="option.is_correct ? 'success' : 'default'"
-                      class="w-100"
-                    />
-                    <VTextField
-                      v-if="option.is_correct"
-                      :id="
-                        'option-points-' + (index + 1) + '-' + (optionIndex + 1)
-                      "
-                      type="number"
-                      v-model="option.points"
-                      label="Points"
-                      :rules="[requiredValidator]"
-                      :base-color="option.is_correct ? 'success' : 'default'"
-                    />
-                    <div class="ml-4" style="width: 40px">
-                      <VCheckbox color="success" v-model="option.is_correct">
-                        <VTooltip activator="parent" location="top">
-                          Correct Answer
-                        </VTooltip>
-                      </VCheckbox>
-                    </div>
-                    <VBtn
-                      v-if="question.options.length > 1"
-                      @click="removeOption(index, optionIndex)"
-                      icon
-                      density="compact"
-                      color="error"
-                      variant="text"
-                    >
-                      <VIcon icon="tabler-trash" />
-                      <VTooltip activator="parent" location="top">
-                        Delete Option
-                      </VTooltip>
-                    </VBtn>
-                  </div>
-                </VCol>
+                <IconBtn
+                  @click="removeQuestion(index)"
+                  v-bind="{
+                    variant: 'text',
+                    density: 'compact',
+                    color: 'error',
+                  }"
+                  icon="tabler-trash"
+                />
               </template>
-            </VRow>
-          </VCardItem>
-          <VCardActions class="ma-3">
-            <VBtn @click="addOption(index)" variant="tonal"> Add Option </VBtn>
-          </VCardActions>
-        </VCard>
-      </VCol>
-      <VCol>
-        <VBtn v-bind="UploadBunAttrs" @click="addQuestion">
-          <VLabel class="mt-2"> Add Question </VLabel>
-        </VBtn>
-      </VCol>
-      <VCol cols="12">
+              <VCardItem>
+                <VRow>
+                  <VCol cols="12">
+                    <EditorJs
+                      class="border rounded pa-4"
+                      :placeholder="'Type here your question ' + (index + 1)"
+                      ref="editorJs"
+                      :holder="(question.id as string)"
+                    />
+                  </VCol>
+                  <template
+                    v-for="(option, optionIndex) in question.options"
+                    :key="optionIndex"
+                  >
+                    <VCol cols="12">
+                      <div class="d-flex align-start gap-2">
+                        <VTextField
+                          :id="
+                            'option-' + (index + 1) + '-' + (optionIndex + 1)
+                          "
+                          v-model="option.option"
+                          :label="'Option ' + (optionIndex + 1)"
+                          :rules="[requiredValidator]"
+                          :base-color="
+                            option.is_correct ? 'success' : 'default'
+                          "
+                          class="w-100"
+                        />
+                        <VTextField
+                          v-if="option.is_correct"
+                          :id="
+                            'option-points-' +
+                            (index + 1) +
+                            '-' +
+                            (optionIndex + 1)
+                          "
+                          type="number"
+                          v-model="option.points"
+                          label="Points"
+                          :rules="[requiredValidator]"
+                          :base-color="
+                            option.is_correct ? 'success' : 'default'
+                          "
+                        />
+                        <div class="ml-4" style="width: 40px">
+                          <VCheckbox
+                            color="success"
+                            v-model="option.is_correct"
+                          >
+                            <VTooltip activator="parent" location="top">
+                              Correct Answer
+                            </VTooltip>
+                          </VCheckbox>
+                        </div>
+                        <VBtn
+                          v-if="question.options.length > 1"
+                          @click="removeOption(index, optionIndex)"
+                          icon
+                          density="compact"
+                          color="error"
+                          variant="text"
+                        >
+                          <VIcon icon="tabler-trash" />
+                          <VTooltip activator="parent" location="top">
+                            Delete Option
+                          </VTooltip>
+                        </VBtn>
+                      </div>
+                    </VCol>
+                  </template>
+                  <VCol cols="12">
+                    <VSwitch
+                      v-model:model-value="question.allow_custom_answer"
+                      label="Accept custom answers"
+                    />
+                  </VCol>
+                </VRow>
+              </VCardItem>
+              <VCardActions class="ma-3">
+                <VBtn @click="addOption(index)" variant="tonal">
+                  Add Option
+                </VBtn>
+              </VCardActions>
+            </CollapsedContent>
+          </VCol>
+          <VCol cols="12" class="d-flex justify-center">
+            <VTooltip location="top">
+              <template #activator="{ props }">
+                <IconBtn
+                  v-bind="props"
+                  icon="tabler-plus"
+                  variant="tonal"
+                  @click="addQuestion"
+                />
+              </template>
+              Add Question
+            </VTooltip>
+          </VCol>
+        </VRow>
+      </VWindowItem>
+      <VWindowItem>
         <VExpansionPanels
           v-model="visibility"
           mandatory="force"
@@ -367,17 +444,35 @@ const save = () => {
             </VExpansionPanelText>
           </VExpansionPanel>
         </VExpansionPanels>
-      </VCol>
-      <VCol cols="12">
-        <VCardText class="d-flex flex-wrap gap-2">
-          <VBtn @click="saveStartOver" variant="outlined" color="success">
-            {{ $t(visibility) }} & Start New Quiz
-          </VBtn>
-          <VSpacer />
-          <VBtn @click="save" color="success"> {{ $t(visibility) }}</VBtn>
-        </VCardText>
-      </VCol>
-    </VRow>
+      </VWindowItem>
+    </VWindow>
+
+    <div
+      class="d-flex flex-wrap gap-4 justify-sm-space-between justify-center mt-8"
+    >
+      <VBtn
+        color="secondary"
+        variant="tonal"
+        :disabled="currentStep === 0"
+        @click="currentStep--"
+      >
+        <VIcon icon="tabler-arrow-left" start class="flip-in-rtl" />
+        Previous
+      </VBtn>
+
+      <template v-if="iconsSteps.length - 1 === currentStep">
+        <VSpacer />
+        <VBtn @click="saveStartOver" variant="outlined" color="success">
+          {{ $t(visibility) }} & Start New Quiz
+        </VBtn>
+        <VBtn @click="save" color="success"> {{ $t(visibility) }}</VBtn>
+      </template>
+
+      <VBtn v-else @click="next">
+        Next
+        <VIcon icon="tabler-arrow-right" end class="flip-in-rtl" />
+      </VBtn>
+    </div>
   </VForm>
   <FileUploaderDialog
     v-model:is-dialog-visible="isUploaderopen"

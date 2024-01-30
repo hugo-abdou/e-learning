@@ -47,7 +47,11 @@
 }
 
 .v-toolbar.toolbar-actions {
-  background: linear-gradient(rgba(0, 0, 0, 0%), rgba(0, 0, 0, 100%));
+  background: linear-gradient(
+    rgba(0, 0, 0, 0%),
+    rgba(0, 0, 0, 0.7),
+    rgba(0, 0, 0, 100%)
+  );
   inset-block-end: 0;
   transform: translateY(50px);
 }
@@ -70,4 +74,12 @@
 
 .text-capitalize {
   text-transform: capitalize;
+}
+
+[data-fill-palette-color="accent"],
+[data-fill-palette-color="primary"] {
+  fill: rgb(var(--v-theme-primary)) !important;
+}
+[data-fill-palette-color="secondary"] {
+  fill: rgb(var(--v-theme-secondary)) !important;
 }

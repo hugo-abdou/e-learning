@@ -85,6 +85,16 @@ $header: ".layout-navbar";
   .layout-footer {
     $ele-layout-footer: &;
 
+    // overflow: hidden;
+    &.footer-blur {
+      @extend %default-layout-vertical-nav-floating-navbar-overlay;
+      &:after {
+        inset-block-start: 16px;
+        block-size: calc(20px + 1rem + 0.5rem);
+        mask: none;
+      }
+    }
+
     .footer-content-container {
       border-radius: variables.$default-layout-with-vertical-nav-navbar-footer-roundness
         variables.$default-layout-with-vertical-nav-navbar-footer-roundness 0 0;

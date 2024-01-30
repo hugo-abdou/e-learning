@@ -2,14 +2,14 @@
 import { QuizStatus } from "@/@core/enums";
 import type { Options } from "@/@core/types";
 import { useQuizzesStore } from "@/stores/useQuizzesStore";
-import type { DataTableHeader } from "@/types";
+import type { DataTableHeader, Quiz } from "@/types";
 import { paginationMeta, resolveCourseStatusVariant } from "@/utils";
 import { debounce } from "lodash";
 import { VDataTableServer } from "vuetify/labs/VDataTable";
 import { VSkeletonLoader } from "vuetify/labs/VSkeletonLoader";
 const scheduledQuiz = ref<number | null>(null);
 const totalQuizzes = ref(0);
-const quizzes = ref<any[]>([]);
+const quizzes = ref<Quiz[]>([]);
 const loading = ref<boolean>(false);
 
 definePage({
@@ -35,7 +35,7 @@ const getQuizzes = debounce(() => {
   if (!quizzes.value.length) loading.value = true;
   // @ts-ignore
   quizzesStore
-    .getQuizzes({ query: options.value })
+    .getQuizzes({ params: options.value })
     .then(({ data, meta }) => {
       quizzes.value = data;
       totalQuizzes.value = meta.total;
@@ -135,8 +135,8 @@ const publishQuiz = (
             {{ item.title }} - ({{ item.duration }} min)
           </template>
           <template #item.description="{ item }">
-            <div class="truncate" style="max-width: 30vw">
-              <VTooltip max-width="600" activator="parent">
+            <div class="truncate" style="max-width: 10vw">
+              <VTooltip max-width="400" activator="parent">
                 {{ item.description }}
               </VTooltip>
               {{ item.description }}

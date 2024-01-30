@@ -114,6 +114,14 @@
       "visibility": {
         "label": "Visibility",
         "description": "Choose who can see this media, such as everyone, registered users, or specific groups."
+      },
+      "quizzes": {
+        "label": "Quizzes",
+        "description": "Select the quizzes that are related to this chapter."
+      },
+      "attachments": {
+        "label": "Attachments",
+        "description": "Select the quizzes that are related to this chapter."
       }
     }
   },

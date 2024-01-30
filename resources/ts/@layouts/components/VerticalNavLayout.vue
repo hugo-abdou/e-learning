@@ -98,9 +98,16 @@ export default defineComponent({
       );
 
       // 👉 Footer
-      const footer = h("footer", { class: "layout-footer" }, [
-        h("div", { class: "footer-content-container" }, slots.footer?.()),
-      ]);
+      const footer = h(
+        "footer",
+        {
+          class: [
+            "layout-footer",
+            { "footer-blur": configStore.isNavbarBlurEnabled },
+          ],
+        },
+        [h("div", { class: "footer-content-container" }, slots.footer?.())]
+      );
 
       // 👉 Overlay
       const layoutOverlay = h("div", {

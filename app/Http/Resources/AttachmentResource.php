@@ -32,7 +32,7 @@ class AttachmentResource extends JsonResource
             case 'video':
                 return [
                     'duration' => $this->data['duration'] ?? 0,
-                    'url' => $this->getMasterUrl(),
+                    'url' => $this->getLowUrl(),
                     'thumb_url' => $this->getThumbUrl(),
                 ];
             default:

@@ -20,18 +20,39 @@ $header: ".layout-navbar";
   @if variables.$layout-vertical-nav-navbar-is-contained {
     @include mixins.bordered-skin(".layout-nav-type-vertical #{$header}");
     .layout-nav-type-vertical.window-scrolled #{$header} {
-      border-block-start: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)) !important;
+      border-block-start: 1px
+        solid
+        rgba(var(--v-border-color), var(--v-border-opacity)) !important;
     }
   } @else {
-    @include mixins.bordered-skin(".layout-nav-type-vertical #{$header}", "border-bottom");
+    @include mixins.bordered-skin(
+      ".layout-nav-type-vertical #{$header}",
+      "border-bottom"
+    );
   }
 
   // Dialog close button
   @include mixins.bordered-skin(".v-dialog-close-btn");
 
+  .layout-vertical-nav-collapsed {
+    .layout-vertical-nav.hovered {
+      background-color: rgb(var(--v-theme-surface)) !important;
+      border: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
+    }
+  }
+
   // Vertical Nav
-  .layout-vertical-nav {
+  .layout-vertical-nav:not(.visible) {
     box-shadow: none;
+    background-color: transparent;
+    border: none;
+    .nav-link > .router-link-exact-active {
+      background: linear-gradient(
+        72.47deg,
+        rgb(var(--v-theme-surface)) 22.16%,
+        rgba(var(--v-theme-surface), 0.7) 76.47%
+      ) !important;
+    }
   }
 
   .v-expansion-panels.expansion-panels-width-border {
@@ -47,7 +68,7 @@ $header: ".layout-navbar";
       }
 
       &::after {
-        content: '';
+        content: "";
       }
     }
   }
@@ -57,9 +78,9 @@ $header: ".layout-navbar";
   .v-combobox__content,
   .v-autocomplete__content {
     box-shadow: none;
-  } 
+  }
 
-  .flatpickr-calendar{
+  .flatpickr-calendar {
     border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
     box-shadow: none;
   }

@@ -4,7 +4,7 @@ import { FetchOptions, SearchParameters, ofetch } from "ofetch";
 function objectToURL(obj: { [key: string]: any }): SearchParameters {
   const params: any = {};
   for (const key in obj) {
-    if (Array.isArray(obj[key])) {
+    if (Array.isArray(obj[key]) || isObject(obj[key])) {
       params[key] = params[key] ? params[key].push(obj[key]) : [obj[key]];
     } else {
       params[key] = obj[key];
@@ -134,7 +134,7 @@ class Api {
         .catch((err) => reject(err));
     });
   }
-  refreshAccessToken() {
+  refreshAccessToken(): Promise<LoginResponse> {
     return new Promise((resolve, reject) => {
       this.http("/oauth/token", "POST", {
         headers: this.headers,
@@ -147,12 +147,8 @@ class Api {
         baseURL: window.location.origin,
       })
         .then((res: LoginResponse) => {
-          useCookie("access_token", {
-            expires: new Date(Date.now() + res.expires_in * 1000),
-            sameSite: "strict",
-          }).value = res.access_token;
-          useCookie("refresh_token", { sameSite: "strict" }).value =
-            res.refresh_token;
+          useCookie("access_token").value = res.access_token;
+          useCookie("refresh_token").value = res.refresh_token;
           resolve(res);
         })
         .catch((err) => reject(err.response));

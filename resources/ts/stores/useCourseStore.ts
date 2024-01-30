@@ -41,7 +41,11 @@ export const useCourseStore = defineStore({
     },
 
     ///////////////////////////////////////////////////////////
-    async getChapters(course_id: number) {},
+    async getChapters(course_id: number, params?: any) {
+      return await $api.get<PaginationResponse<Chapter>>(`/chapters`, {
+        params: { course_id, ...params },
+      });
+    },
     async getChapter(id: number) {},
     async createChapter(
       course_id: number,

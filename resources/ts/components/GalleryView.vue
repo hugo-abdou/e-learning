@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { GridColumn, Options } from "@/@core/types";
-import Media from "@/components/Media/index.vue";
 import { useMediaStore } from "@/stores/mediaStore";
 import type { Media as MediaType } from "@/types";
+import { resolveDefaultThumbnal } from "@/utils";
 import { debounce } from "lodash";
+import Media from "./Media";
 
 interface Props {
   selectable?: boolean;
@@ -132,14 +133,10 @@ defineExpose({ init, loadMore });
     :items="media"
     @load="loadMore"
   >
-    <Media
-      v-if="variant === 'preview'"
-      :deletable="deletable"
-      :media="item"
-      is-preview
-      @update:media="init"
-      @on-delete="removeItem"
-    />
+    <VCard v-if="variant === 'preview'">
+      <!-- {{ item.url }} -->
+      <Media @delete="removeItem(item.id)" deletable :media="item" preview />
+    </VCard>
     <div v-else class="w-100" :style="{ aspectRatio: 1 }">
       <CustomCheckboxe
         v-model="selectedMedia"
@@ -150,7 +147,11 @@ defineExpose({ init, loadMore });
         :selected="selectedMedia.includes(item.id)"
         :value="item.id"
       >
-        <VImg :src="item.thumb_url" class="w-100 h-100 media-card" cover>
+        <VImg
+          :src="resolveDefaultThumbnal(item)"
+          class="w-100 h-100 media-card"
+          cover
+        >
           <VToolbar absolute density="compact" class="toolbar-actions">
             <VCardSubtitle
               style="inline-size: 95%"

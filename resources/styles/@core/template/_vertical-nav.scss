@@ -5,15 +5,13 @@
   // 👉 Layout Vertical nav
   .layout-vertical-nav {
     @include mixins.elevation(2);
-
     .nav-header {
+      padding: 1rem 0.95rem;
       .app-logo {
         .app-title {
           font-size: 22px;
         }
       }
-
-     
     }
 
     // 👉 Nav group & Link
@@ -27,11 +25,42 @@
         outline: none;
       }
     }
+    .nav-section-title,
+    .nav-link > :first-child,
+    .nav-group > :first-child {
+      padding-inline: 0.35rem;
+    }
+
+    .nav-link > .router-link-exact-active {
+      background: linear-gradient(
+        72.47deg,
+        rgb(var(--v-theme-background)) 22.16%,
+        rgba(var(--v-theme-background), 0.3) 76.47%
+      ) !important;
+      color: rgb(var(--v-theme-primary));
+      box-shadow: none;
+      position: relative;
+      overflow: hidden;
+      &::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 3px;
+        height: 100%;
+        background: rgb(var(--v-theme-primary));
+        // transform: scaleX(0);
+        transition: transform 0.2s ease-in-out;
+      }
+    }
 
     // 👉 Nav group active
     .nav-group.active {
       > .nav-group-label {
-        color: rgba(var(--v-theme-on-background), var(--v-high-emphasis-opacity));
+        color: rgba(
+          var(--v-theme-on-background),
+          var(--v-high-emphasis-opacity)
+        );
         font-weight: 500;
       }
     }

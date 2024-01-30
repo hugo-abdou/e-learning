@@ -25,12 +25,18 @@ class MediaResource extends JsonResource
 
     public function getMediaUrls()
     {
+        // dd($this->getUrl());
         switch (Media::checkFileType($this->mime_type)) {
             case 'video':
                 return [
                     'duration' => $this->data['duration'] ?? 0,
-                    'url' => $this->getMasterUrl(),
+                    'url' => $this->getLowUrl(),
                     'thumb_url' => $this->getThumbUrl(),
+                ];
+            case 'image':
+                return [
+                    'url' => $this->getUrl(),
+                    'thumb_url' => $this->getUrl(),
                 ];
             default:
                 return [

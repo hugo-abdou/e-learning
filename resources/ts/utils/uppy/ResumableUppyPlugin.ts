@@ -8,6 +8,7 @@ export default class ResumableUppyPlugin extends BasePlugin {
   id: string;
   type: string;
   resumable: any;
+  token: string;
 
   constructor(uppy: Uppy, opts?: PluginOptions | undefined) {
     super(uppy, opts);
@@ -15,27 +16,30 @@ export default class ResumableUppyPlugin extends BasePlugin {
     this.id = "ResumableUppyPlugin";
     this.type = "uploader";
 
+    this.token = useCookie("access_token").value as string;
+
+    // Bind your methods
+    this.upload = this.upload.bind(this);
+    this.initResumable = this.initResumable.bind(this);
+    this.initResumable();
+
+    this.registerEvents = this.registerEvents.bind(this);
+    this.registerEvents();
+  }
+
+  initResumable() {
     // Initialize Resumable.js with your configuration
     this.resumable = new Resumable({
       target: "/api/media/upload",
       headers: {
         Accept: "application/json",
         common: { "X-Requested-With": "XMLHttpRequest" },
-        "X-CSRF-TOKEN": document
-          .querySelector('meta[name="csrf-token"]')
-          ?.getAttribute("content"),
+        Authorization: `Bearer ${this.token}`,
       },
-      withCredentials: true,
       chunkSize: 1 * 1024 * 1024,
       simultaneousUploads: 1,
       maxChunkRetries: 3,
     });
-
-    // Bind your methods
-    this.upload = this.upload.bind(this);
-    this.registerEvents = this.registerEvents.bind(this);
-
-    this.registerEvents();
   }
 
   async upload(fileIDs: string[]) {
@@ -100,10 +104,7 @@ export default class ResumableUppyPlugin extends BasePlugin {
   }
 
   registerEvents() {
-    this.resumable.on("fileAdded", (file: ResumableFile) => {
-      this.uppy.emit("upload-started", this.uppy.getFile(file.file.uuid));
-      this.resumable.upload();
-    });
+    const $this = this;
     this.uppy.on("upload-retry", (uuid) => {
       const file = this.resumable.files.find(
         ({ file }: ResumableFile) => file.uuid === uuid
@@ -112,6 +113,10 @@ export default class ResumableUppyPlugin extends BasePlugin {
     });
     this.uppy.on("retry-all", () => {
       this.resumable.files.map((file: ResumableFile) => file.retry());
+    });
+    this.resumable.on("fileAdded", (file: ResumableFile) => {
+      this.uppy.emit("upload-started", this.uppy.getFile(file.file.uuid));
+      this.resumable.upload();
     });
     this.resumable.on("fileProgress", (file: ResumableFile) => {
       const uppyFile = this.uppy.getFile(file.file.uuid);
@@ -133,13 +138,31 @@ export default class ResumableUppyPlugin extends BasePlugin {
       }
       // this.resumable.uploadNextChunk();
     });
-    this.resumable.on("fileError", (file: ResumableFile, _error: string) => {
-      let error = _error;
-      try {
-        error = JSON.parse(_error);
-      } catch (error) {}
-      this.uppy.emit("upload-error", this.uppy.getFile(file.file.uuid), error);
-    });
+    this.resumable.on(
+      "fileError",
+      async (file: ResumableFile, _error: string) => {
+        let error = _error;
+        try {
+          error = JSON.parse(_error);
+        } catch (error) {}
+        // @ts-ignore
+        if (error?.message === "Unauthenticated.") {
+          const { access_token } = await $api.refreshAccessToken();
+          $this.token = access_token;
+        }
+        // @ts-ignore
+        if (error?.error === "invalid_request") {
+          useCookie("access_token").value = null;
+          useCookie("refresh_token").value = null;
+          await $api.refreshAccessToken();
+        }
+        this.uppy.emit(
+          "upload-error",
+          this.uppy.getFile(file.file.uuid),
+          error
+        );
+      }
+    );
   }
 
   install() {

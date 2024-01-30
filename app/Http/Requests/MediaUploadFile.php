@@ -56,7 +56,7 @@ class MediaUploadFile extends FormRequest
     {
         $file = $this->validated('file');
         $uniqueFileFolder = Str::random(20) . '_' . uniqid();
-        $path = filesystem($this->disk)->putFileAs("media/" . auth()->id() . "/$uniqueFileFolder", $file, 'original.' . $file->getClientOriginalExtension());
+        $path = Storage::disk($this->disk)->putFileAs("media/" . auth()->id() . "/$uniqueFileFolder", $file, 'original.' . $file->getClientOriginalExtension());
         return Media::create([
             'name' => pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
             'mime_type' => $file->getMimeType(),

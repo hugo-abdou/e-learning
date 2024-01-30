@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { MediaTypes } from "@/@core/enums";
 import { avatarText } from "@/@core/utils/formatters";
-import Media from "@/components/Media/index.vue";
+import Media from "@/components/Media";
 import { secondsToMinutes } from "@/helpers";
 import { useCourseStore } from "@/stores/useCourseStore";
 import { useUserStore } from "@/stores/user";
-import type { Attachment, Course } from "@/types";
+import type { Attachment, Chapter, Course } from "@/types";
 import { VSkeletonLoader } from "vuetify/labs/VSkeletonLoader";
 definePage({
   meta: {
@@ -19,6 +19,7 @@ const router = useRouter();
 const loading = ref(false);
 const courseStore = useCourseStore();
 const course = ref<Course>();
+const chapters = ref<Chapter[]>([]);
 const finished = ref<boolean>(false);
 const activeAttachment = ref<Attachment>();
 const playList = ref();
@@ -80,16 +81,14 @@ watch(activeAttachment, (val) => {
 });
 
 onBeforeMount(async () => {
-  // loading.value = true;
+  loading.value = true;
   try {
     // @ts-ignore
-    course.value = await courseStore.getCourse(route.params.id as number, {
-      additional: { chapters: true },
-    });
+    course.value = await courseStore.getCourse(route.params.id as number);
   } catch (error) {
     router.push({ name: "course" });
   }
-  // loading.value = false;
+  loading.value = false;
 });
 </script>
 
@@ -239,10 +238,10 @@ onBeforeMount(async () => {
     <VCol cols="12" md="4">
       <div class="position-sticky" style="inset-block-start: 90px">
         <CoursePlayList
-          v-if="course?.chapters"
+          v-model:selected="activeAttachment"
+          v-if="course"
+          :course-id="course?.id"
           ref="playList"
-          v-model:attachment="activeAttachment"
-          :chapters="course?.chapters"
         />
         <VSkeletonLoader
           v-else

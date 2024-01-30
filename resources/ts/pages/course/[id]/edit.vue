@@ -46,7 +46,6 @@ onBeforeMount(async () => {
     chapters.value = course.value?.chapters || [];
 
     delete course.value.chapters;
-
     delete course.value?.author;
   } catch (error) {
     router.push({ name: "course" });
@@ -84,13 +83,15 @@ const save = async () => {
         return { ...item, course_id, attachments, order: i };
       });
 
-      snackbarStore.add({ text: "course updated successfuly", timeout: 5000 });
-
       await Promise.all(
         chaptersForm.map((form) =>
           courseStore.updateChapter(form.id || 0, form)
         )
       );
+      snackbarStore.add({
+        text: "course updated successfuly",
+        timeout: 5000,
+      });
     }
   } catch (error) {
     // @ts-expect-error

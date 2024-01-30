@@ -1,28 +1,18 @@
-<template>
-    <VCard class="media-card">
-        <VImg :src="media.url" cover />
-        <VToolbar absolute density="compact" class="px-2">
-            <VSpacer />
-            <slot name="toolbar" />
-        </VToolbar>
-    </VCard>
-</template>
-
-<script setup lang="ts">
+<script lang="ts" setup>
 import { Media } from "@/types";
-
 interface Props {
-    media: Media;
+  media: Media;
+  aspectRatio?: string;
 }
-const props = defineProps<Props>();
+
+const props = withDefaults(defineProps<Props>(), {});
+const style = computed(() => ({
+  aspectRatio: props.aspectRatio || props.media.width / props.media.height,
+}));
 </script>
-<style lang="scss" scoped>
-.v-toolbar {
-    bottom: 0;
-    transform: translateY(50px);
-    background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.568));
-}
-.media-card:hover .v-toolbar {
-    transform: translateY(0px);
-}
-</style>
+
+<template>
+  <VCard :style="style">
+    <VImg :src="media.url" />
+  </VCard>
+</template>

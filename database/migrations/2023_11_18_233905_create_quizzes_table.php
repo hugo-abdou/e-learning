@@ -28,6 +28,7 @@ return new class extends Migration
         Schema::create('questions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('quiz_id')->constrained('quizzes')->onDelete('cascade');
+            $table->boolean('allow_custom_answer')->default(false);
             $table->text('question');
             $table->timestamps();
         });

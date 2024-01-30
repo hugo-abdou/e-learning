@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { CourseDifficulty, CourseStatus } from "@/@core/enums";
 import { requiredValidator } from "@/@core/utils/validators";
-import Media from "@/components/Media/index.vue";
 import type { CourseForm, Media as MediaType } from "@/types";
 import { UploadBunAttrs } from "@/utils";
 import { VForm } from "vuetify/components/VForm";
@@ -59,18 +58,23 @@ watch(
       <VCardItem>
         <VRow class="mt-0">
           <VCol cols="12" md="4">
-            <div
+            <VImg
               v-if="form.thumbnail"
-              style="max-block-size: 200px"
-              class="h-100"
-            >
-              <Media
+              v-bind="{
+                ...UploadBunAttrs,
+                style: 'min-height: 100%',
+                aspectRatio: 1.77,
+              }"
+              :src="form.thumbnail"
+              cover
+            />
+            <!-- <Media
                 :media="{ thumb_url: form.thumbnail, status: 2, type: 'image' }"
+                aspect-ratio="1.77"
                 deletable
-                is-preview
+                preview
                 @on-delete="form.thumbnail = undefined"
-              />
-            </div>
+              /> -->
             <template v-else>
               <InfoTooltip
                 v-slot="{ props }"
@@ -131,19 +135,6 @@ watch(
               <template #append-inner>
                 <InfoTooltip
                   :text="$t('course.fields.difficulty.description')"
-                />
-              </template>
-            </AppSelect>
-          </VCol>
-          <VCol cols="12" sm="6">
-            <AppSelect
-              v-model="form.prerequisite_id"
-              :items="[]"
-              :label="$t('course.fields.prerequisite.label')"
-            >
-              <template #append-inner>
-                <InfoTooltip
-                  :text="$t('course.fields.prerequisite.description')"
                 />
               </template>
             </AppSelect>

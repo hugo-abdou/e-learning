@@ -1,6 +1,7 @@
 import type { VerticalNavItems } from "@/@layouts/types";
 
 export default [
+  { heading: "_" },
   {
     title: "Dashboard",
     to: { name: "dashboard" },

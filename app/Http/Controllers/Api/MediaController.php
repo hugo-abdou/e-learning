@@ -55,18 +55,18 @@ class MediaController extends Controller
         $media = $upload->handle();
         $type = Str::before($media->mime_type, '/');
 
-        if ($type === 'application') {
-            $media->update([
-                'status' => MediaStatus::Completed->value,
-                'conversions' => [
-                    'engine' => 'pdf',
-                    'path' => '/assets/pdf-placeholder.png',
-                    'disk' => 'public',
-                    'size' => $media->size,
-                    'name' => 'thumb',
-                ]
-            ]);
-        }
+        // if ($type === 'application') {
+        //     $media->update([
+        //         'status' => MediaStatus::Completed->value,
+        //         'conversions' => [
+        //             'engine' => 'pdf',
+        //             'path' => '/assets/pdf-placeholder.png',
+        //             'disk' => 'public',
+        //             'size' => $media->size,
+        //             'name' => 'thumb',
+        //         ]
+        //     ]);
+        // }
 
         // process Image and extract thumbnails and large images
         ProcessImageMediaJob::dispatchIf(
@@ -77,12 +77,12 @@ class MediaController extends Controller
         );
 
         // convert  Video to HLS format and extract thumbnails and qualities [360,720,1080]
-        ProcessVideoMediaJob::dispatchIf(
-            $type === 'video',
-            $media->id,
-            [MediaResolutions::RESOLUTION_240P->value, MediaResolutions::RESOLUTION_720P->value],
-            ['disk' => 'public', 'path' => 'media/' . auth()->id()]
-        );
+        // ProcessVideoMediaJob::dispatchIf(
+        //     $type === 'video',
+        //     $media->id,
+        //     [MediaResolutions::RESOLUTION_240P->value, MediaResolutions::RESOLUTION_720P->value],
+        //     ['disk' => 'public', 'path' => 'media/' . auth()->id()]
+        // );
 
         // wee query the media agan becose inside the imageJob i update the media table but the changes dos not effect on $media object so i get new data from db 
         return new MediaResource(Media::find($media->id));

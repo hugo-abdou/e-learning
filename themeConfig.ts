@@ -4,7 +4,8 @@ import { Icon } from "@iconify/vue";
 import { breakpointsVuetify } from "@vueuse/core";
 
 // ❗ Logo SVG must be imported with ?raw suffix
-import logo from "@images/logo.svg?raw";
+// import logo from "@images/logo.svg?raw";
+import logo from "@images/logo/svg/logo-no-background.svg?raw";
 
 import {
   AppContentLayoutNav,
@@ -18,7 +19,8 @@ export const { themeConfig, layoutConfig } = defineThemeConfig({
     title: "vuexy",
     logo: h("div", {
       innerHTML: logo,
-      style: "line-height:0; color: rgb(var(--v-global-theme-primary))",
+      style:
+        "line-height:0;width:7rem; color: rgb(var(--v-global-theme-primary))",
     }),
     contentWidth: ContentWidth.Boxed,
     contentLayoutNav: AppContentLayoutNav.Vertical,
@@ -52,7 +54,7 @@ export const { themeConfig, layoutConfig } = defineThemeConfig({
     type: NavbarType.Sticky,
     navbarBlur: true,
   },
-  footer: { type: FooterType.Static },
+  footer: { type: FooterType.Sticky },
   verticalNav: {
     isVerticalNavCollapsed: false,
     defaultNavItemIconProps: { icon: "tabler-circle", size: 10 },

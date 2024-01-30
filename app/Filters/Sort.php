@@ -3,14 +3,20 @@
 namespace App\Filters;
 
 use Closure;
+use Illuminate\Support\Str;
 
 class Sort
 {
-    public function handle($request, Closure $next)
+    public function handle($query, Closure $next)
     {
-        if (!request()->has('sortBy')) return $next($request);
-        $sortField = request()->input('sortBy.0.key', 'created_at');
-        $sortDirection = request()->input('sortBy.0.order', 'desc');
-        return $request->orderBy($sortField, $sortDirection);
+        $sort = json_decode(request('sortBy', '{}'));
+        $key = 'created_at';
+        $order = 'desc';
+        if (isset($sort->key)) {
+            $key = $sort->key;
+            $order = $sort->order;
+        };
+        $query->orderBy($key, Str::upper($order));
+        return $next($query);
     }
 }

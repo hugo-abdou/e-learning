@@ -9,7 +9,7 @@ export const useQuizzesStore = defineStore({
   actions: {
     async getQuizzes(
       options?: FetchOptions<"json"> | undefined
-    ): Promise<PaginationResponse<any>> {
+    ): Promise<PaginationResponse<Quiz>> {
       return await $api.get("/quizzes", options);
     },
     async getQuiz(id: number, options?: FetchOptions<"json"> | undefined) {

@@ -28,7 +28,7 @@ class CourseRequest extends FormRequest
             "title" => "required|string",
             "description" => "required|string",
             "difficulty" => [Rule::in(CourseDifficulty::values())],
-            "prerequisite_id" => 'nullable|exists:courses,id',
+            // "prerequisite_id" => 'nullable|exists:courses,id',
             "thumbnail" => 'nullable|string'
         ];
     }

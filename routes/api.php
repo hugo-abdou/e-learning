@@ -36,8 +36,7 @@ use Laravel\Jetstream\Jetstream;
 Route::post('/oauth/register', [RegisteredUserController::class, 'store']);
 
 Route::post('/media/bunny_webhook', [MediaController::class, 'bunny_webhook'])->name('bunny_webhook');
-Route::get('media/upload', ResumableUploadController::class);
-Route::post('media/upload', ResumableUploadController::class);
+
 Route::middleware(['auth:api'])->get('/auth', fn (Request $request) => AuthResource::make($request->user())->resolve());
 Route::middleware(['auth:api', 'verified'])->group(function () {
     Route::put('/user/{user}/update', [UsersController::class, 'edit']);
@@ -49,6 +48,8 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::get('/', [MediaController::class, 'index'])->name('list');
         Route::get('/search', [MediaController::class, 'search'])->name('fetch');
         // Route::post('/upload', [MediaController::class, 'upload'])->name('upload');
+        Route::get('upload', ResumableUploadController::class);
+        Route::post('upload', ResumableUploadController::class);
         Route::post('/store', [MediaController::class, 'store'])->name('store');
         Route::get('/{media}', [MediaController::class, 'show'])->name('show');
         Route::delete('/{media}', [MediaController::class, 'destroy'])->name('destroy');
@@ -78,7 +79,6 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
     Route::patch('quizzes/{quiz}/schedule', ScheduleQuizController::class);
     ////////////////////////////////////////////////////////////////////////////////
 });
-
 Route::prefix('admin')->middleware(['auth:api'])->group(function () {
     Route::get('roles', [RoleController::class, 'roles']);
     Route::post('roles', [RoleController::class, 'store']);
