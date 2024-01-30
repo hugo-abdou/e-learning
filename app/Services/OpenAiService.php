@@ -14,7 +14,7 @@ class OpenAiService
      * @throws RequestException
      * @throws InvalidArgumentException
      */
-    public static function execute($context = null, string $message, int $maxTokens = 15000): string
+    public static function execute($context = null, string $message = "", int $maxTokens = 15000): string
     {
         // $apiKey = 'openAiApiKey';
 
