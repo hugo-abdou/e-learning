@@ -33,7 +33,7 @@ class GitHubWebhookController extends Controller
             $process->run(function ($type, $buffer) use (&$message) {
                 $message .= $buffer;
             });
-            Log::info($message);
+            Log::info(str_replace("[90m.[39m", '', $message));
             // Check if the process was successful
             if (!$process->isSuccessful()) {
                 Log::error('Error occurred while running the deploy script.');
