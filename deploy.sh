@@ -3,7 +3,7 @@
 GITHUB="hugo-abdou/e-learning"
 BRANCH="main"
 
-SSH_KEY="~/.ssh/id_rsa"
+SSH_KEY="./id_rsa"
 WORK_TREE="./"
 GIT_DIR="./.git"
 chmod 600 $SSH_KEY
