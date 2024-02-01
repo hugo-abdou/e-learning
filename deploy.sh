@@ -7,7 +7,7 @@ BRANCH="main"
 WORK_TREE="./"
 GIT_DIR="./.git"
 # chmod 600 $SSH_KEY
-eval $(sudo ssh-agent -s)
+eval $(ssh-agent -s)
 # sudo ssh-add $SSH_KEY
 REPO="git@github.com:$GITHUB"
 if [ -d "$GIT_DIR" ]; then
