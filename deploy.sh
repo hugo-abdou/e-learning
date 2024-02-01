@@ -2,6 +2,7 @@
 # activate maintenance mode
 php artisan down
 # update source code
+git config --global --add safe.directory /home/skillsup/htdocs/skillsup.ma
 git pull
 # update PHP dependencies
 # --no-interaction Do not ask any interactive question
