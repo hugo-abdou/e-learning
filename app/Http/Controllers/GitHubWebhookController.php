@@ -16,10 +16,27 @@ class GitHubWebhookController extends Controller
         $localHash = 'sha1=' . hash_hmac('sha1', $githubPayload, $localToken, false);
         if (hash_equals($githubHash, $localHash)) {
             $root_path = base_path();
-            $process = new Process(['cd ' . $root_path, './deploy.sh']);
+            // Change directory command
+            $cdCommand = "cd {$root_path}";
+
+            // Command to execute the shell script
+            $deployScript = './deploy.sh';
+
+            // Combine commands to run them together in the same shell process
+            $command = "{$cdCommand} && {$deployScript}";
+
+            // Create a new Process instance
+            $process = Process::fromShellCommandline($command);
+
+            // Run the process
             $process->run(function ($type, $buffer) {
                 Log::info($buffer);
             });
+            // Check if the process was successful
+            if (!$process->isSuccessful()) {
+                Log::error('Error occurred while running the deploy script.');
+                Log::error($process->getErrorOutput());
+            }
         }
     }
 }
