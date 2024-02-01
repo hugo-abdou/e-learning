@@ -2,7 +2,6 @@
 
 GITHUB="hugo-abdou/e-learning"
 BRANCH="main"
-su - skillsup
 # SSH_KEY="~/.ssh/id_rsa"
 WORK_TREE="./"
 GIT_DIR="./.git"
@@ -26,3 +25,15 @@ else
     git --work-tree=$WORK_TREE --git-dir=$GIT_DIR checkout -f $BRANCH
     git --work-tree=$WORK_TREE --git-dir=$GIT_DIR merge origin/$BRANCH
 fi
+    # activate maintenance mode
+    php artisan down
+    # update PHP dependencies
+    # --no-interaction Do not ask any interactive question
+    # --no-dev  Disables installation of require-dev packages.
+    # --prefer-dist  Forces installation from package dist even for dev versions.
+    composer install --no-interaction --no-dev --prefer-dist
+    # update database
+    # --force  Required to run when in production.
+    php artisan migrate --force
+    # stop maintenance mode
+    php artisan up
