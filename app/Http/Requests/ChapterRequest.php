@@ -29,6 +29,8 @@ class ChapterRequest extends FormRequest
             "attachments.*.download" => 'nullable|boolean',
             "attachments.*.type" => 'nullable|string',
             "attachments.*.name" => 'nullable|string',
+            "quizzes" =>  'nullable|array',
+            "quizzes.*" =>  'nullable|integer',
             "video" =>  'nullable|integer',
             "title" => 'required|string',
             "order" => 'required|integer',

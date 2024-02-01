@@ -45,12 +45,13 @@ class ChapterController extends Controller
                 'order' => $request->validated('order'),
             ]);
             $chapter->attachments()->sync($request->validated('attachments'));
+            $chapter->quizzes()->sync($request->validated('quizzes'));
             DB::commit();
             return ChapterResource::make($chapter);
         } catch (\Throwable $th) {
             $course->update(['status' => CourseStatus::Error]);
+            return response()->json(['message' => 'Something went wrong'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-        return response()->json(['message' => 'Something went wrong'], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -67,16 +68,20 @@ class ChapterController extends Controller
      */
     public function update(ChapterRequest $request, $chapter)
     {
-        $chapter = Chapter::updateOrCreate(['id' => $chapter], [
-            'course_id' => $request->validated('course_id'),
-            'title' => $request->validated('title'),
-            'order' => $request->validated('order'),
-        ]);
-
-        $chapter->attachments()->sync($request->validated('attachments'));
-
-
-        return ChapterResource::make($chapter);
+        try {
+            DB::beginTransaction();
+            $chapter = Chapter::updateOrCreate(['id' => $chapter], [
+                'course_id' => $request->validated('course_id'),
+                'title' => $request->validated('title'),
+                'order' => $request->validated('order'),
+            ]);
+            $chapter->attachments()->sync($request->validated('attachments'));
+            $chapter->quizzes()->sync($request->validated('quizzes'));
+            DB::commit();
+            return ChapterResource::make($chapter);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => 'Something went wrong'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**

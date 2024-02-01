@@ -245,6 +245,7 @@ interface BaseMedia {
   height: number;
 }
 interface VideoMedia extends BaseMedia {
+  uuid: string;
   type: "video";
   playing: boolean;
   duration: number;
@@ -326,6 +327,7 @@ interface Chapter {
   course_id?: number;
   title: string;
   attachments: Attachment[];
+  quizzes: Quiz[];
 }
 interface CourseForm
   extends Omit<

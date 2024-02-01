@@ -1,5 +1,5 @@
 <template>
-  <VCard class="media-card">
+  <VCard class="media-card" :style="style">
     <PdfViewer
       ref="pdfViwer"
       v-bind="$attrs"
@@ -34,6 +34,7 @@ import { DocumentMedia, Media } from "@/types";
 
 interface Props {
   media: Media;
+  aspectRatio?: string;
 }
 const props = defineProps<Props>();
 const pdfViwer = ref<{
@@ -50,6 +51,9 @@ const page = computed({
     pdfViwer.value.page = val;
   },
 });
+const style = computed(() => ({
+  aspectRatio: props.aspectRatio || props.media.width / props.media.height,
+}));
 
 defineExpose({ ...pdfViwer.value });
 </script>

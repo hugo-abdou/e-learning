@@ -19,6 +19,7 @@ class ChapterResource extends JsonResource
             'title' => $this->title,
             'order' => $this->order,
             'attachments' => AttachmentResource::collection($this->attachments),
+            'quizzes' => QuizResource::collection($this->quizzes),
         ];
     }
 }

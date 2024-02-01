@@ -12,7 +12,11 @@ const style = computed(() => ({
 </script>
 
 <template>
-  <VCard :style="style">
+  <VCard class="media-card" :style="style">
     <VImg :src="media.url" />
+    <VToolbar absolute density="compact" class="toolbar-actions px-2">
+      <VSpacer />
+      <slot name="toolbar" />
+    </VToolbar>
   </VCard>
 </template>

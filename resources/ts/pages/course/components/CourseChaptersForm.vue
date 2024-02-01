@@ -48,10 +48,12 @@ const uploaderRules = computed(() => {
 
 const quizStore = useQuizzesStore();
 onMounted(() => {
+  console.log(props.chapters);
   if (chaptersForm.value.length === 0)
     chaptersForm.value.push({
       title: "",
       attachments: [],
+      quizzes: [],
       order: 0,
       id: 0,
     });
@@ -114,6 +116,7 @@ const addChapter = async () => {
     chaptersForm.value.push({
       title: "",
       attachments: [],
+      quizzes: [],
       order: chaptersForm.value.length,
       id: 0,
     });
@@ -306,6 +309,18 @@ defineExpose({ formEl, validate });
                     </div>
                   </VBtn>
                 </InfoTooltip>
+              </VCol>
+              <VCol cols="12" class="mb-4">
+                <AppSelect
+                  v-model="chapter.quizzes"
+                  :items="quizzes"
+                  label="Quizzes"
+                  item-value="id"
+                  placeholder="Select Quizzes"
+                  chips
+                  multiple
+                  closable-chips
+                />
               </VCol>
             </VRow>
           </VCardText>

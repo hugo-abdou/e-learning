@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { MediaTypes } from "@/@core/enums";
 import { avatarText } from "@/@core/utils/formatters";
-import Media from "@/components/Media";
 import { secondsToMinutes } from "@/helpers";
 import { useCourseStore } from "@/stores/useCourseStore";
 import { useUserStore } from "@/stores/user";
@@ -94,49 +93,14 @@ onBeforeMount(async () => {
 
 <template>
   <VRow>
-    <VCol cols="12" md="8">
+    <VCol cols="12">
       <VCard>
-        <VCardText v-if="!loading && activeAttachment" class="py-0 px-0">
-          <div class="position-relative">
-            <Media
-              v-bind="events"
-              :key="activeAttachment.id"
-              aspect-ratio="1.77"
-              :media="activeAttachment"
-            >
-              <template #toolbar>
-                <VBtn
-                  variant="elevated"
-                  color="default"
-                  append-icon="mdi-skip-forward"
-                  @click="nextAttachment"
-                >
-                  Continue
-                </VBtn>
-              </template>
-            </Media>
-            <div
-              v-if="finished"
-              class="position-absolute w-100 h-100 d-flex gap-1 align-center justify-center"
-              style="background-color: rgba(0, 0, 0, 56.8%); inset: 0"
-            >
-              <VBtn
-                color="default"
-                prepend-icon="mdi-rotate-left"
-                @click="replay"
-              >
-                Start Over
-              </VBtn>
-              <VBtn
-                color="default"
-                append-icon="mdi-skip-forward"
-                @click="nextAttachment"
-              >
-                Continue
-              </VBtn>
-            </div>
-          </div>
-        </VCardText>
+        <VImg
+          v-if="!loading"
+          :src="course?.thumbnail"
+          style="aspect-ratio: 16/9"
+          cover
+        />
         <VSkeletonLoader v-else :type="['image', 'image']" />
       </VCard>
       <VCardItem v-if="!loading">
@@ -234,20 +198,6 @@ onBeforeMount(async () => {
         </div>
       </VCardItem>
       <VSkeletonLoader v-else class="py-5" :type="['heading', 'paragraph']" />
-    </VCol>
-    <VCol cols="12" md="4">
-      <div class="position-sticky" style="inset-block-start: 90px">
-        <CoursePlayList
-          v-model:selected="activeAttachment"
-          v-if="course"
-          :course-id="course?.id"
-          ref="playList"
-        />
-        <VSkeletonLoader
-          v-else
-          :type="Array(5).fill('list-item-avatar-three-line')"
-        />
-      </div>
     </VCol>
   </VRow>
 </template>
