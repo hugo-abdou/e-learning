@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GitHubWebhookController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,5 +14,5 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
+Route::post('deploy', [GitHubWebhookController::class, 'handle']);
 Route::get('{any?}', fn () => view('application'))->where('any', '^(?!api|storage|build\/).*');
