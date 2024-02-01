@@ -3,12 +3,12 @@
 GITHUB="hugo-abdou/e-learning"
 BRANCH="main"
 
-# SSH_KEY="~/.ssh/id_rsa"
+SSH_KEY="~/.ssh/id_rsa"
 WORK_TREE="./"
 GIT_DIR="./.git"
-# chmod 600 $SSH_KEY
+chmod 600 $SSH_KEY
 eval $(ssh-agent -s)
-# ssh-add $SSH_KEY
+ssh-add $SSH_KEY
 REPO="git@github.com:$GITHUB"
 if [ -d "$GIT_DIR" ]; then
     cd $WORK_TREE
