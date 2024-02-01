@@ -16,7 +16,7 @@ class GitHubWebhookController extends Controller
         $localHash = 'sha1=' . hash_hmac('sha1', $githubPayload, $localToken, false);
         if (hash_equals($githubHash, $localHash)) {
             $root_path = base_path();
-            $process = (new Process(['./deploy.sh']))->set_include_path($root_path);
+            $process = (new Process(['./deploy.sh']));
             $process->run(function ($type, $buffer) {
                 Log::info($buffer);
             });
