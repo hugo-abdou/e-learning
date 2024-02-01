@@ -30,7 +30,7 @@ class GitHubWebhookController extends Controller
 
             // Run the process
             $message = '';
-            $process->run(function ($type, $buffer) use ($message) {
+            $process->run(function ($type, $buffer) use (&$message) {
                 $message .= $buffer . '\n';
             });
             Log::info($message);
