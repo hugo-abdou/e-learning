@@ -44,7 +44,7 @@ export default defineConfig({
       },
     }),
     laravel({
-      input: ["resources/ts/main.ts"],
+      input: ["resources/ts/main.ts", "resources/ts/maintenance.ts"],
       refresh: true,
     }),
     VueDevTools(),
