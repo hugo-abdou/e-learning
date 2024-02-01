@@ -29,9 +29,11 @@ class GitHubWebhookController extends Controller
             $process = Process::fromShellCommandline($command);
 
             // Run the process
-            $process->run(function ($type, $buffer) {
-                Log::info($buffer);
+            $message = '';
+            $process->run(function ($type, $buffer) use ($message) {
+                $message .= $buffer . '\n';
             });
+            Log::info($message);
             // Check if the process was successful
             if (!$process->isSuccessful()) {
                 Log::error('Error occurred while running the deploy script.');
