@@ -2,7 +2,7 @@
 
 GITHUB="hugo-abdou/e-learning"
 BRANCH="main"
-
+whoami
 # SSH_KEY="~/.ssh/id_rsa"
 WORK_TREE="./"
 GIT_DIR="./.git"
@@ -12,11 +12,10 @@ eval $(ssh-agent -s)
 REPO="git@github.com:$GITHUB"
 if [ -d "$GIT_DIR" ]; then
     cd $WORK_TREE
-    git pull origin $BRANCH
-    # git --work-tree=$WORK_TREE --git-dir=$GIT_DIR fetch
-    # git --work-tree=$WORK_TREE --git-dir=$GIT_DIR fetch origin --tags --force
-    # git --work-tree=$WORK_TREE --git-dir=$GIT_DIR checkout -f $BRANCH
-    # git --work-tree=$WORK_TREE --git-dir=$GIT_DIR merge origin/$BRANCH
+    git --work-tree=$WORK_TREE --git-dir=$GIT_DIR fetch
+    git --work-tree=$WORK_TREE --git-dir=$GIT_DIR fetch origin --tags --force
+    git --work-tree=$WORK_TREE --git-dir=$GIT_DIR checkout -f $BRANCH
+    git --work-tree=$WORK_TREE --git-dir=$GIT_DIR merge origin/$BRANCH
 else
     git init --bare $GIT_DIR
     rm -rf $WORK_TREE
