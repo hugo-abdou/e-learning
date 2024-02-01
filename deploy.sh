@@ -2,7 +2,7 @@
 
 GITHUB="hugo-abdou/e-learning"
 BRANCH="main"
-whoami
+su - skillsup
 # SSH_KEY="~/.ssh/id_rsa"
 WORK_TREE="./"
 GIT_DIR="./.git"
