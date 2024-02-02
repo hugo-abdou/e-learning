@@ -45,7 +45,7 @@ class Media extends Model
     }
     public function getLowUrl(): ?string
     {
-        return $this->getConversionUrl('low');
+        return $this->getConversionUrl('master');
     }
     public function getThumbUrl(): ?string
     {
