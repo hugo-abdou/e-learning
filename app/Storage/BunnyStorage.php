@@ -25,8 +25,9 @@ class BunnyStorage implements StorageInterface
                 config('services.bunnycdn.key'),
                 config('services.bunnycdn.region'),
             ),
-            config('services.bunnycdn.pull_zone_url'),
+            'skillsup.b-cdn.net'
         );
+        // $adapter->setPathPrefix('https://storage.bunnycdn.com');
 
         $this->filesystem = new Filesystem($adapter);
     }
@@ -110,6 +111,6 @@ class BunnyStorage implements StorageInterface
      */
     public function url($key)
     {
-        return ltrim("https://" . config('services.bunnycdn.pull_zone_url') . "/$key", '/');
+        return ltrim("https://skillsup.b-cdn.net/$key", '/');
     }
 }
