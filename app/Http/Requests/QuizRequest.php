@@ -35,6 +35,7 @@ class QuizRequest extends FormRequest
             "attachments.*" => 'nullable|array',
             "attachments.*.type" => 'nullable|string',
             "attachments.*.name" => 'nullable|string',
+            "attachments.*.slug" => 'nullable|string',
         ];
     }
 }

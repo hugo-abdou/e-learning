@@ -5,6 +5,7 @@ import { delay } from "@/helpers";
 import { useCourseStore } from "@/stores/useCourseStore";
 import type { ChapterForm, Media as MediaType, Quiz } from "@/types";
 import { UploadBunAttrs, scrollToTop } from "@/utils";
+import slugify from "slugify";
 import { VForm } from "vuetify/components/VForm";
 
 interface Props {
@@ -48,7 +49,6 @@ const uploaderRules = computed(() => {
 
 const quizStore = useQuizzesStore();
 onMounted(() => {
-  console.log(props.chapters);
   if (chaptersForm.value.length === 0)
     chaptersForm.value.push({
       title: "",
@@ -80,6 +80,7 @@ const setMediaFromUploader = (media: MediaType[]) => {
         visibility: [],
         download: false,
         watermark: "",
+        slug: slugify(m.name),
       }))
     );
   }

@@ -78,6 +78,7 @@ const nextStep = async () => {
             type: attachment.type,
             download: attachment.download,
             visibility: JSON.stringify(attachment.visibility),
+            slug: attachment.slug,
           };
         });
         return { ...item, attachments, order: i };

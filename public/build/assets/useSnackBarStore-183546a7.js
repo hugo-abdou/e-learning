@@ -1,0 +1,1 @@
+import{bK as e}from"./plugins-20f6c63a.js";const r=e("useSnackBarStore",{state:()=>({list:[]}),getters:{snackbars:t=>t.list.filter(({active:s})=>s)},actions:{add(t){this.list.push({...t,active:!0})}}});export{r as u};

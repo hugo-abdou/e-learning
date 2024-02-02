@@ -148,7 +148,7 @@ class MediaController extends Controller
                 "path" => $path,
                 "conversions" => [
                     ["engine" => "ImageResize", "path" => $themb, "disk" => 'remote', "name" => "thumb"],
-                    ["engine" => "VideoResize", "path" => $low, "disk" => 'remote', "name" => "master"],
+                    ["engine" => "VideoResize", "path" => $low, "disk" => 'remote', "name" => "low"],
                 ]
             ]);
         } else {

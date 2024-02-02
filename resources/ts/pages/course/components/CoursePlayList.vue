@@ -4,10 +4,14 @@ import type { Attachment } from "@/types";
 import { resolveAttachmentTypeIcon, resolveDefaultThumbnal } from "@/utils";
 import { VSkeletonLoader } from "vuetify/labs/VSkeletonLoader";
 
-type PlaylistAttachment = Attachment & { index: number; active: boolean };
+type PlaylistAttachment = Attachment & {
+  index: number;
+  active: boolean;
+  chapter_id: number;
+};
 
 interface Props {
-  selected?: Attachment;
+  selected?: PlaylistAttachment;
   courseId: number;
 }
 const props = defineProps<Props>();
@@ -93,8 +97,13 @@ defineExpose({ next, prev });
         v-if="attachment.type !== 'header'"
         class="mt-2"
         :title="attachment.name"
-        :active="attachment.active"
-        @click="updateSelected(attachment.index)"
+        :to="{
+          name: 'course-id-watch-media',
+          params: {
+            id: courseId,
+            media: `${attachment.slug}-${attachment.id}-${attachment.chapter_id}`,
+          },
+        }"
       >
         <template #prepend="{ isActive }">
           <div>

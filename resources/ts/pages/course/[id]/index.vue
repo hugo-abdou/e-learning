@@ -98,7 +98,7 @@ onBeforeMount(async () => {
         <VImg
           v-if="!loading"
           :src="course?.thumbnail"
-          style="aspect-ratio: 16/9"
+          style="aspect-ratio: 16/5"
           cover
         />
         <VSkeletonLoader v-else :type="['image', 'image']" />

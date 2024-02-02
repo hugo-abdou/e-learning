@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\Media;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class AttachmentResource extends JsonResource
@@ -18,6 +19,7 @@ class AttachmentResource extends JsonResource
             'uuid' => $this->uuid,
             'type' => Media::checkFileType($this->mime_type),
             "name" => $this->pivot->name,
+            "slug" => $this->pivot->slug,
             'status' => $this->status,
             "download" => $download,
             "visibility" => json_decode($this->pivot->visibility ?? '[]'),

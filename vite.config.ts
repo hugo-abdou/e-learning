@@ -76,7 +76,8 @@ export default defineConfig({
             };
         },
       ],
-    }), // Docs: https://github.com/antfu/unplugin-auto-import#unplugin-auto-import
+    }),
+    // Docs: https://github.com/antfu/unplugin-auto-import#unplugin-auto-import
     AutoImport({
       imports: [
         "vue",
@@ -85,6 +86,9 @@ export default defineConfig({
         "@vueuse/math",
         "vue-i18n",
         "pinia",
+        {
+          slugify: ["slugify"],
+        },
       ],
       dirs: [
         "./resources/ts/@core/utils",

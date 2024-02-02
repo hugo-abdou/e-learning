@@ -12,6 +12,6 @@ trait HasAttachment
     {
         return $this->belongsToMany(Media::class, table: 'resource_media', relatedPivotKey: 'attachment_id', foreignPivotKey: 'resource_id')
             ->wherePivot('resource_type', get_class($this))
-            ->withPivot(['type', 'download', 'visibility', 'watermark', 'name'])->withPivotValue(['resource_type' => get_class($this)]);
+            ->withPivot(['type', 'download', 'visibility', 'watermark', 'name', 'slug'])->withPivotValue(['resource_type' => get_class($this)]);
     }
 }

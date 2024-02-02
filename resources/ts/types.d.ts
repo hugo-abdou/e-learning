@@ -264,6 +264,7 @@ export type Attachment =
       visibility: string[];
       download: boolean;
       name: string;
+      slug: string;
     };
 
 type Author = {

@@ -1,0 +1,1 @@
+import{a as s,b as o}from"./VToolbar-c437b776.js";import{g as t,l as p,n as l,s as i}from"./plugins-20f6c63a.js";const T=t()({name:"VAppBarTitle",props:s(),setup(e,r){let{slots:a}=r;return p(()=>l(o,i(e,{class:"v-app-bar-title"}),a)),{}}});export{T as V};

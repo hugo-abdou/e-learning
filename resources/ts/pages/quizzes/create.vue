@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import Media from "@/components/Media";
 import type { Quiz } from "@/types";
 import { UploadBunAttrs, uuid } from "@/utils";
 import EditorJS from "@editorjs/editorjs";
+import slugify from "slugify";
 
 definePage({
   meta: {
@@ -138,7 +140,8 @@ const submit = () => {
       }
       const attachments: { [key: number]: any } = {};
       formData.value.attachments.forEach(
-        ({ type, id, name }) => (attachments[id] = { type, name })
+        ({ type, id, name }) =>
+          (attachments[id] = { type, name, slug: slugify(name) })
       );
       const res = await quizStore.createQuiz({
         ...formData.value,

@@ -48,7 +48,7 @@ declare module 'vue-router/auto/routes' {
     'course': RouteRecordInfo<'course', '/course', Record<never, never>, Record<never, never>>,
     'course-id': RouteRecordInfo<'course-id', '/course/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'course-id-edit': RouteRecordInfo<'course-id-edit', '/course/:id/edit', { id: ParamValue<true> }, { id: ParamValue<false> }>,
-    'course-id-watch': RouteRecordInfo<'course-id-watch', '/course/:id/watch', { id: ParamValue<true> }, { id: ParamValue<false> }>,
+    'course-id-watch-media': RouteRecordInfo<'course-id-watch-media', '/course/:id/watch/:media', { id: ParamValue<true>, media: ParamValue<true> }, { id: ParamValue<false>, media: ParamValue<false> }>,
     'course-components-course-chapters-form': RouteRecordInfo<'course-components-course-chapters-form', '/course/components/CourseChaptersForm', Record<never, never>, Record<never, never>>,
     'course-components-course-details-form': RouteRecordInfo<'course-components-course-details-form', '/course/components/CourseDetailsForm', Record<never, never>, Record<never, never>>,
     'course-components-course-play-list': RouteRecordInfo<'course-components-course-play-list', '/course/components/CoursePlayList', Record<never, never>, Record<never, never>>,
