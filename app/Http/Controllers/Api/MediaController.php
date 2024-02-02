@@ -135,26 +135,29 @@ class MediaController extends Controller
         ]);
 
         if ($media = Media::where('uuid', $data['VideoLibraryId'] . '-' . $data['VideoGuid'])->first()) {
-            $videoData = $bunnyVideoManager->getVideo($data['VideoLibraryId'], $data['VideoGuid']);
-
-            Log::alert("videoData", $videoData);
-            return;
-            $path = "https://" . env("VITE_PULL_ZONE") . ".b-cdn.net/" . $videoData['guid'] . "/play_480p.mp4";
-            $themb = "https://" . env("VITE_PULL_ZONE") . ".b-cdn.net/" . $videoData['guid'] . "/preview.webp";
-            $low = "https://" . env("VITE_PULL_ZONE") . ".b-cdn.net/" . $videoData['guid'] . "/playlist.m3u8";
-            $media->update([
-                'disk' => 'remote',
-                "name" => $videoData['title'],
-                "data->duration" => $videoData['length'] / 60,
-                "data->width" => $videoData['width'] / 60,
-                "data->height" => $videoData['height'] / 60,
-                "status" => $videoData['status'],
-                "path" => $path,
-                "conversions" => [
-                    ["engine" => "ImageResize", "path" => $themb, "disk" => 'remote', "name" => "thumb"],
-                    ["engine" => "VideoResize", "path" => $low, "disk" => 'remote', "name" => "low"],
-                ]
-            ]);
+            $responce = $bunnyVideoManager->getVideo($data['VideoLibraryId'], $data['VideoGuid'] . '454');
+            if ($responce->successful()) {
+                $guid = $responce->json('guid');
+                $pull_zone = config('services.bunnycdn.pull_zone');
+                $path = "https://$pull_zone.b-cdn.net/$guid/play_480p.mp4";
+                $themb = "https://$pull_zone.b-cdn.net/$guid/preview.webp";
+                $low = "https://$pull_zone.b-cdn.net/$guid/playlist.m3u8";
+                $media->update([
+                    'disk' => 'remote',
+                    "name" => $responce->json('title'),
+                    "data->duration" => $responce->json('length') / 60,
+                    "data->width" => $responce->json('width') / 60,
+                    "data->height" => $responce->json('height') / 60,
+                    "status" => $responce->json('status'),
+                    "path" => $path,
+                    "conversions" => [
+                        ["engine" => "ImageResize", "path" => $themb, "disk" => 'remote', "name" => "thumb"],
+                        ["engine" => "VideoResize", "path" => $low, "disk" => 'remote', "name" => "low"],
+                    ]
+                ]);
+            } else {
+                $media->update(['status' => MediaStatus::Error->value, 'data->error' => $responce->json('error')]);
+            }
         } else {
             return response('video not found', 404);
         }

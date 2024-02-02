@@ -11,15 +11,18 @@ class BunnyVideoManager
     public function __construct()
     {
         $this->client = Http::withHeaders([
-            'accessKey' => env('VITE_BUNNY_KEY'),
+            'accessKey' => env('VITE_BUNNY_API_KEY'),
             "accept" => "application/json"
         ])->baseUrl('https://video.bunnycdn.com');
     }
 
-
+    /**
+     *@param string $libraryId
+     *@param string $videoId
+     *@return \Illuminate\Http\Client\Response
+     */
     public function getVideo(string $libraryId, string $videoId)
     {
-        $response = $this->client->get("/library/{$libraryId}/videos/{$videoId}");
-        return $response->json();
+        return $this->client->get("/library/{$libraryId}/videos/{$videoId}");
     }
 }

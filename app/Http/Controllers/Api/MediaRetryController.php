@@ -32,9 +32,9 @@ class MediaRetryController extends Controller
                 $videoId = str_replace("{$library}-", '', $media->uuid);
                 $videoData = $bunnyVideoManager->getVideo($library, $videoId);
                 if (!$videoData) return response()->json(['message' => "Error Video $videoId Not Found On library: $library"], 405);
-                $path = "https://" . env("VITE_PULL_ZONE") . ".b-cdn.net/" . $videoData['guid'] . "/play_480p.mp4";
-                $themb = "https://" . env("VITE_PULL_ZONE") . ".b-cdn.net/" . $videoData['guid'] . "/thumbnail.jpg";
-                $low = "https://" . env("VITE_PULL_ZONE") . ".b-cdn.net/" . $videoData['guid'] . "/playlist.m3u8";
+                $path = "https://" . env("BUNNY_PULL_ZONE") . ".b-cdn.net/" . $videoData['guid'] . "/play_480p.mp4";
+                $themb = "https://" . env("BUNNY_PULL_ZONE") . ".b-cdn.net/" . $videoData['guid'] . "/thumbnail.jpg";
+                $low = "https://" . env("BUNNY_PULL_ZONE") . ".b-cdn.net/" . $videoData['guid'] . "/playlist.m3u8";
                 $media->update([
                     'disk' => 'remote',
                     "name" => $videoData['title'],
