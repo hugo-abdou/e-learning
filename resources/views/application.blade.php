@@ -6,6 +6,7 @@
     <link rel="icon" href="{{ asset('favicon.ico') }}" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vuexy - Vuejs Admin Dashboard Template</title>
+    <meta name="referrer" content="origin">
     <link rel="stylesheet" type="text/css" href="{{ asset('loader.css') }}" />
     @isset($maintenance)
         @vite(['resources/ts/maintenance.ts'])
