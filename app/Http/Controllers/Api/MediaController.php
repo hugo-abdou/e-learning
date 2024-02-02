@@ -17,6 +17,7 @@ use App\Support\MediaUploader;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 
@@ -135,6 +136,9 @@ class MediaController extends Controller
 
         if ($media = Media::where('uuid', $data['VideoLibraryId'] . '-' . $data['VideoGuid'])->first()) {
             $videoData = $bunnyVideoManager->getVideo($data['VideoLibraryId'], $data['VideoGuid']);
+
+            Log::alert("videoData", $videoData);
+            return;
             $path = "https://" . env("VITE_PULL_ZONE") . ".b-cdn.net/" . $videoData['guid'] . "/play_480p.mp4";
             $themb = "https://" . env("VITE_PULL_ZONE") . ".b-cdn.net/" . $videoData['guid'] . "/preview.webp";
             $low = "https://" . env("VITE_PULL_ZONE") . ".b-cdn.net/" . $videoData['guid'] . "/playlist.m3u8";
