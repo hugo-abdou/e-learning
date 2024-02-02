@@ -35,7 +35,7 @@ use Laravel\Jetstream\Jetstream;
 
 Route::post('/oauth/register', [RegisteredUserController::class, 'store']);
 
-Route::post('/media/bunny_webhook', [MediaController::class, 'bunny_webhook'])->name('bunny_webhook');
+
 
 Route::middleware(['auth:api'])->get('/auth', fn (Request $request) => AuthResource::make($request->user())->resolve());
 Route::middleware(['auth:api', 'verified'])->group(function () {

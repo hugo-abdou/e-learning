@@ -151,6 +151,8 @@ class MediaController extends Controller
                     ["engine" => "VideoResize", "path" => $low, "disk" => 'remote', "name" => "master"],
                 ]
             ]);
+        } else {
+            return response('video not found', 404);
         }
         return response('ok');
     }
