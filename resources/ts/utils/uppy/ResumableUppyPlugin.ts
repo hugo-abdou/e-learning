@@ -56,7 +56,6 @@ export default class ResumableUppyPlugin extends BasePlugin {
         const bunnyStreem = new BunnyStreem();
         try {
           this.uppy.emit("upload-started", file);
-          const library = "179002";
           bunnyStreem.onProgress("uploadProgress", (e: { loaded: number }) => {
             this.uppy.emit("upload-progress", file, {
               uploader: this,
@@ -65,7 +64,10 @@ export default class ResumableUppyPlugin extends BasePlugin {
             });
           });
           bunnyStreem.setFeild("title", file.meta.name);
-          const res = await bunnyStreem.store(library, file.data as File);
+          const res = await bunnyStreem.store(
+            BunnyStreem.LIBRARY_ID,
+            file.data as File
+          );
           const uploadResp = { status: 200, body: res };
           this.uppy.emit("upload-success", file, uploadResp);
         } catch (error) {

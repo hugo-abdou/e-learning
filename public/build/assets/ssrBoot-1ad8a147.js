@@ -1,0 +1,1 @@
+import{az as t,k as e,aA as s,cu as n}from"./plugins-23ac56fa.js";function u(){const o=t(!1);return e(()=>{window.requestAnimationFrame(()=>{o.value=!0})}),{ssrBootStyles:s(()=>o.value?void 0:{transition:"none !important"}),isBooted:n(o)}}export{u};

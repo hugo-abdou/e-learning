@@ -32,5 +32,7 @@ return [
         "key" => env("BUNNY_API_KEY", null),
         "base_url" => env("BUNNY_BASE_URL", 'https://video.bunnycdn.com'),
         "pull_zone" => env("BUNNY_PULL_ZONE", null),
+        "pull_zone_url" => env("BUNNY_PULL_ZONE_URL", null),
+        'region' => env('BUNNYCDN_REGION', \App\Support\BunnyCDNRegion::DEFAULT)
     ]
 ];

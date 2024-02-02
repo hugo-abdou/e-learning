@@ -1,1 +1,0 @@
-import{g as n,ax as r,b4 as o,l as c,n as d}from"./plugins-1ca62e54.js";const l=n()({name:"VCardActions",props:r(),setup(a,s){let{slots:e}=s;return o({VBtn:{variant:"text"}}),c(()=>{var t;return d("div",{class:["v-card-actions",a.class],style:a.style},[(t=e.default)==null?void 0:t.call(e)])}),{}}});export{l as V};

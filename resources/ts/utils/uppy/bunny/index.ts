@@ -18,6 +18,7 @@ export default class BunnyStreem {
   static VERSION = "0.0.1";
   // @ts-ignore
   static BASE_URL = import.meta.env.VITE_BUNNY_BASE_URL;
+  static LIBRARY_ID = import.meta.env.VITE_BUNNY_LIBRARY_ID;
   // @ts-ignore
   static BUNNY_KEY = import.meta.env.VITE_BUNNY_API_KEY;
   static DEFAULT_HEADERS = {};
