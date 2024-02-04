@@ -1,11 +1,11 @@
 #!/bin/bash
 
 set -e  # Exit immediately if a command exits with a non-zero status
-source ~/.nvm/nvm.sh
-nvm use 18
+source ~/.nvm/nvm.sh || true
+nvm use 18 || true
 
-node -v
-npm -v
+node -v || true
+npm -v || true
 
 GITHUB="hugo-abdou/e-learning"
 BRANCH="main"
