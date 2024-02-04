@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e  # Exit immediately if a command exits with a non-zero status
-
+source ~/.nvm/nvm.sh
 nvm use 18
 
 node -v
