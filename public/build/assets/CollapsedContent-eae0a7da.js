@@ -1,1 +1,0 @@
-import{_ as o}from"./CollapsedContent.vue_vue_type_script_setup_true_lang-76623c5b.js";import"./plugins-23ac56fa.js";import"./index-fb540909.js";import"./VCard-76e97c90.js";import"./VCardActions-cfac30f0.js";import"./createSimpleFunctional-510e0cf2.js";import"./VAvatar-6b93ad41.js";import"./VCardText-bc505610.js";export{o as default};

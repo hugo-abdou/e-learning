@@ -1,0 +1,1 @@
+import{_ as o}from"./_plugin-vue_export-helper-c27b6911.js";import{v as n,z as t,B as e}from"./plugins-c4f6eef2.js";const r={};function c(a,s){return n(),t(e,{variant:"tonal",color:"default",size:"small",density:"comfortable"})}const f=o(r,[["render",c]]);export{f as _};
