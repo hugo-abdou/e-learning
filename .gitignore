@@ -51,7 +51,7 @@ dist-ssr
 .yarn
 
 # iconify dist files
-resources/ts/plugins/iconify/icons.css
+# resources/ts/plugins/iconify/icons.css
 
 # Ignore MSW script
 public/mockServiceWorker.js
