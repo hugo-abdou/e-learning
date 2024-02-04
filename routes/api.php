@@ -35,7 +35,8 @@ use Laravel\Jetstream\Jetstream;
 
 Route::post('/oauth/register', [RegisteredUserController::class, 'store']);
 
-
+Route::get('media/upload', ResumableUploadController::class);
+Route::post('media/upload', ResumableUploadController::class);
 
 Route::middleware(['auth:api'])->get('/auth', fn (Request $request) => AuthResource::make($request->user())->resolve());
 Route::middleware(['auth:api', 'verified'])->group(function () {
@@ -48,8 +49,6 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::get('/', [MediaController::class, 'index'])->name('list');
         Route::get('/search', [MediaController::class, 'search'])->name('fetch');
         // Route::post('/upload', [MediaController::class, 'upload'])->name('upload');
-        Route::get('upload', ResumableUploadController::class);
-        Route::post('upload', ResumableUploadController::class);
         Route::post('/store', [MediaController::class, 'store'])->name('store');
         Route::get('/{media}', [MediaController::class, 'show'])->name('show');
         Route::delete('/{media}', [MediaController::class, 'destroy'])->name('destroy');
