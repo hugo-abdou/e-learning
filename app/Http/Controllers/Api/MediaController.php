@@ -12,7 +12,7 @@ use App\Jobs\ProcessImageMediaJob;
 use App\Jobs\ProcessVideoMediaJob;
 use App\MediaConversions\MediaImageResizeConversion;
 use App\Models\Media;
-use App\Services\BunnyVideoManager;
+use App\Services\BunnyStream;
 use App\Support\MediaUploader;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -126,7 +126,7 @@ class MediaController extends Controller
         return response()->json(['message' => 'Media deleted successfully']);
     }
 
-    public function bunny_webhook(Request $request, BunnyVideoManager $bunnyVideoManager)
+    public function bunny_webhook(Request $request, BunnyStream $bunnyVideoManager)
     {
         $data = $request->validate([
             "VideoLibraryId" => 'required|integer',
@@ -135,32 +135,32 @@ class MediaController extends Controller
         ]);
 
         if ($media = Media::where('uuid', $data['VideoLibraryId'] . '-' . $data['VideoGuid'])->first()) {
-            $responce = $bunnyVideoManager->getVideo($data['VideoLibraryId'], $data['VideoGuid'] . '454');
-            if ($responce->successful()) {
-                $guid = $responce->json('guid');
+            try {
+                $video = $bunnyVideoManager->getVideo($data['VideoLibraryId'], $data['VideoGuid'] . '454');
+                $guid = $video['guid'];
                 $pull_zone = config('services.bunnycdn.pull_zone');
                 $path = "https://$pull_zone.b-cdn.net/$guid/play_480p.mp4";
                 $themb = "https://$pull_zone.b-cdn.net/$guid/preview.webp";
                 $low = "https://$pull_zone.b-cdn.net/$guid/playlist.m3u8";
                 $media->update([
                     'disk' => 'remote',
-                    "name" => $responce->json('title'),
-                    "data->duration" => $responce->json('length') / 60,
-                    "data->width" => $responce->json('width') / 60,
-                    "data->height" => $responce->json('height') / 60,
-                    "status" => $responce->json('status'),
+                    "name" => $video['title'],
+                    "data->duration" => $video['length'] / 60,
+                    "data->width" => $video['width'] / 60,
+                    "data->height" => $video['height'] / 60,
+                    "status" => $video['status'],
                     "path" => $path,
                     "conversions" => [
                         ["engine" => "ImageResize", "path" => $themb, "disk" => 'remote', "name" => "thumb"],
                         ["engine" => "VideoResize", "path" => $low, "disk" => 'remote', "name" => "low"],
                     ]
                 ]);
-            } else {
-                $media->update(['status' => MediaStatus::Error->value, 'data->error' => $responce->json('error')]);
+                return response('ok');
+            } catch (\Throwable $th) {
+                $media->update(['status' => MediaStatus::Error->value, 'data->error' => $th->getMessage()]);
+                return response('error', 500);
             }
-        } else {
-            return response('video not found', 404);
         }
-        return response('ok');
+        return response('video not found', 404);
     }
 }
