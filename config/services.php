@@ -28,11 +28,13 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
     "bunnycdn" => [
-        "storage_zone" => env("BUNNY_STORAGE_ZONE", null),
-        "key" => env("BUNNY_API_KEY", null),
+         "storage_zone" => env("BUNNY_STORAGE_ZONE", null),
+        "streem_key" => env("BUNNY_STREEM_API_KEY", null),
+        "storage_key" => env("BUNNY_STORAGE_API_KEY", null),
         "base_url" => env("BUNNY_BASE_URL", 'https://video.bunnycdn.com'),
         "pull_zone" => env("BUNNY_PULL_ZONE", null),
         "pull_zone_url" => env("BUNNY_PULL_ZONE_URL", null),
-        'region' => env('BUNNYCDN_REGION', \App\Support\BunnyCDNRegion::DEFAULT)
+        'region' => env('BUNNYCDN_REGION', \App\Support\BunnyCDNRegion::DEFAULT),
+        'library' => env('BUNNY_LIBRARY_ID', null)
     ]
 ];
