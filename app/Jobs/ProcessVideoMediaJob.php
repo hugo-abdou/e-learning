@@ -42,16 +42,17 @@ class ProcessVideoMediaJob
                 if (!file_exists($filePath)) throw new \Exception("File not found");
 
                 $bunnyStream = new BunnyStream();
-                $res = $bunnyStream->presignedUpload(config('services.bunnycdn.library'), $media->name);
+                $res = $bunnyStream->presignedUpload($this->config['library'], $media->name);
                 $bunnyStream->upload(
-                    config('services.bunnycdn.library'),
+                    $this->config['library'],
                     $res['guid'],
                     file_get_contents($filePath)
                 );
                 $video = $bunnyStream->getVideo(
-                    config('services.bunnycdn.library'),
+                    $this->config['library'],
                     $res['guid']
                 );
+                $data['uuid'] = $this->config['library'] . '-' . $video['guid'];
                 $data['data->width'] = 1080;
                 $data['data->height'] = 720;
                 $data['data->duration'] = 0;

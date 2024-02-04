@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
+use function Laravel\Prompts\error;
 
 class MediaController extends Controller
 {
@@ -160,9 +161,11 @@ class MediaController extends Controller
                 return response('ok');
             } catch (\Throwable $th) {
                 $media->update(['status' => MediaStatus::Error->value, 'data->error' => $th->getMessage()]);
+                error("Bunny CDN Video Error", $th->getMessage());
                 return response('error', 500);
             }
         }
+        error("Bunny CDN Video Not Found", $data);
         return response('video not found', 404);
     }
 }
