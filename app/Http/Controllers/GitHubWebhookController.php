@@ -27,13 +27,12 @@ class GitHubWebhookController extends Controller
 
             // Create a new Process instance
             $process = Process::fromShellCommandline($command);
+            $process->setTimeout(120);
 
             // Run the process
-            $message = '';
             $process->run(function ($type, $buffer) use (&$message) {
-                $message .= $buffer;
+                Log::info(str_replace("[90m.[39m", '', $buffer));
             });
-            Log::info(str_replace("[90m.[39m", '', $message));
             // Check if the process was successful
             if (!$process->isSuccessful()) {
                 Log::error('Error occurred while running the deploy script.');
