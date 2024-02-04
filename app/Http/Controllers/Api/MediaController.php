@@ -136,7 +136,7 @@ class MediaController extends Controller
 
         if ($media = Media::where('uuid', $data['VideoLibraryId'] . '-' . $data['VideoGuid'])->first()) {
             try {
-                $video = $bunnyVideoManager->getVideo($data['VideoLibraryId'], $data['VideoGuid'] . '454');
+                $video = $bunnyVideoManager->getVideo($data['VideoLibraryId'], $data['VideoGuid']);
                 $guid = $video['guid'];
                 $pull_zone = config('services.bunnycdn.pull_zone');
                 $path = "https://$pull_zone.b-cdn.net/$guid/play_480p.mp4";
