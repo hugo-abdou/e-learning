@@ -6,22 +6,15 @@ use GuzzleHttp\Client;
 
 class BunnyStream
 {
-    protected string $accessKey;
-    protected $client;
-    protected $base_url;
-    protected $pull_zone;
-    protected $client_secret;
+    protected Client $client;
 
     public function __construct()
     {
-        $this->accessKey = config('services.bunnycdn.streem_key');
-        $this->pull_zone = config('services.bunnycdn.pull_zone');
-        $this->base_url = config('services.bunnycdn.base_url');
 
         $this->client = new Client([
-            'base_uri' => $this->base_url,
+            'base_uri' => config('services.bunnycdn.base_url'),
             'headers' => [
-                'AccessKey' => $this->accessKey,
+                'AccessKey' => config('services.bunnycdn.streem_key'),
                 'accept' => 'application/json',
             ],
         ]);
