@@ -156,6 +156,7 @@ export default defineConfig({
     exclude: ["vuetify"],
     entries: ["./resources/ts/**/*.vue"],
   },
+  // server
   server: {
     hmr: { overlay: false },
     watch: {
