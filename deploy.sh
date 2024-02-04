@@ -2,6 +2,9 @@
 
 set -e  # Exit immediately if a command exits with a non-zero status
 
+node -v
+npm -v
+
 GITHUB="hugo-abdou/e-learning"
 BRANCH="main"
 # SSH_KEY="~/.ssh/id_rsa"
