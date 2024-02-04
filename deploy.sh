@@ -2,7 +2,7 @@
 
 set -e  # Exit immediately if a command exits with a non-zero status
 
-node use 18
+nvm use 18
 
 node -v
 npm -v
