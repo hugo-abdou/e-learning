@@ -24,6 +24,8 @@ else
     git --work-tree=$WORK_TREE --git-dir=$GIT_DIR fetch origin --tags --force
     git --work-tree=$WORK_TREE --git-dir=$GIT_DIR checkout -f $BRANCH
     git --work-tree=$WORK_TREE --git-dir=$GIT_DIR merge origin/$BRANCH
+
+     composer install --no-interaction --no-dev --prefer-dist
 fi
     # activate maintenance mode
     php artisan down
@@ -35,5 +37,14 @@ fi
     # update database
     # --force  Required to run when in production.
     php artisan migrate --force
+
+    # update assets
+    # --no-interaction Do not ask any interactive question
+    # --no-dev  Disables installation of require-dev packages.
+    # --prefer-dist  Forces installation from package dist even for dev versions.
+    npm install --no-interaction --no-dev --prefer-dist
+    # --force  Required to run when in production.
+    npm run build --force
+
     # stop maintenance mode
     php artisan up
