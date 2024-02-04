@@ -134,6 +134,8 @@ class MediaController extends Controller
             "Status" => 'required|integer',
         ]);
 
+        info("Bunny CDN Video Status Changed", $data);
+
         if ($media = Media::where('uuid', $data['VideoLibraryId'] . '-' . $data['VideoGuid'])->first()) {
             try {
                 $video = $bunnyVideoManager->getVideo($data['VideoLibraryId'], $data['VideoGuid']);
