@@ -11,6 +11,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
@@ -35,7 +36,6 @@ class ProcessImageMediaJob
      */
     public function handle(): void
     {
-
         if ($media = \App\Models\Media::findOrFail($this->mediaId)) {
             if (Str::before($media->mime_type, '/') !== 'image') throw new \Exception("Media is not a image");
             $media->update(['status' => MediaStatus::Processing->value]);
@@ -54,6 +54,7 @@ class ProcessImageMediaJob
                 $data['data->height'] = $image->getHeight();
                 Storage::disk('tmp')->delete($media->path);
             } catch (\Throwable $th) {
+                Log::error($th->getMessage());
                 $data['data->error'] =  $th->getMessage();
                 $data['data->width'] = "1080";
                 $data['data->height'] = "720";

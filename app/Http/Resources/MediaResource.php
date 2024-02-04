@@ -36,7 +36,7 @@ class MediaResource extends JsonResource
             case 'image':
                 return [
                     'url' => $this->getUrl(),
-                    'thumb_url' => $this->getUrl(),
+                    'thumb_url' => $this->getThumbUrl(),
                 ];
             default:
                 return [

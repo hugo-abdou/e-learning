@@ -187,9 +187,7 @@ const auth = useUserStore();
           <!-- <UserProfile /> -->
         </template>
         <template v-else>
-          <VBtn variant="elevated" target="_blank" href="/login">
-            <span class="d-none d-lg-block">Login</span>
-          </VBtn>
+          <VBtn variant="elevated" target="_blank" href="/login"> Login </VBtn>
         </template>
         <NavbarThemeSwitcher />
       </div>

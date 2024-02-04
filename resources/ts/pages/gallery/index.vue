@@ -28,6 +28,7 @@ const { width: windowWidth } = useWindowSize();
         <GalleryView
           ref="gallery"
           deletable
+          :grid="{ cols: '6', sm: '4', md: '3', lg: '2' }"
           :search-posisions="windowWidth > 769 ? '90px' : '10px'"
         >
           <template #actions>

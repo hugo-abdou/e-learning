@@ -52,40 +52,15 @@ export default class ResumableUppyPlugin extends BasePlugin {
 
     for (let i = 0; i < fileIDs.length; i++) {
       const file = this.uppy.getFile(fileIDs[i]);
-      if (file.type?.includes("video/")) {
-        const bunnyStreem = new BunnyStreem();
-        try {
-          this.uppy.emit("upload-started", file);
-          bunnyStreem.onProgress("uploadProgress", (e: { loaded: number }) => {
-            this.uppy.emit("upload-progress", file, {
-              uploader: this,
-              bytesUploaded: e.loaded,
-              bytesTotal: file.size,
-            });
-          });
-          bunnyStreem.setFeild("title", file.meta.name);
-          const res = await bunnyStreem.store(
-            BunnyStreem.LIBRARY_ID,
-            file.data as File
-          );
-          const uploadResp = { status: 200, body: res };
-          this.uppy.emit("upload-success", file, uploadResp);
-        } catch (error) {
-          this.uppy.emit("upload-error", file, error);
-        }
-        // await this.uploadVideo(file as File);
-        return;
-      }
       this.resumable.addFile(file.data);
     }
   }
 
-  uploadVideo(file: File) {
-    const bunnyStreem = new BunnyStreem();
-    return new Promise<void>(async (resolve, reject) => {
-      this.uppy.emit("upload-started", file);
+  async uploadVideo(file: File) {
+    if (file.type?.includes("video/")) {
+      const bunnyStreem = new BunnyStreem();
       try {
-        const library = "179002";
+        this.uppy.emit("upload-started", file);
         bunnyStreem.onProgress("uploadProgress", (e: { loaded: number }) => {
           this.uppy.emit("upload-progress", file, {
             uploader: this,
@@ -93,16 +68,19 @@ export default class ResumableUppyPlugin extends BasePlugin {
             bytesTotal: file.size,
           });
         });
-        bunnyStreem.setFeild("title", file.name);
-        const res = await bunnyStreem.store(library, file as File);
+        bunnyStreem.setFeild("title", file.meta.name);
+        const res = await bunnyStreem.store(
+          BunnyStreem.LIBRARY_ID,
+          file.data as File
+        );
         const uploadResp = { status: 200, body: res };
         this.uppy.emit("upload-success", file, uploadResp);
-        return resolve();
       } catch (error) {
         this.uppy.emit("upload-error", file, error);
-        return reject(error);
       }
-    });
+      // await this.uploadVideo(file as File);
+      return;
+    }
   }
 
   registerEvents() {

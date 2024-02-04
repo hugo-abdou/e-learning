@@ -5,10 +5,9 @@ namespace App\Support;
 use App\Abstracts\StorageUploadedFile;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
+use App\Facades\Storage;
 use App\Models\Media;
 use App\Contracts\MediaConversion;
-use Illuminate\Support\Str;
 
 class MediaUploader
 {
@@ -66,7 +65,10 @@ class MediaUploader
         if (!$path)  throw new \Exception("The file was not uploaded. Check your $this->disk driver configuration.");
         $fileSize = $this->file->getSize();
         $conversions = $this->performConversions($path);
-        Storage::disk($this->disk)->put($this->path . '/' . $this->file->getClientOriginalName(), $this->file->getContent());
+        Storage::disk($this->disk)->put(
+            $this->path . '/' . $this->file->getClientOriginalName(),
+            $this->file->getContent()
+        );
         $totalSize = collect($conversions)->sum('size');
         return [
             'size_total' => $fileSize + $totalSize,

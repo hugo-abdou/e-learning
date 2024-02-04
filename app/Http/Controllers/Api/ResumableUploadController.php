@@ -6,6 +6,7 @@ use App\Enums\MediaStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\MediaResource;
 use App\Jobs\ProcessImageMediaJob;
+use App\Jobs\ProcessVideoMediaJob;
 use App\Models\Media;
 use App\Services\Resumable;
 use Illuminate\Http\Request;
@@ -88,12 +89,15 @@ class ResumableUploadController extends Controller
             ]);
             Storage::disk('tmp')->delete($media->path);
         }
+
+        ProcessVideoMediaJob::dispatchIf($type === 'video', $media->id);
+
         // process Image and extract thumbnails and large images
         ProcessImageMediaJob::dispatchIf(
             $type === 'image',
             $media->id,
-            ["thumb" => 500],
-            ['disk' => disk(), 'path' => 'media' . DIRECTORY_SEPARATOR . auth()->id()]
+            ["thumb" => 300],
+            ['disk' => disk(), 'path' => 'media/' . auth()->id()]
         );
     }
 }

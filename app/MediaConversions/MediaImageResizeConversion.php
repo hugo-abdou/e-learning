@@ -54,6 +54,7 @@ class MediaImageResizeConversion extends MediaConversion
             $constraint->aspectRatio();
             $constraint->upsize();
         })->encode();
+
         Storage::disk($this->getToDisk())->put($this->getPath(), $convert->getEncoded());
 
         return MediaConversionData::conversion($this);

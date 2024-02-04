@@ -60,7 +60,7 @@ return [
         'bunnycdn' => [
             'driver' => 'bunnycdn',
             'storage_zone' => env('BUNNY_STORAGE_ZONE'),
-            'api_key' => env('BUNNY_API_KEY'),
+            'api_key' => env('BUNNY_STREEM_API_KEY'),
             'region' => env('BUNNYCDN_REGION', \App\Support\BunnyCDNRegion::DEFAULT)
         ],
     ],
