@@ -1,8 +1,7 @@
 #!/bin/bash
-
-set -e  # Exit immediately if a command exits with a non-zero status
-node -v || true
-npm -v || true
+source ~/.nvm/nvm.sh
+node -v
+npm -v
 
 GITHUB="hugo-abdou/e-learning"
 BRANCH="main"
@@ -29,26 +28,26 @@ else
     git --work-tree=$WORK_TREE --git-dir=$GIT_DIR checkout -f $BRANCH
     git --work-tree=$WORK_TREE --git-dir=$GIT_DIR merge origin/$BRANCH
 
-     composer install --no-interaction --no-dev --prefer-dist || true
+     composer install --no-interaction --no-dev --prefer-dist
 fi
     # activate maintenance mode
-    php artisan down || true
+    php artisan down
     # update PHP dependencies
     # --no-interaction Do not ask any interactive question
     # --no-dev  Disables installation of require-dev packages.
     # --prefer-dist  Forces installation from package dist even for dev versions.
-    composer install --no-interaction --no-dev --prefer-dist || true
+    composer install --no-interaction --no-dev --prefer-dist
     # update database
     # --force  Required to run when in production.
-    php artisan migrate --force || true
+    php artisan migrate --force
 
     # update assets
     # --no-interaction Do not ask any interactive question
     # --no-dev  Disables installation of require-dev packages.
     # --prefer-dist  Forces installation from package dist even for dev versions.
-    npm install --no-interaction --no-dev --prefer-dist || true
+    npm install --no-interaction --no-dev --prefer-dist
     # --force  Required to run when in production.
-    npm run build --force || true
+    npm run build --force
 
     # stop maintenance mode
-    php artisan up || true
+    php artisan up
