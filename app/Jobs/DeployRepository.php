@@ -47,7 +47,7 @@ class DeployRepository implements ShouldQueue
             });
         } catch (\Throwable $th) {
             Log::error('Error occurred while running the deploy script.');
-            Log::error($th->getMessage());
+            throw $th;
         }
     }
 }
