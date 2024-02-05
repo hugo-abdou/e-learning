@@ -27,7 +27,7 @@ class GitHubWebhookController extends Controller
 
             // Create a new Process instance
             $process = Process::fromShellCommandline($command);
-            $process->setTimeout(120);
+            $process->setTimeout(180);
 
             try {
                 $process->run(function ($type, $buffer) use (&$message) {
