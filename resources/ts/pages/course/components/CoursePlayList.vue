@@ -6,7 +6,6 @@ import { VSkeletonLoader } from "vuetify/labs/VSkeletonLoader";
 
 type PlaylistAttachment = Attachment & {
   index: number;
-  active: boolean;
   chapter_id: number;
 };
 
@@ -27,8 +26,46 @@ type Playlist = (
   | { type: "header"; title: string; id: number }
 )[];
 const playlist = ref<Playlist>([]);
+const hasNext = ref(false);
+const route = useRoute();
+const router = useRouter();
 
-const next = () => {};
+const getPlayListItemIndex = (mediaId: number, chapterId: number) => {
+  return playlist.value.findIndex(
+    (it) =>
+      it.type !== "header" && it.chapter_id === chapterId && it.id === mediaId
+  );
+};
+const getActive = () => {
+  const mediaMeta = (route.params.media as string).split("-");
+  const mediaId: number = Number(mediaMeta[mediaMeta.length - 2]);
+  const chapterId: number = Number(mediaMeta[mediaMeta.length - 1]);
+  return playlist.value.find(
+    (it) =>
+      it.type !== "header" && it.chapter_id === chapterId && it.id === mediaId
+  );
+};
+const goToIndex = (index: number) => {
+  const nextItem = playlist.value[index];
+  if (!nextItem) return;
+  if (nextItem.type !== "header") {
+    router.push({
+      name: "course-id-watch-media",
+      params: {
+        id: props.courseId,
+        media: `${nextItem.slug}-${nextItem.id}-${nextItem.chapter_id}`,
+      },
+    });
+  } else {
+    goToIndex(index + 1);
+  }
+};
+const next = () => {
+  const { chapter_id, id } = getActive() as PlaylistAttachment;
+  const currentIndex = getPlayListItemIndex(id, chapter_id);
+  goToIndex(currentIndex + 1);
+  checkForNext();
+};
 const prev = () => {};
 
 const chaptersStore = useCourseStore();
@@ -39,26 +76,31 @@ onMounted(async () => {
       itemsPerPage: 1000,
     });
     playlist.value = data.reduce(
-      (result: Playlist, { attachments, title, id }) => {
+      (result: Playlist, { attachments, title, id }, i) => {
         if (attachments.length) {
           result.push({ type: "header", title, id });
           result.push(
-            ...attachments.map((it, i) => ({
-              ...it,
-              index: i,
-              active: i === 0,
-              chapter_id: id,
-            }))
+            ...attachments.map((it) => ({ ...it, index: i, chapter_id: id }))
           );
         }
         return result;
       },
       []
     );
-  } catch (error) {}
+    checkForNext();
+  } catch (error) {
+    throw error;
+  }
 });
 
-defineExpose({ next, prev });
+const checkForNext = () => {
+  const { chapter_id, id } = getActive() as PlaylistAttachment;
+  const currentIndex = getPlayListItemIndex(id, chapter_id);
+  hasNext.value = playlist.value.length > currentIndex + 1;
+};
+
+watch(() => route.params.media, checkForNext);
+defineExpose({ next, prev, hasNext });
 </script>
 
 <template>

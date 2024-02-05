@@ -1,6 +1,6 @@
 <template>
   <VRow align="start" class="gap-y-2">
-    <VCol cols="12" md="9" class="py-0">
+    <VCol cols="12" md="8" class="py-0">
       <div v-if="selected" class="position-relative h-100 border rounded">
         <Media
           v-bind="events"
@@ -8,7 +8,10 @@
           aspect-ratio="1.77"
           :media="selected"
         >
-          <template v-if="selected.type === MediaTypes.image" #toolbar>
+          <template
+            v-if="selected.type === MediaTypes.image && playList?.hasNext"
+            #toolbar
+          >
             <VBtn
               variant="elevated"
               color="default"
@@ -28,6 +31,7 @@
             Start Over
           </VBtn>
           <VBtn
+            v-if="playList?.hasNext"
             color="default"
             append-icon="mdi-skip-forward"
             @click="nextAttachment"
@@ -38,7 +42,7 @@
       </div>
       <VSkeletonLoader v-else :type="['image', 'image']" />
     </VCol>
-    <VCol cols="12" md="3" class="rounded py-0">
+    <VCol cols="12" md="4" class="rounded py-0">
       <VCard>
         <PerfectScrollbar :options="{ wheelPropagation: true }">
           <CoursePlayList ref="playList" :course-id="Number(route.params.id)" />
@@ -70,7 +74,10 @@ const events = computed(() => {
   if (!selected.value) return {};
   if (selected.value.type === MediaTypes.video) {
     return {
-      onReady: (e: any) => (plyr.value = e.target?.plyr),
+      onReady: (e: any) => {
+        plyr.value = e.target?.plyr;
+        plyr.value?.play();
+      },
       onEnded: (e: any) => (finished.value = true),
       // @ts-ignore
       onPause: (e: any) => (selected.value.playing = false),
@@ -108,13 +115,13 @@ const loadMedia = () => {
     const mediaMeta = (route.params.media as string).split("-");
     const mediaId: number = Number(mediaMeta[mediaMeta.length - 2]);
     const chapterId: number = Number(mediaMeta[mediaMeta.length - 1]);
-    // console.log({ chapterId, mediaId });
 
     mediaStore
       .getAttachmentById(chapterId, "chapters", mediaId)
       .then((attachment) => {
         selected.value = attachment;
       });
+    finished.value = false;
   }
 };
 

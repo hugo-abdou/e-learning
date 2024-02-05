@@ -216,7 +216,7 @@ defineExpose({ formEl, validate });
                 />
               </VCol>
               <Masonry
-                v-slot="{ item: doc }"
+                v-slot="{ item: doc, index }"
                 class="w-100"
                 :items="chapter.attachments"
                 :grid="{ cols: '12' }"
@@ -233,7 +233,7 @@ defineExpose({ formEl, validate });
                         @delete="
                           () => {
                             chapter.attachments = chapter.attachments.filter(
-                              ({ id }) => id !== doc.id
+                              (_, i) => i !== index
                             );
                           }
                         "

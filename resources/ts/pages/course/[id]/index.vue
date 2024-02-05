@@ -28,7 +28,6 @@ onBeforeMount(async () => {
 });
 
 const currentTab = ref(0);
-const items = ["Overview", "Lessons", "Assignments"];
 </script>
 
 <template>

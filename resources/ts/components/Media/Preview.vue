@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { MediaTypes } from "@/@core/enums";
+import { MediaStatus, MediaTypes } from "@/@core/enums";
 import { Media } from "@/types";
 import { resolveDefaultThumbnal } from "@/utils";
 interface Props {
@@ -50,8 +50,8 @@ const faild = () => (isError.value = true);
     cover
     :lazy-src="thumb"
     :src="!isError ? thumb : '/assets/Image_not_available.png'"
-    class="media-card h-100"
     @error="faild"
+    class="media-card h-100"
   >
     <template v-slot:placeholder>
       <div
@@ -68,7 +68,11 @@ const faild = () => (isError.value = true);
       class="card-header-actions d-flex align-center justify-center w-100 pa-1"
     >
       <VSpacer />
-      <IconBtn @click="mediaStore.retry(resource.id)" icon="tabler-reload" />
+      <IconBtn
+        v-if="resource.status === MediaStatus.Error"
+        @click="mediaStore.retry(resource.id)"
+        icon="tabler-reload"
+      />
       <IconBtn
         v-if="deletable"
         @click="$emit('delete')"
@@ -78,7 +82,7 @@ const faild = () => (isError.value = true);
     </div>
     <VToolbar absolute density="compact" class="toolbar-overlay pa-2">
       <div class="d-flex align-center justify-center w-100 me-2">
-        <VBtn
+        <IconBtn
           v-if="resource.url"
           @click="playPreview(resource.type)"
           icon="tabler-play"
