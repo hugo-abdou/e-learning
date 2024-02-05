@@ -38,13 +38,13 @@ class DeployRepository implements ShouldQueue
 
         // Create a new Process instance
         $process = Process::fromShellCommandline($command);
+        $process->setTimeout(180); // Set the timeout here before running the process
 
         try {
             // Run the command
             $process->run(function ($type, $buffer) {
                 Log::info(str_replace("[90m.[39m", '', $buffer));
             });
-            $process->setTimeout(180);
         } catch (\Throwable $th) {
             Log::error('Error occurred while running the deploy script.');
             Log::error($th->getMessage());
