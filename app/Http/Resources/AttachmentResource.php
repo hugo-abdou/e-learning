@@ -37,6 +37,7 @@ class AttachmentResource extends JsonResource
                     'duration' => $this->data['duration'] ?? 0,
                     'url' => $this->getLowUrl(),
                     'thumb_url' => $this->getThumbUrl(),
+                    'preview_url' => $this->getPreviewUrl(),
                 ];
             default:
                 return [

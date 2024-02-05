@@ -2,25 +2,16 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Enums\MediaResolutions;
-use App\Enums\MediaStatus;
 use App\Facades\Storage;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MediaUploadFile;
 use App\Http\Resources\MediaResource;
+use App\Jobs\GetVideoFromBunnyJob;
 use App\Jobs\ProcessImageMediaJob;
-use App\Jobs\ProcessVideoMediaJob;
-use App\MediaConversions\MediaImageResizeConversion;
 use App\Models\Media;
-use App\Services\BunnyStream;
-use App\Support\MediaUploader;
 use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
-use function Laravel\Prompts\error;
 
 class MediaController extends Controller
 {
@@ -127,45 +118,13 @@ class MediaController extends Controller
         return response()->json(['message' => 'Media deleted successfully']);
     }
 
-    public function bunny_webhook(Request $request, BunnyStream $bunnyVideoManager)
+    public function bunny_webhook(Request $request)
     {
         $data = $request->validate([
             "VideoLibraryId" => 'required|integer',
             "VideoGuid" => 'required|string',
             "Status" => 'required|integer',
         ]);
-
-        info("Bunny CDN Video Status Changed", $data);
-
-        if ($media = Media::where('uuid', $data['VideoLibraryId'] . '-' . $data['VideoGuid'])->first()) {
-            try {
-                $video = $bunnyVideoManager->getVideo($data['VideoLibraryId'], $data['VideoGuid']);
-                $guid = $video['guid'];
-                $pull_zone = config('services.bunnycdn.pull_zone');
-                $path = "https://$pull_zone.b-cdn.net/$guid/play_480p.mp4";
-                $themb = "https://$pull_zone.b-cdn.net/$guid/preview.webp";
-                $low = "https://$pull_zone.b-cdn.net/$guid/playlist.m3u8";
-                $media->update([
-                    'disk' => 'remote',
-                    "name" => $video['title'],
-                    "data->duration" => $video['length'],
-                    "data->width" => $video['width'] / 60,
-                    "data->height" => $video['height'] / 60,
-                    "status" => $video['status'],
-                    "path" => $path,
-                    "conversions" => [
-                        ["engine" => "ImageResize", "path" => $themb, "disk" => 'remote', "name" => "thumb"],
-                        ["engine" => "VideoResize", "path" => $low, "disk" => 'remote', "name" => "low"],
-                    ]
-                ]);
-                return response('ok');
-            } catch (\Throwable $th) {
-                $media->update(['status' => MediaStatus::Error->value, 'data->error' => $th->getMessage()]);
-                error("Bunny CDN Video Error", $th->getMessage());
-                return response('error', 500);
-            }
-        }
-        error("Bunny CDN Video Not Found", $data);
-        return response('video not found', 404);
+        GetVideoFromBunnyJob::dispatch($data['VideoLibraryId'], $data['VideoGuid']);
     }
 }

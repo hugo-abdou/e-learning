@@ -49,8 +49,11 @@ class Media extends Model
     }
     public function getThumbUrl(): ?string
     {
-
         return $this->getConversionUrl('thumb');
+    }
+    public function getPreviewUrl(): ?string
+    {
+        return $this->getConversionUrl('preview');
     }
 
     public function getLargeFullPath(): ?string

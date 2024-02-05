@@ -247,6 +247,7 @@ interface BaseMedia {
 }
 interface VideoMedia extends BaseMedia {
   uuid: string;
+  preview_url: string;
   type: "video";
   playing: boolean;
   duration: number;
@@ -260,13 +261,12 @@ interface DocumentMedia extends BaseMedia {
 }
 
 export type Media = ImageMedia | VideoMedia | DocumentMedia;
-export type Attachment =
-  | Media & {
-      visibility: string[];
-      download: boolean;
-      name: string;
-      slug: string;
-    };
+export type Attachment = Media & {
+  visibility: string[];
+  download: boolean;
+  name: string;
+  slug: string;
+};
 
 type Author = {
   id: number;
