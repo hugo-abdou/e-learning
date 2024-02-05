@@ -1,4 +1,4 @@
-import type { Media, ResourceResponse } from "@/types";
+import type { Attachment, Media, ResourceResponse } from "@/types";
 import type { MediaTypes } from "@core/enums";
 import { acceptHMRUpdate, defineStore } from "pinia";
 
@@ -51,6 +51,30 @@ export const useMediaStore = defineStore({
       this.dialog.open = false;
       this.dialog.type = undefined;
       this.dialog.data = undefined;
+    },
+    // attachments Section
+    getAttachments(
+      resourceId: number,
+      resource: "chapters" | "quizzes",
+      params?: any
+    ): Promise<ResourceResponse<Attachment[]>> {
+      return $api.get<ResourceResponse<Attachment[]>>(
+        `${resource}/${resourceId}/attachments`,
+        {
+          params,
+        }
+      );
+    },
+    getAttachmentById: async (
+      resourceId: number,
+      resource: "chapters" | "quizzes",
+      id: number,
+      params?: any
+    ): Promise<Attachment> => {
+      return await $api.get<Attachment>(
+        `${resource}/${resourceId}/attachments/${id}`,
+        { params }
+      );
     },
   },
 });

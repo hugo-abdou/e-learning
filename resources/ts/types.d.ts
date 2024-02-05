@@ -243,6 +243,7 @@ interface BaseMedia {
   data: any;
   width: number;
   height: number;
+  size: number;
 }
 interface VideoMedia extends BaseMedia {
   uuid: string;

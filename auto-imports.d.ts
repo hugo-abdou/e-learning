@@ -247,7 +247,7 @@ declare global {
   const useMax: typeof import('@vueuse/math')['useMax']
   const useMediaControls: typeof import('@vueuse/core')['useMediaControls']
   const useMediaQuery: typeof import('@vueuse/core')['useMediaQuery']
-  const useMediaStore: typeof import('./resources/ts/stores/mediaStore')['useMediaStore']
+  const useMediaStore: typeof import('./resources/ts/stores/useMediaStore')['useMediaStore']
   const useMemoize: typeof import('@vueuse/core')['useMemoize']
   const useMemory: typeof import('@vueuse/core')['useMemory']
   const useMin: typeof import('@vueuse/math')['useMin']
@@ -608,7 +608,7 @@ declare module 'vue' {
     readonly useMax: UnwrapRef<typeof import('@vueuse/math')['useMax']>
     readonly useMediaControls: UnwrapRef<typeof import('@vueuse/core')['useMediaControls']>
     readonly useMediaQuery: UnwrapRef<typeof import('@vueuse/core')['useMediaQuery']>
-    readonly useMediaStore: UnwrapRef<typeof import('./resources/ts/stores/mediaStore')['useMediaStore']>
+    readonly useMediaStore: UnwrapRef<typeof import('./resources/ts/stores/useMediaStore')['useMediaStore']>
     readonly useMemoize: UnwrapRef<typeof import('@vueuse/core')['useMemoize']>
     readonly useMemory: UnwrapRef<typeof import('@vueuse/core')['useMemory']>
     readonly useMin: UnwrapRef<typeof import('@vueuse/math')['useMin']>
@@ -963,7 +963,7 @@ declare module '@vue/runtime-core' {
     readonly useMax: UnwrapRef<typeof import('@vueuse/math')['useMax']>
     readonly useMediaControls: UnwrapRef<typeof import('@vueuse/core')['useMediaControls']>
     readonly useMediaQuery: UnwrapRef<typeof import('@vueuse/core')['useMediaQuery']>
-    readonly useMediaStore: UnwrapRef<typeof import('./resources/ts/stores/mediaStore')['useMediaStore']>
+    readonly useMediaStore: UnwrapRef<typeof import('./resources/ts/stores/useMediaStore')['useMediaStore']>
     readonly useMemoize: UnwrapRef<typeof import('@vueuse/core')['useMemoize']>
     readonly useMemory: UnwrapRef<typeof import('@vueuse/core')['useMemory']>
     readonly useMin: UnwrapRef<typeof import('@vueuse/math')['useMin']>

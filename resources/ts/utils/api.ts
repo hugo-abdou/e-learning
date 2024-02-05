@@ -1,3 +1,4 @@
+import { router } from "@/plugins/1.router";
 import { LoginResponse } from "@/types";
 import { FetchOptions, SearchParameters, ofetch } from "ofetch";
 
@@ -36,10 +37,7 @@ class Api {
           ) {
             useCookie("access_token").value = null;
             useCookie("refresh_token").value = null;
-
-            window.location.href = "/login";
-
-            return Promise.resolve();
+            router.push("/login");
           }
 
           if (

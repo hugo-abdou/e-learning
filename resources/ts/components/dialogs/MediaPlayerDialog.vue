@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useMediaStore } from "@/stores/mediaStore";
+import { useMediaStore } from "@/stores/useMediaStore";
 import Media from "../Media";
 
 const mediaStore = useMediaStore();

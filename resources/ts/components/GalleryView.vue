@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { MediaTypes } from "@/@core/enums";
 import type { GridColumn, Options } from "@/@core/types";
-import { useMediaStore } from "@/stores/mediaStore";
+import { formatBytes, secondsToMinutes } from "@/helpers";
+import { useMediaStore } from "@/stores/useMediaStore";
 import type { Media as MediaType } from "@/types";
 import { resolveDefaultThumbnal } from "@/utils";
 import { debounce } from "lodash";
@@ -136,6 +138,24 @@ defineExpose({ init, loadMore });
     <VCard v-if="variant === 'preview'">
       <!-- {{ item.url }} -->
       <Media @delete="removeItem(item.id)" deletable :media="item" preview />
+      <VCardTitle :title="item.name">
+        {{ item.name }}
+      </VCardTitle>
+      <VCardItem class="py-2">
+        <div class="w-100 d-flex">
+          <VCardSubtitle
+            v-if="item.type === MediaTypes.video"
+            class="d-inline-flex align-center gap-1"
+          >
+            <VIcon icon="tabler-clock" size="16" />
+            {{ secondsToMinutes(item.duration) }}
+          </VCardSubtitle>
+          <VSpacer />
+          <VCardSubtitle class="d-inline-flex align-center gap-1">
+            {{ formatBytes(item.size) }}
+          </VCardSubtitle>
+        </div>
+      </VCardItem>
     </VCard>
     <div v-else class="w-100" :style="{ aspectRatio: 1 }">
       <CustomCheckboxe

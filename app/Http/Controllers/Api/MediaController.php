@@ -148,7 +148,7 @@ class MediaController extends Controller
                 $media->update([
                     'disk' => 'remote',
                     "name" => $video['title'],
-                    "data->duration" => $video['length'] / 60,
+                    "data->duration" => $video['length'],
                     "data->width" => $video['width'] / 60,
                     "data->height" => $video['height'] / 60,
                     "status" => $video['status'],

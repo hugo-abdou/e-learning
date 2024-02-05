@@ -45,12 +45,13 @@ class Handler extends ExceptionHandler
      */
     public function register(): void
     {
-        $this->renderable(function (HttpException $e) {
-            if ($e->getStatusCode() === 503) {
-                $maintenance = true;
-                return response()->view('application', compact('maintenance'));
-            }
-        });
+        // $this->renderable(function (HttpException $e) {
+        //     if ($e->getStatusCode() === 503) {
+        //         $maintenance = true;
+        //         return response()->view('application', compact('maintenance'));
+        //     }
+        //     return $e;
+        // });
         $this->reportable(function (Throwable $e) {
         });
     }

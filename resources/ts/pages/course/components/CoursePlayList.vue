@@ -11,14 +11,12 @@ type PlaylistAttachment = Attachment & {
 };
 
 interface Props {
-  selected?: PlaylistAttachment;
   courseId: number;
 }
 const props = defineProps<Props>();
 
 const emit = defineEmits<Emits>();
 interface Emits {
-  (e: "update:selected", value: Attachment): void;
   (e: "play", value: Attachment): void;
 }
 
@@ -30,29 +28,7 @@ type Playlist = (
 )[];
 const playlist = ref<Playlist>([]);
 
-const updateSelected = (index: number) => {
-  if (index >= 0) {
-    playlist.value.forEach((item) => {
-      if (item.type !== "header" && item.index === index) {
-        item.active = true;
-        emit("update:selected", item as Attachment);
-      } else {
-        item.active = false;
-      }
-    });
-  }
-};
-
-const next = () => {
-  if (props.selected) {
-    const activeIndex = props.selected?.index;
-    let nextIndex = activeIndex + 1;
-    // check if the index is a header or attachment
-    if (playlist.value[nextIndex]?.type === "header") nextIndex++;
-
-    updateSelected(nextIndex);
-  }
-};
+const next = () => {};
 const prev = () => {};
 
 const chaptersStore = useCourseStore();
@@ -79,10 +55,6 @@ onMounted(async () => {
       },
       []
     );
-    const first = playlist.value.find(
-      (item) => item.type === "video" && item.active
-    );
-    emit("update:selected", first as Attachment);
   } catch (error) {}
 });
 
@@ -116,14 +88,9 @@ defineExpose({ next, prev });
           </div>
         </template>
         <template #title="{ title }">
-          <ResponsiveText
-            v-slot="{ text }"
-            :text="String(title)"
-            :max-lines="2"
-            :char-width="2"
-          >
-            {{ text }}
-          </ResponsiveText>
+          <VCardSubtitle class="">
+            {{ title }}
+          </VCardSubtitle>
         </template>
         <VListItemSubtitle class="d-flex gap-2 pa-1 align-center">
           <VIcon size="16" :icon="resolveAttachmentTypeIcon(attachment.type)" />

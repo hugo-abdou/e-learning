@@ -8,6 +8,7 @@ interface Props {
   deletable?: boolean;
 }
 
+defineOptions({ inheritAttrs: false });
 const props = withDefaults(defineProps<Props>(), {
   deletable: false,
 });
@@ -17,8 +18,7 @@ const isError = ref(false);
 const resource = ref<Media>(props.media);
 const thumb = computed(() => resolveDefaultThumbnal(resource.value));
 const style = computed(() => ({
-  aspectRatio:
-    props.aspectRatio || resource.value.width / resource.value.height,
+  aspectRatio: "1.77",
 }));
 
 const mediaStore = useMediaStore();
@@ -30,6 +30,7 @@ const faild = () => (isError.value = true);
 
 <template>
   <VImg
+    v-bind="$attrs"
     :style="style"
     cover
     :lazy-src="thumb"
@@ -67,7 +68,7 @@ const faild = () => (isError.value = true);
           />
         </div>
       </VToolbar>
-      <VToolbar absolute density="compact" class="toolbar-actions">
+      <!-- <VToolbar absolute density="compact" class="toolbar-actions">
         <VCardSubtitle
           style="inline-size: 85%"
           class="text-white"
@@ -76,7 +77,7 @@ const faild = () => (isError.value = true);
           {{ resource.name }}
         </VCardSubtitle>
         <VSpacer />
-      </VToolbar>
+      </VToolbar> -->
       <slot />
     </template>
   </VImg>

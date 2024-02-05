@@ -41,11 +41,7 @@
     <VCol cols="12" md="3" class="rounded py-0">
       <VCard>
         <PerfectScrollbar :options="{ wheelPropagation: true }">
-          <CoursePlayList
-            ref="playList"
-            v-model:selected="selected"
-            :course-id="Number(route.params.id)"
-          />
+          <CoursePlayList ref="playList" :course-id="Number(route.params.id)" />
         </PerfectScrollbar>
       </VCard>
     </VCol>
@@ -68,7 +64,6 @@ const route = useRoute();
 const selected = ref<Attachment>();
 
 const finished = ref<boolean>(false);
-const auth = useUserStore();
 const plyr = ref<Plyr>();
 const playList = ref();
 const events = computed(() => {
@@ -107,21 +102,20 @@ const replay = () => {
   }
   finished.value = false;
 };
-
-watch(selected, (val) => {
-  if (val && val.type === "video") {
-    setTimeout(() => {
-      plyr.value?.play();
-    }, 500);
-    finished.value = false;
-  }
-});
-
+const mediaStore = useMediaStore();
 const loadMedia = () => {
-  const mediaMeta = (route.params.media as string).split("-");
-  const mediaId = mediaMeta[mediaMeta.length - 2];
-  const chapterId = mediaMeta[mediaMeta.length - 1];
-  console.log({ chapterId, mediaId });
+  if (route.params.media) {
+    const mediaMeta = (route.params.media as string).split("-");
+    const mediaId: number = Number(mediaMeta[mediaMeta.length - 2]);
+    const chapterId: number = Number(mediaMeta[mediaMeta.length - 1]);
+    // console.log({ chapterId, mediaId });
+
+    mediaStore
+      .getAttachmentById(chapterId, "chapters", mediaId)
+      .then((attachment) => {
+        selected.value = attachment;
+      });
+  }
 };
 
 watch(() => route.params.media, loadMedia, { immediate: true });

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AnalyticController;
 use App\Http\Controllers\Api\ApiTokenController;
+use App\Http\Controllers\Api\AttachmentsController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ChapterController;
 use App\Http\Controllers\Api\CoursesController;
@@ -76,6 +77,9 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
     Route::apiResource('quizzes', QuizController::class);
     Route::patch('quizzes/{quiz}/publish', PublishQuizController::class);
     Route::patch('quizzes/{quiz}/schedule', ScheduleQuizController::class);
+    ////////////////////////////////////////////////////////////////////////////////
+    Route::get('{resource}/{resourceId}/attachments', [AttachmentsController::class, 'index']);
+    Route::get('{resource}/{resourceId}/attachments/{attachment}', [AttachmentsController::class, 'show']);
     ////////////////////////////////////////////////////////////////////////////////
 });
 Route::prefix('admin')->middleware(['auth:api'])->group(function () {
