@@ -19,7 +19,7 @@ class GitHubWebhookController extends Controller
         $localHash = 'sha1=' . hash_hmac('sha1', $githubPayload, $localToken, false);
 
         if (hash_equals($githubHash, $localHash)) {
-            DeployRepository::dispatch($githubPayload);
+            DeployRepository::dispatch();
         }
         return response()->json(['status' => 'ok']);
     }

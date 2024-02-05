@@ -16,7 +16,10 @@ class DeployRepository implements ShouldQueue
 
     protected $githubPayload;
 
-    public function __construct($githubPayload)
+    // set timeout to 10 minutes
+    public $timeout = 600;
+
+    public function __construct($githubPayload = null)
     {
         $this->githubPayload = $githubPayload;
     }
