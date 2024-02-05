@@ -41,6 +41,9 @@ fi
     # --force  Required to run when in production.
     php artisan migrate --force
 
+    # stop maintenance mode
+    php artisan up
+
     # update assets
     # --no-interaction Do not ask any interactive question
     # --no-dev  Disables installation of require-dev packages.
@@ -48,6 +51,3 @@ fi
     npm install --no-interaction --no-dev --prefer-dist
     # --force  Required to run when in production.
     npm run build --force
-
-    # stop maintenance mode
-    php artisan up
