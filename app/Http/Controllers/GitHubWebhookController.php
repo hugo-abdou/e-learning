@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
+use App\Jobs\DeployRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
-use Symfony\Component\Process\Process;
+use Illuminate\Support\Facades\Hash;
 
 class GitHubWebhookController extends Controller
 {
@@ -12,31 +15,12 @@ class GitHubWebhookController extends Controller
     {
         $githubPayload = $request->getContent();
         $githubHash = $request->header('X-Hub-Signature');
-        $localToken = config('app.deploy_secret');
+        $localToken = Config::get('app.deploy_secret');
         $localHash = 'sha1=' . hash_hmac('sha1', $githubPayload, $localToken, false);
+
         if (hash_equals($githubHash, $localHash)) {
-            $root_path = base_path();
-            // Change directory command
-            $cdCommand = "cd {$root_path}";
-
-            // Command to execute the shell script
-            $deployScript = './deploy.sh';
-
-            // Combine commands to run them together in the same shell process
-            $command = "{$cdCommand} && {$deployScript}";
-
-            // Create a new Process instance
-            $process = Process::fromShellCommandline($command);
-            $process->setTimeout(180);
-
-            try {
-                $process->run(function ($type, $buffer) use (&$message) {
-                    Log::info(str_replace("[90m.[39m", '', $buffer));
-                });
-            } catch (\Throwable $th) {
-                Log::error('Error occurred while running the deploy script.');
-                Log::error($th->getMessage());
-            }
+            DeployRepository::dispatch($githubPayload);
         }
+        return response()->json(['status' => 'ok']);
     }
 }
