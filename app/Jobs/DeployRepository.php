@@ -37,6 +37,7 @@ class DeployRepository implements ShouldQueue
         $process = Process::fromShellCommandline($command);
 
         try {
+            // Run the command
             $process->run(function ($type, $buffer) {
                 Log::info(str_replace("[90m.[39m", '', $buffer));
             });
