@@ -44,6 +44,7 @@ class DeployRepository implements ShouldQueue
             $process->run(function ($type, $buffer) {
                 Log::info(str_replace("[90m.[39m", '', $buffer));
             });
+            $process->setTimeout(180);
         } catch (\Throwable $th) {
             Log::error('Error occurred while running the deploy script.');
             Log::error($th->getMessage());
