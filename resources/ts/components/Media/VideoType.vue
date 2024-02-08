@@ -1,32 +1,72 @@
 <script setup lang="ts">
-import type { Media } from "@/types";
+import type { VideoMedia } from "@/types";
 
 defineOptions({ inheritAttrs: false });
 
+const emit = defineEmits([
+  "progress",
+  "ready",
+  "play",
+  "pause",
+  "timeupdate",
+  "seeking",
+  "seeked",
+  "ended",
+  "ratechange",
+  "enterfullscreen",
+  "exitfullscreen",
+  "captionsenabled",
+  "captionsdisabled",
+  "languagechange",
+  "volumechange",
+  "error",
+  "fullscreenchange",
+]);
+
 interface Props {
-  media: Media;
+  media: VideoMedia;
+  aspectRatio?: string;
 }
-defineProps<Props>();
+const props = defineProps<Props>();
+const style = computed(() => ({
+  aspectRatio: props.aspectRatio || props.media.width / props.media.height,
+}));
 
 const plyr = ref<{ player: any }>();
 
 defineExpose({ ...plyr.value });
+
+function iframeInit(el: HTMLIFrameElement) {
+  if (!el) return;
+  el.onload = () => {
+    el.contentWindow?.postMessage({ command: "activate" });
+    window?.addEventListener("message", handleMessage);
+  };
+}
+function handleMessage(event: MessageEvent) {
+  if (event.data.channel === "bunnystream") {
+    emit(event.data.event, event.data);
+  }
+}
+
+onBeforeUnmount(() => {
+  window.removeEventListener("message", handleMessage);
+});
 </script>
 
 <template>
-  <VCard>
-    <VuePlyr
-      ref="plyr"
+  <VCard
+    :style="style"
+    class="h-100 bg-black d-flex justify-center align-center"
+  >
+    <!-- ?autoplay=false&loop=false&muted=false&preload=false&responsive=true -->
+    <iframe
+      :ref="iframeInit"
+      :src="`/embed/${media.uuid.replace('-', '/')}`"
       v-bind="$attrs"
-      :src="media.url"
-      :poster="media.thumb_url"
-    />
-    <!-- <iframe
-      src="https://iframe.mediadelivery.net/embed/179002/b48d09ac-f82b-408f-914b-1129e0553418?autoplay=false&loop=false&muted=false&preload=false&responsive=true"
-      loading="lazy"
       style="border: 0; height: 100%; width: 100%; aspect-ratio: 16/9"
       allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;"
       allowfullscreen="true"
-    ></iframe> -->
+    ></iframe>
   </VCard>
 </template>

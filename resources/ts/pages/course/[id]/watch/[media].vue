@@ -1,13 +1,8 @@
 <template>
-  <VRow align="start" class="gap-y-2">
-    <VCol cols="12" md="8" class="py-0">
-      <div v-if="selected" class="position-relative h-100 border rounded">
-        <Media
-          v-bind="events"
-          :key="selected?.id"
-          aspect-ratio="1.77"
-          :media="selected"
-        >
+  <VRow align="start" class="gap-y-2 page-container">
+    <VCol cols="12" md="8" class="py-0 h-100">
+      <div v-if="selected" class="position-relative h-100">
+        <Media v-bind="events" :key="selected?.id" :media="selected">
           <template
             v-if="selected.type === MediaTypes.image && playList?.hasNext"
             #toolbar
@@ -75,14 +70,18 @@ const events = computed(() => {
   if (selected.value.type === MediaTypes.video) {
     return {
       onReady: (e: any) => {
-        plyr.value = e.target?.plyr;
-        plyr.value?.play();
+        console.log(e);
+        // plyr.value = e.target?.plyr;
+        // plyr.value?.play();
       },
       onEnded: (e: any) => (finished.value = true),
       // @ts-ignore
       onPause: (e: any) => (selected.value.playing = false),
       // @ts-ignore
-      onPlay: (e: any) => (selected.value.playing = true),
+      onPlay: (e: any) => {
+        selected.value.playing = true;
+        console.log(e);
+      },
     };
   }
   if (selected.value.type === MediaTypes.pdf) {
@@ -129,7 +128,10 @@ watch(() => route.params.media, loadMedia, { immediate: true });
 </script>
 
 <style lang="scss">
-.ps {
-  height: calc(100vh - 182px);
+@media (min-width: 958px) {
+  .page-container,
+  .ps {
+    height: calc(100vh - 100px);
+  }
 }
 </style>

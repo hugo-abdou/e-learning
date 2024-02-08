@@ -8,7 +8,6 @@ use App\Http\Resources\MediaResource;
 use App\Jobs\GetVideoFromBunnyJob;
 use App\Jobs\ProcessImageMediaJob;
 use App\Models\Media;
-use App\Services\BunnyStream;
 use Illuminate\Support\Str;
 
 class MediaRetryController extends Controller
@@ -16,7 +15,7 @@ class MediaRetryController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Media $media, BunnyStream $bunnyVideoManager)
+    public function __invoke(Media $media)
     {
         $type = Str::before($media->mime_type, '/');
         $media->update(['status' => MediaStatus::Pending->value]);

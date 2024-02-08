@@ -94,7 +94,7 @@ export default {
 };
 </script>
 <template>
-  <video ref="video" controls style="aspect-ratio: 16/9"></video>
+  <video ref="video" controls style="height: 100%; width: 100%"></video>
 </template>
 <style lang="scss">
 :root {

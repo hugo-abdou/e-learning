@@ -13,6 +13,7 @@ class MediaResource extends JsonResource
     {
         return array_merge($this->getMediaUrls(), [
             'id' => $this->id,
+            'uuid' => $this->uuid,
             'name' => $this->name,
             'type' => Media::checkFileType($this->mime_type),
             'status' => $this->status,
