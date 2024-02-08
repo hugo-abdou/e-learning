@@ -37,13 +37,16 @@ const getPlayListItemIndex = (mediaId: number, chapterId: number) => {
   );
 };
 const getActive = () => {
-  const mediaMeta = (route.params.media as string).split("-");
-  const mediaId: number = Number(mediaMeta[mediaMeta.length - 2]);
-  const chapterId: number = Number(mediaMeta[mediaMeta.length - 1]);
-  return playlist.value.find(
-    (it) =>
-      it.type !== "header" && it.chapter_id === chapterId && it.id === mediaId
-  );
+  const media = route.params.media as string;
+  if (media) {
+    const mediaMeta = media.split("-");
+    const mediaId: number = Number(mediaMeta[mediaMeta.length - 2]);
+    const chapterId: number = Number(mediaMeta[mediaMeta.length - 1]);
+    return playlist.value.find(
+      (it) =>
+        it.type !== "header" && it.chapter_id === chapterId && it.id === mediaId
+    );
+  }
 };
 const goToIndex = (index: number) => {
   const nextItem = playlist.value[index];

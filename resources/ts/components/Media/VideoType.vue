@@ -36,7 +36,7 @@ const plyr = ref<{ player: any }>();
 
 defineExpose({ ...plyr.value });
 
-function iframeInit(el: HTMLIFrameElement) {
+function iframeInit(el: any) {
   if (!el) return;
   el.onload = () => {
     el.contentWindow?.postMessage({ command: "activate" });
@@ -59,7 +59,6 @@ onBeforeUnmount(() => {
     :style="style"
     class="h-100 bg-black d-flex justify-center align-center"
   >
-    <!-- ?autoplay=false&loop=false&muted=false&preload=false&responsive=true -->
     <iframe
       :ref="iframeInit"
       :src="`/embed/${media.uuid.replace('-', '/')}`"
