@@ -68,7 +68,8 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
     Route::get('users/{user}', [UsersController::class, 'show']);
     Route::delete('users/{user}', [UsersController::class, 'destroy']);
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-    Route::apiResource('courses', CoursesController::class);
+    Route::apiResource('courses', CoursesController::class, ['exept' => ['show']]);
+    Route::get('courses/{course:slug}', [CoursesController::class, 'show']);
     Route::patch('courses/{course}/publish', PublishCourseController::class);
     Route::patch('courses/{course}/schedule', ScheduleCourseController::class);
     Route::apiResource('chapters', ChapterController::class);

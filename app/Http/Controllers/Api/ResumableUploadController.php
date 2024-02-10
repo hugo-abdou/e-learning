@@ -82,7 +82,7 @@ class ResumableUploadController extends Controller
                 'conversions' => [[
                     'engine' => 'pdf',
                     'path' => '/assets/pdf_placeholder.png',
-                    'disk' => 'remote',
+                    'disk' => 'bunnycdn',
                     'size' => $media->size,
                     'name' => 'thumb',
                 ]]

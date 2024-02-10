@@ -1,44 +1,59 @@
 <script setup lang="ts">
-import { useConfigStore } from '@core/stores/config'
-import type { SearchResults } from '@db/app-bar-search/types'
-import Shepherd from 'shepherd.js'
-import { withQuery } from 'ufo'
-import type { RouteLocationRaw } from 'vue-router'
+import { useConfigStore } from "@core/stores/config";
+import Shepherd from "shepherd.js";
+import { withQuery } from "ufo";
+import type { RouteLocationRaw } from "vue-router";
 
 interface Suggestion {
-  icon: string
-  title: string
-  url: RouteLocationRaw
+  icon: string;
+  title: string;
+  url: RouteLocationRaw;
 }
 
 defineOptions({
   inheritAttrs: false,
-})
+});
 
-const configStore = useConfigStore()
+const configStore = useConfigStore();
 
 interface SuggestionGroup {
-  title: string
-  content: Suggestion[]
+  title: string;
+  content: Suggestion[];
 }
 
 // 👉 Is App Search Bar Visible
-const isAppSearchBarVisible = ref(false)
+const isAppSearchBarVisible = ref(false);
 
 // 👉 Default suggestions
 
 const suggestionGroups: SuggestionGroup[] = [
   {
-    title: 'Popular Searches',
+    title: "Popular Searches",
     content: [
-      // { icon: 'tabler-chart-donut', title: 'Analytics', url: { name: 'dashboards-analytics' } },
-      // { icon: 'tabler-chart-bubble', title: 'CRM', url: { name: 'dashboards-crm' } },
-      // { icon: 'tabler-file', title: 'Landing Page', url: { name: 'front-pages-landing-page' } },
-      // { icon: 'tabler-users', title: 'User List', url: { name: 'apps-user-list' } },
+      {
+        icon: "tabler-chart-donut",
+        title: "Analytics",
+        url: { name: "dashboards-analytics" },
+      },
+      {
+        icon: "tabler-chart-bubble",
+        title: "CRM",
+        url: { name: "dashboards-crm" },
+      },
+      {
+        icon: "tabler-file",
+        title: "Landing Page",
+        url: { name: "front-pages-landing-page" },
+      },
+      {
+        icon: "tabler-users",
+        title: "User List",
+        url: { name: "apps-user-list" },
+      },
     ],
   },
   {
-    title: 'Apps & Pages',
+    title: "Apps & Pages",
     content: [
       // { icon: 'tabler-calendar', title: 'Calendar', url: { name: 'apps-calendar' } },
       // { icon: 'tabler-shopping-cart', title: 'ECommerce Product', url: { name: 'apps-ecommerce-product-list' } },
@@ -47,7 +62,7 @@ const suggestionGroups: SuggestionGroup[] = [
     ],
   },
   {
-    title: 'User Interface',
+    title: "User Interface",
     content: [
       // { icon: 'tabler-letter-a', title: 'Typography', url: { name: 'pages-typography' } },
       // { icon: 'tabler-square', title: 'Tabs', url: { name: 'components-tabs' } },
@@ -56,7 +71,7 @@ const suggestionGroups: SuggestionGroup[] = [
     ],
   },
   {
-    title: 'Popular Searches',
+    title: "Popular Searches",
     content: [
       // { icon: 'tabler-list', title: 'Select', url: { name: 'forms-select' } },
       // { icon: 'tabler-currency-dollar', title: 'Payment', url: { name: 'front-pages-payment' } },
@@ -64,67 +79,65 @@ const suggestionGroups: SuggestionGroup[] = [
       // { icon: 'tabler-home', title: 'Property Listing Wizard', url: { name: 'wizard-examples-property-listing' } },
     ],
   },
-]
+];
 
 // 👉 No Data suggestion
 const noDataSuggestions: Suggestion[] = [
-  // {
-  //   title: 'Analytics Dashboard',
-  //   icon: 'tabler-shopping-cart',
-  //   url: { name: 'dashboards-analytics' },
-  // },
-  // {
-  //   title: 'Account Settings',
-  //   icon: 'tabler-user',
-  //   url: { name: 'pages-account-settings-tab', params: { tab: 'account' } },
-  // },
-  // {
-  //   title: 'Pricing Page',
-  //   icon: 'tabler-cash',
-  //   url: { name: 'pages-pricing' },
-  // },
-]
+  {
+    title: "Analytics Dashboard",
+    icon: "tabler-shopping-cart",
+    url: { name: "/" },
+  },
+  {
+    title: "Account Settings",
+    icon: "tabler-user",
+    url: { name: "pages-account-settings-tab", params: { tab: "account" } },
+  },
+  {
+    title: "Pricing Page",
+    icon: "tabler-cash",
+    url: { name: "pages-pricing" },
+  },
+];
 
-const searchQuery = ref('')
+const searchQuery = ref("");
 
-const router = useRouter()
-const searchResult = ref<SearchResults[]>([])
+const router = useRouter();
+const searchResult = ref<any[]>([]);
 
 const fetchResults = async () => {
-  const { data } = await useApi<any>(withQuery('/app-bar/search', { q: searchQuery.value }))
+  const { data } = await useApi<any>(
+    withQuery("/app-bar/search", { q: searchQuery.value })
+  );
 
-  searchResult.value = data.value
-}
+  searchResult.value = data.value;
+};
 
-watch(searchQuery, fetchResults)
+watch(searchQuery, fetchResults);
 
 // 👉 redirect the selected page
 const redirectToSuggestedOrSearchedPage = (selected: Suggestion) => {
-  router.push(selected.url as string)
-  isAppSearchBarVisible.value = false
-  searchQuery.value = ''
-}
+  router.push(selected.url as string);
+  isAppSearchBarVisible.value = false;
+  searchQuery.value = "";
+};
 
-const LazyAppBarSearch = defineAsyncComponent(() => import('@core/components/AppBarSearch.vue'))
+const LazyAppBarSearch = defineAsyncComponent(
+  () => import("@core/components/AppBarSearch.vue")
+);
 </script>
 
 <template>
   <div
     class="d-flex align-center cursor-pointer"
     v-bind="$attrs"
-    style="user-select: none;"
+    style="user-select: none"
     @click="isAppSearchBarVisible = !isAppSearchBarVisible"
   >
     <!-- 👉 Search Trigger button -->
     <!-- close active tour while opening search bar using icon -->
-    <IconBtn
-      class="me-1"
-      @click="Shepherd.activeTour?.cancel()"
-    >
-      <VIcon
-        size="26"
-        icon="tabler-search"
-      />
+    <IconBtn class="me-1" @click="Shepherd.activeTour?.cancel()">
+      <VIcon size="26" icon="tabler-search" />
     </IconBtn>
 
     <span
@@ -146,10 +159,7 @@ const LazyAppBarSearch = defineAsyncComponent(() => import('@core/components/App
     <!-- suggestion -->
     <template #suggestions>
       <VCardText class="app-bar-search-suggestions h-100 pa-10">
-        <VRow
-          v-if="suggestionGroups"
-          class="gap-y-4"
-        >
+        <VRow v-if="suggestionGroups" class="gap-y-4">
           <VCol
             v-for="suggestion in suggestionGroups"
             :key="suggestion.title"
@@ -170,11 +180,7 @@ const LazyAppBarSearch = defineAsyncComponent(() => import('@core/components/App
                 @click="redirectToSuggestedOrSearchedPage(item)"
               >
                 <template #prepend>
-                  <VIcon
-                    :icon="item.icon"
-                    size="20"
-                    class="me-2"
-                  />
+                  <VIcon :icon="item.icon" size="20" class="me-2" />
                 </template>
               </VListItem>
             </VList>
@@ -185,18 +191,16 @@ const LazyAppBarSearch = defineAsyncComponent(() => import('@core/components/App
     <!-- no data suggestion -->
     <template #noDataSuggestion>
       <div class="mt-8">
-        <span class="d-flex justify-center text-disabled">Try searching for</span>
+        <span class="d-flex justify-center text-disabled"
+          >Try searching for</span
+        >
         <h6
           v-for="suggestion in noDataSuggestions"
           :key="suggestion.title"
           class="app-bar-search-suggestion text-sm font-weight-regular cursor-pointer mt-3"
           @click="redirectToSuggestedOrSearchedPage(suggestion)"
         >
-          <VIcon
-            size="20"
-            :icon="suggestion.icon"
-            class="me-3"
-          />
+          <VIcon size="20" :icon="suggestion.icon" class="me-3" />
           <span class="text-sm">{{ suggestion.title }}</span>
         </h6>
       </div>
@@ -213,11 +217,7 @@ const LazyAppBarSearch = defineAsyncComponent(() => import('@core/components/App
         @click="redirectToSuggestedOrSearchedPage(list)"
       >
         <template #prepend>
-          <VIcon
-            size="20"
-            :icon="list.icon"
-            class="me-3"
-          />
+          <VIcon size="20" :icon="list.icon" class="me-3" />
         </template>
         <template #append>
           <VIcon
@@ -238,11 +238,11 @@ const LazyAppBarSearch = defineAsyncComponent(() => import('@core/components/App
 @use "@styles/variables/_vuetify.scss";
 
 .meta-key {
-    border: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
-    border-radius: 6px;
-    block-size: 1.5625rem;
-    line-height: 1.3125rem;
-    padding-block: 0.125rem;
-    padding-inline: 0.25rem;
+  border: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
+  border-radius: 6px;
+  block-size: 1.5625rem;
+  line-height: 1.3125rem;
+  padding-block: 0.125rem;
+  padding-inline: 0.25rem;
 }
 </style>

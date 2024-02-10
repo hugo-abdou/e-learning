@@ -21,12 +21,10 @@ class ChapterController extends Controller
      */
     public function index(Request $request)
     {
-        $chapters = Pipeline::send(
-            auth()->user()->courses()->where('id', $request->get('course_id'))->firstOrFail()->chapters()
-        )->through([
-            Sort::class,
-            new Search(['title'])
-        ])->thenReturn()
+
+        $chapters = auth()->user()
+            ->courses()->where('slug', $request->get('course_id'))->firstOrFail()
+            ->chapters()->with(['attachments'])
             ->paginate($request->get('itemsPerPage', 10));
         return ChapterResource::collection($chapters);
     }

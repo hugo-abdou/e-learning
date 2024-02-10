@@ -134,7 +134,7 @@ watch(
               <div class="d-flex flex-column">
                 <h6 class="text-base">
                   <RouterLink
-                    :to="{ name: 'course-id', params: { id: item.id } }"
+                    :to="{ name: 'course-id', params: { id: item.slug } }"
                     class="font-weight-medium user-list-name"
                   >
                     {{ item.title }}
@@ -190,7 +190,7 @@ watch(
               <VMenu activator="parent">
                 <VList>
                   <VListItem
-                    :to="{ name: 'course-id-edit', params: { id: item.id } }"
+                    :to="{ name: 'course-id-edit', params: { id: item.slug } }"
                   >
                     <template #prepend>
                       <VIcon icon="tabler-edit" />

@@ -3,8 +3,8 @@
 namespace App\MediaConversions;
 
 use App\Abstracts\MediaConversion;
-use App\Facades\Storage;
 use App\Support\MediaConversionData;
+use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 
 class MediaImageResizeConversion extends MediaConversion

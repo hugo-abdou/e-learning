@@ -9,6 +9,7 @@ import UserProfile from "@/layouts/components/UserProfile.vue";
 import NavBarI18n from "@core/components/I18n.vue";
 
 // @layouts plugin
+import { RouteTransitions } from "@/@core/enums";
 import { VerticalNavLayout } from "@layouts";
 
 // SECTION: Loading Indicator
@@ -44,16 +45,18 @@ const navItems = useVerticalNavItems();
           <VIcon size="26" icon="tabler-menu-2" />
         </IconBtn>
 
-        <NavbarThemeSwitcher />
+        <!-- <NavSearchBar class="ms-lg-n3" /> -->
 
         <VSpacer />
 
+        <NavbarThemeSwitcher class="mr-2" />
         <NavBarI18n
           v-if="
             themeConfig.app.i18n.enable &&
             themeConfig.app.i18n.langConfig?.length
           "
           :languages="themeConfig.app.i18n.langConfig"
+          class="mr-2"
         />
         <UserProfile />
       </div>
@@ -68,7 +71,9 @@ const navItems = useVerticalNavItems();
         @fallback="isFallbackStateActive = true"
         @resolve="isFallbackStateActive = false"
       >
-        <Component :is="Component" />
+        <Transition :name="RouteTransitions['Slide Fade']" mode="out-in">
+          <Component :is="Component" />
+        </Transition>
       </Suspense>
     </RouterView>
 

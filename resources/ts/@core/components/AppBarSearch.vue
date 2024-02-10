@@ -1,71 +1,69 @@
 <script setup lang="ts" generic="T extends unknown">
-import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
-import { VList, VListItem } from 'vuetify/components/VList'
+import { PerfectScrollbar } from "vue3-perfect-scrollbar";
+import { VList, VListItem } from "vuetify/components/VList";
 
 interface Emit {
-  (e: 'update:isDialogVisible', value: boolean): void
-  (e: 'search', value: string): void
+  (e: "update:isDialogVisible", value: boolean): void;
+  (e: "search", value: string): void;
 }
 
 interface Props {
-  isDialogVisible: boolean
-  searchResults: T[]
+  isDialogVisible: boolean;
+  searchResults: T[];
 }
 
-const props = defineProps<Props>()
-const emit = defineEmits<Emit>()
+const props = defineProps<Props>();
+const emit = defineEmits<Emit>();
 
 // 👉 Hotkey
 // eslint-disable-next-line camelcase
 const { ctrl_k, meta_k } = useMagicKeys({
   passive: false,
   onEventFired(e) {
-    if (e.ctrlKey && e.key === 'k' && e.type === 'keydown')
-      e.preventDefault()
+    if (e.ctrlKey && e.key === "k" && e.type === "keydown") e.preventDefault();
   },
-})
+});
 
-const refSearchList = ref<VList>()
-const refSearchInput = ref<HTMLInputElement>()
-const searchQueryLocal = ref('')
+const refSearchList = ref<VList>();
+const refSearchInput = ref<HTMLInputElement>();
+const searchQueryLocal = ref("");
 
 // 👉 watching control + / to open dialog
 /* eslint-disable camelcase */
-watch([
-  ctrl_k, meta_k,
-], () => {
-  emit('update:isDialogVisible', true)
-})
+watch([ctrl_k, meta_k], () => {
+  emit("update:isDialogVisible", true);
+});
 /* eslint-enable */
 
 // 👉 clear search result and close the dialog
 const clearSearchAndCloseDialog = () => {
-  searchQueryLocal.value = ''
-  emit('update:isDialogVisible', false)
-}
+  searchQueryLocal.value = "";
+  emit("update:isDialogVisible", false);
+};
 
 // 👉 get fucus on search list
 const getFocusOnSearchList = (e: KeyboardEvent) => {
-  if (e.key === 'ArrowDown') {
-    e.preventDefault()
-    refSearchList.value?.focus('next')
+  if (e.key === "ArrowDown") {
+    e.preventDefault();
+    refSearchList.value?.focus("next");
+  } else if (e.key === "ArrowUp") {
+    e.preventDefault();
+    refSearchList.value?.focus("prev");
   }
-  else if (e.key === 'ArrowUp') {
-    e.preventDefault()
-    refSearchList.value?.focus('prev')
-  }
-}
+};
 
 const dialogModelValueUpdate = (val: boolean) => {
-  searchQueryLocal.value = ''
-  emit('update:isDialogVisible', val)
-}
+  searchQueryLocal.value = "";
+  emit("update:isDialogVisible", val);
+};
 
 // 👉 clear search query when redirect to another page
 watch(
   () => props.isDialogVisible,
-  () => { searchQueryLocal.value = '' },
-)
+  () => {
+    searchQueryLocal.value = "";
+  }
+);
 </script>
 
 <template>
@@ -78,17 +76,12 @@ watch(
     @update:model-value="dialogModelValueUpdate"
     @keyup.esc="clearSearchAndCloseDialog"
   >
-    <VCard
-      height="100%"
-      width="100%"
-      class="position-relative"
-    >
+    <VCard height="100%" width="100%" class="position-relative">
       <VCardText class="pt-2">
         <!-- 👉 Search Input -->
         <VTextField
           ref="refSearchInput"
           v-model="searchQueryLocal"
-          autofocus
           density="comfortable"
           variant="plain"
           @keyup.esc="clearSearchAndCloseDialog"
@@ -98,11 +91,7 @@ watch(
           <!-- 👉 Prepend Inner -->
           <template #prepend-inner>
             <div class="d-flex align-center text-high-emphasis me-1">
-              <VIcon
-                size="22"
-                icon="tabler-search"
-                style="opacity: 1;"
-              />
+              <VIcon size="22" icon="tabler-search" style="opacity: 1" />
             </div>
           </template>
 
@@ -116,14 +105,8 @@ watch(
                 [esc]
               </div>
 
-              <IconBtn
-                size="22"
-                @click="clearSearchAndCloseDialog"
-              >
-                <VIcon
-                  icon="tabler-x"
-                  size="20"
-                />
+              <IconBtn size="22" @click="clearSearchAndCloseDialog">
+                <VIcon icon="tabler-x" size="20" />
               </IconBtn>
             </div>
           </template>
@@ -140,20 +123,14 @@ watch(
       >
         <!-- 👉 Search List -->
         <VList
-          v-show="searchQueryLocal.length && !!props.searchResults.length"
+          v-show="searchQueryLocal?.length && !!props.searchResults?.length"
           ref="refSearchList"
           density="compact"
           class="app-bar-search-list"
         >
           <!-- 👉 list Item /List Sub header -->
-          <template
-            v-for="item in props.searchResults"
-            :key="item"
-          >
-            <slot
-              name="searchResult"
-              :item="item"
-            >
+          <template v-for="item in props.searchResults" :key="item">
+            <slot name="searchResult" :item="item">
               <VListItem>
                 {{ item }}
               </VListItem>
@@ -163,7 +140,9 @@ watch(
 
         <!-- 👉 Suggestions -->
         <div
-          v-show="!!props.searchResults && !searchQueryLocal && $slots.suggestions"
+          v-show="
+            !!props.searchResults && !searchQueryLocal && $slots.suggestions
+          "
           class="h-100"
         >
           <slot name="suggestions" />
@@ -171,17 +150,18 @@ watch(
 
         <!-- 👉 No Data found -->
         <div
-          v-show="!props.searchResults.length && searchQueryLocal.length"
+          v-show="!props.searchResults?.length && searchQueryLocal?.length"
           class="h-100"
         >
           <slot name="noData">
             <VCardText class="h-100">
-              <div class="app-bar-search-suggestions d-flex flex-column align-center justify-center text-high-emphasis h-100">
-                <VIcon
-                  size="75"
-                  icon="tabler-file-x"
-                />
-                <div class="d-flex align-center flex-wrap justify-center gap-2 text-h6 my-3">
+              <div
+                class="app-bar-search-suggestions d-flex flex-column align-center justify-center text-high-emphasis h-100"
+              >
+                <VIcon size="75" icon="tabler-file-x" />
+                <div
+                  class="d-flex align-center flex-wrap justify-center gap-2 text-h6 my-3"
+                >
                   <span>No Result For </span>
                   <span>"{{ searchQueryLocal }}"</span>
                 </div>
@@ -214,10 +194,10 @@ watch(
     font-size: 0.875rem !important;
   }
 
-  .v-input{
-    .v-field{
-      .v-field__field{
-        input{
+  .v-input {
+    .v-field {
+      .v-field__field {
+        input {
           padding-block-start: 1rem !important;
         }
       }

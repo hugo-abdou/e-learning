@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Facades\Storage;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MediaUploadFile;
 use App\Http\Resources\MediaResource;
@@ -10,6 +9,7 @@ use App\Jobs\GetVideoFromBunnyJob;
 use App\Jobs\ProcessImageMediaJob;
 use App\Models\Media;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 
@@ -21,8 +21,6 @@ class MediaController extends Controller
     public function index(Request $request)
     {
         $query = Media::query()->orderByDesc('created_at');
-
-        // dd($request->all());
 
         if ($types = json_decode($request->get('types', '[]'))) {
             foreach ($types as $type) {
@@ -108,11 +106,11 @@ class MediaController extends Controller
 
     function destroy(Media $media)
     {
-        foreach ($media->conversions as $conversion) {
-            if ($conversion['disk'] !== 'remote') {
-                Storage::disk($conversion['disk'])->delete($conversion['path']);
-            }
-        }
+        // foreach ($media->conversions as $conversion) {
+        //     if ($conversion['disk'] !== 'remote') {
+        //         Storage::disk($conversion['disk'])->delete($conversion['path']);
+        //     }
+        // }
         Storage::disk($media->disk)->delete($media->path);
         $media->delete();
         return response()->json(['message' => 'Media deleted successfully']);

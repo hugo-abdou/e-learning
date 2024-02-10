@@ -8,7 +8,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {});
 const style = computed(() => ({
-  // aspectRatio: props.aspectRatio || props.media.width / props.media.height,
+  aspectRatio: props.aspectRatio || props.media.width / props.media.height,
 }));
 
 const isError = ref(false);
@@ -26,10 +26,10 @@ const faild = () => (isError.value = true);
   >
     <VImg
       :lazy-src="thumb"
-      :src="!isError ? thumb : '/assets/Image_not_available.png'"
+      :src="!isError ? props.media.url : '/assets/Image_not_available.png'"
       @error="faild"
       cover
-      style="height: 100%; width: 100%"
+      :style="style"
     >
       <template v-slot:placeholder>
         <div class="d-flex align-center justify-center fill-height">

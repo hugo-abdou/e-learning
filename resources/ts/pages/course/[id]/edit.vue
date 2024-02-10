@@ -40,13 +40,13 @@ const chapters = ref<Chapter[]>([]);
 
 onBeforeMount(async () => {
   try {
-    course.value = await courseStore.getCourse(Number(route.params?.id), {
+    course.value = await courseStore.getCourse(route.params?.id, {
       additional: { chapters: true },
     });
     chapters.value = course.value?.chapters || [];
 
-    delete course.value.chapters;
-    delete course.value?.author;
+    // delete course.value.chapters;
+    // delete course.value?.author;
   } catch (error) {
     router.push({ name: "course" });
   }

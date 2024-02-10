@@ -37,11 +37,11 @@ const plyr = ref<{ player: any }>();
 defineExpose({ ...plyr.value });
 
 function iframeInit(el: any) {
-  if (!el) return;
-  el.onload = () => {
-    el.contentWindow?.postMessage({ command: "activate" });
-    window?.addEventListener("message", handleMessage);
-  };
+  // if (!el) return;
+  // el.onload = () => {
+  //   el.contentWindow?.postMessage({ command: "activate" });
+  //   window?.addEventListener("message", handleMessage);
+  // };
 }
 function handleMessage(event: MessageEvent) {
   if (event.data.channel === "bunnystream") {

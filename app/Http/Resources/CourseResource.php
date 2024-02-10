@@ -19,6 +19,7 @@ class CourseResource extends JsonResource
         $data = [
             "id" => $this->id,
             "title" => $this->title,
+            "slug" => $this->slug,
             "description" => $this->description,
             "author" => $this->author->only(["id", "name", 'profile_photo_url']),
             // "prerequisite_id" =>  $this->prerequisite_id,

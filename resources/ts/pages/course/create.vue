@@ -58,56 +58,58 @@ const course = ref<Course>();
 const router = useRouter();
 const courseStore = useCourseStore();
 
+const form = ref<{
+  course: CourseForm | null;
+  chapters: ChapterForm[];
+}>({
+  course: null,
+  chapters: [],
+});
+
 const nextStep = async () => {
   const step = steps.value[currentStep.value];
-  try {
-    if (step.id === 1) {
-      const data: CourseForm = await step.component?.validate();
-      course.value = await courseStore.createCourse(data);
-    }
-    if (step.id === 2 && course.value) {
-      const data: Chapter[] = await step.component?.validate();
-      // @ts-expect-error
-      const chaptersForm: ChapterForm[] = data.map((item, i) => {
-        const attachments: { [key: number]: any } = {};
-        item.attachments.forEach((attachment) => {
-          attachments[attachment.id] = {
-            name: attachment.name,
-            // @ts-ignore
-            watermark: attachment.watermark,
-            type: attachment.type,
-            download: attachment.download,
-            visibility: JSON.stringify(attachment.visibility),
-            slug: attachment.slug,
-          };
-        });
-        return { ...item, attachments, order: i };
-      });
-      const courseId = course.value?.id;
-      await Promise.all(
-        chaptersForm.map((form) => courseStore.createChapter(courseId, form))
-      );
-    }
-    if (steps.value.length - 1 > currentStep.value) currentStep.value++;
-  } catch (error: any) {
-    if (
-      error?.response?.status === 500 &&
-      steps.value.length - 1 > currentStep.value
-    ) {
-      router.push({ name: "course" });
-    }
-    console.error(error);
+  if (step.id === 1) {
+    const data: CourseForm = await step.component?.validate();
+    form.value.course = data;
   }
+  if (step.id === 2) {
+    const data: Chapter[] = await step.component?.validate();
+    // @ts-expect-error
+    const chaptersForm: ChapterForm[] = data.map((item, i) => {
+      const attachments: { [key: number]: any } = {};
+      item.attachments.forEach((attachment) => {
+        attachments[attachment.id] = {
+          name: attachment.name,
+          // @ts-ignore
+          watermark: attachment.watermark,
+          type: attachment.type,
+          download: attachment.download,
+          visibility: JSON.stringify(attachment.visibility),
+          slug: attachment.slug,
+        };
+      });
+      return { ...item, attachments, order: i };
+    });
+    form.value.chapters = chaptersForm;
+  }
+  if (steps.value.length - 1 > currentStep.value) currentStep.value++;
 };
 
 const submit = async () => {
   try {
-    if (!course.value) throw new Error("Course not Found");
+    if (!form.value.course) throw new Error("Course not Found");
+    const course = await courseStore.createCourse(form.value.course);
+
+    await Promise.all(
+      form.value.chapters.map((form) =>
+        courseStore.createChapter(course.id, form)
+      )
+    );
     if (visibility.value === "schedule")
-      await courseStore.scheduleCourse(course.value.id, scheduleDate.value);
+      await courseStore.scheduleCourse(course.id, scheduleDate.value);
 
     if (visibility.value === "publish")
-      await courseStore.publishCourse(course.value.id, publishStatus.value);
+      await courseStore.publishCourse(course.id, publishStatus.value);
 
     router.push({ name: "course" });
   } catch (error) {

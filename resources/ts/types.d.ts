@@ -276,6 +276,7 @@ type Author = {
 interface Course {
   id: number;
   title: string;
+  slug: string;
   description: string;
   author: Author;
   // prerequisite_id?: number | null;
@@ -335,6 +336,7 @@ interface CourseForm
   extends Omit<
     Course,
     | "id"
+    | "slug"
     | "duration"
     | "author"
     | "chapters"

@@ -20,7 +20,7 @@ onBeforeMount(async () => {
   loading.value = true;
   try {
     // @ts-ignore
-    course.value = await courseStore.getCourse(route.params.id as number);
+    course.value = await courseStore.getCourse(route.params.id);
   } catch (error) {
     router.push({ name: "course" });
   }
@@ -37,7 +37,7 @@ const currentTab = ref(0);
         <VImg
           v-if="!loading"
           :src="course?.thumbnail"
-          style="aspect-ratio: 16/9"
+          style="aspect-ratio: 16/4"
           cover
         />
         <VSkeletonLoader v-else :type="['image', 'image']" />
@@ -142,7 +142,7 @@ const currentTab = ref(0);
             />
           </VWindowItem>
           <VWindowItem>
-            <CoursePlayList v-if="course" :course-id="course?.id" />
+            <CoursePlayList v-if="course" :course-id="course?.slug" />
             <VSkeletonLoader
               v-else
               :type="Array(5).fill('list-item-avatar-three-line')"

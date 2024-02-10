@@ -61,6 +61,7 @@ class ProcessVideoMediaJob implements ShouldQueue
             $data['data->width'] = 1080;
             $data['data->height'] = 720;
             $data['data->duration'] = 0;
+            $data['disk'] = 'bunnycdn';
             Storage::disk('tmp')->delete($media->path);
         } catch (\Throwable $th) {
             $data['data->error'] =  $th->getMessage();

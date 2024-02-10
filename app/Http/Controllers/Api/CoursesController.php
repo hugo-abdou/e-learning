@@ -40,7 +40,7 @@ class CoursesController extends Controller
      */
     public function store(CourseRequest $request)
     {
-        $course = auth()->user()->courses()->create([...$request->validated(), 'status' => CourseStatus::Draft->value]);
+        $course = auth()->user()->courses()->create([...$request->validated(), 'slug' => $request->validated('title'), 'status' => CourseStatus::Draft->value]);
         return CourseResource::make($course);
     }
 
@@ -49,7 +49,7 @@ class CoursesController extends Controller
      */
     public function show($course)
     {
-        return CourseResource::make(Course::with(['chapters', 'chapters.attachments'])->findOrFail($course));
+        return CourseResource::make(Course::with(['chapters', 'chapters.attachments'])->where('slug', $course)->firstOrFail());
     }
 
     /**

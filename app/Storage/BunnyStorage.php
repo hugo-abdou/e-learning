@@ -9,30 +9,15 @@ use PlatformCommunity\Flysystem\BunnyCDN\BunnyCDNClient;
 
 class BunnyStorage implements StorageInterface
 {
-    /**
-     * @var Filesystem
-     */
-    private $filesystem;
 
-    /**
-     * BunnyStorage constructor.
-     */
-    public function __construct()
+    public function __construct($test, $hugo)
     {
-        $adapter = new BunnyCDNAdapter(
-            new BunnyCDNClient(
-                config('services.bunnycdn.storage_zone'),
-                config('services.bunnycdn.storage_key'),
-                config('services.bunnycdn.region'),
-            ),
-            config('services.bunnycdn.pull_zone_url')
-        );
-        $this->filesystem = new Filesystem($adapter);
+        dd($test, $hugo);
     }
 
     public function __call($key, $data)
     {
-        return $this->filesystem->$key(...$data);
+        // return $this->filesystem->$key(...$data);
     }
 
     /**
@@ -44,7 +29,7 @@ class BunnyStorage implements StorageInterface
      */
     public function put($key, $data)
     {
-        $this->filesystem->write($key, $data);
+        // $this->filesystem->write($key, $data);
     }
     /**
      * Put data into the Bunny Storage.
@@ -55,8 +40,8 @@ class BunnyStorage implements StorageInterface
      */
     public function putFileAs($directionPath, File $file, $fileName)
     {
-        $this->filesystem->write("$directionPath/$fileName", $file->getContent());
-        return ltrim("$directionPath/$fileName", '/');
+        // $this->filesystem->write("$directionPath/$fileName", $file->getContent());
+        // return ltrim("$directionPath/$fileName", '/');
     }
 
     /**
@@ -67,7 +52,7 @@ class BunnyStorage implements StorageInterface
      */
     public function get($key)
     {
-        return $this->filesystem->read($key);
+        // return $this->filesystem->read($key);
     }
 
     /**
@@ -78,7 +63,7 @@ class BunnyStorage implements StorageInterface
      */
     public function delete($key)
     {
-        $this->filesystem->delete($key);
+        // $this->filesystem->delete($key);
     }
     /**
      * Delete a Directory from the Bunny Storage.
@@ -88,7 +73,7 @@ class BunnyStorage implements StorageInterface
      */
     public function deleteDirectory($key)
     {
-        $this->filesystem->deleteDirectory($key);
+        // $this->filesystem->deleteDirectory($key);
     }
 
     /**
@@ -99,7 +84,7 @@ class BunnyStorage implements StorageInterface
      */
     public function fileInfo($key)
     {
-        return $this->filesystem->getMetadata($key);
+        // return $this->filesystem->getMetadata($key);
     }
     /**
      * Get information about a file in the Bunny Storage.
@@ -109,6 +94,6 @@ class BunnyStorage implements StorageInterface
      */
     public function url($key)
     {
-        return ltrim(config('services.bunnycdn.pull_zone_url') . "/$key", '/');
+        // return ltrim(config('services.bunnycdn.pull_zone_url') . "/$key", '/');
     }
 }

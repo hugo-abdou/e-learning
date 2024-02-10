@@ -48,6 +48,7 @@ export const { themeConfig, layoutConfig } = defineThemeConfig({
     },
     theme: "system",
     skin: Skins.Default,
+    // routeTransition: RouteTransitions.Fade,
     iconRenderer: Icon,
   },
   navbar: {

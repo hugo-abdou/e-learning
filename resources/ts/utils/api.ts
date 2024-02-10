@@ -1,7 +1,12 @@
 import { router } from "@/plugins/1.router";
 import { LoginResponse } from "@/types";
-import { FetchOptions, SearchParameters, ofetch } from "ofetch";
-
+import {
+  FetchContext,
+  FetchOptions,
+  FetchResponse,
+  SearchParameters,
+  ofetch,
+} from "ofetch";
 function objectToURL(obj: { [key: string]: any }): SearchParameters {
   const params: any = {};
   for (const key in obj) {
@@ -13,11 +18,15 @@ function objectToURL(obj: { [key: string]: any }): SearchParameters {
   }
   return params;
 }
+type OnFunction<T> = (context: T) => void;
 class Api {
   // TODO: use a real API client
   private readonly client;
   private readonly baseUrl: string;
   private readonly headers: FetchOptions["headers"];
+  private onErrors: OnFunction<
+    FetchContext<any, any> & { response: FetchResponse<any> }
+  >[] = [];
 
   constructor() {
     this.baseUrl = import.meta.env.VITE_API_BASE_URL || "/api";
@@ -30,6 +39,7 @@ class Api {
       timeout: 30000, // 30 seconds
       retryStatusCodes: [401, 403],
       onResponseError: async (context) => {
+        this.onErrors.forEach((cb) => cb(context));
         try {
           if (
             context.response.status === 401 &&
@@ -51,7 +61,7 @@ class Api {
         }
       },
 
-      async onRequest(context) {
+      onRequest: async (context) => {
         // const headers = options.headers || {};
         const access_token = useCookie("access_token").value;
         if (access_token) {
@@ -63,6 +73,12 @@ class Api {
       },
     });
   }
+  onError(
+    cb: OnFunction<FetchContext<any, any> & { response: FetchResponse<any> }>
+  ) {
+    this.onErrors.push(cb);
+  }
+
   async http(
     url: string,
     method: string,

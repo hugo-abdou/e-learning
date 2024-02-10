@@ -5,9 +5,9 @@ namespace App\Support;
 use App\Abstracts\StorageUploadedFile;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\UploadedFile;
-use App\Facades\Storage;
 use App\Models\Media;
 use App\Contracts\MediaConversion;
+use Illuminate\Support\Facades\Storage;
 
 class MediaUploader
 {

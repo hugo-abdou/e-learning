@@ -15,7 +15,15 @@ class Search
         if ($search = request()->get('search')) {
             $query->where(function ($query) use ($search) {
                 foreach ($this->fields as $field) {
-                    $query->orWhere($field, 'like', "%$search%");
+                    if (strpos($field, '.') !== false) {
+                        $relation = explode('.', $field)[0];
+                        $field = explode('.', $field)[1];
+                        $query->orWhereHas($relation, function ($query) use ($field, $search) {
+                            $query->where($field, 'like', "%$search%");
+                        });
+                    } else {
+                        $query->orWhere($field, 'like', "%$search%");
+                    }
                 }
             });
         }

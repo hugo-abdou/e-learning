@@ -1041,11 +1041,10 @@
                             }
                             errorEventsString += (key + "=" + value);
                         }
-
-                        loadUrl("https://video-803.mediadelivery.net/.metrics/add?errorEvents=" +
-                            errorEventsString + "&bandwidth=" + bandwidth + "&zoneTier=" +
-                            'premium',
-                            function(data) {});
+                        // loadUrl("https://video-803.mediadelivery.net/.metrics/add?errorEvents=" +
+                        //     errorEventsString + "&bandwidth=" + bandwidth + "&zoneTier=" +
+                        //     'premium',
+                        //     function(data) {});
                         errorEvents = {};
                     }
                 }, 15000);

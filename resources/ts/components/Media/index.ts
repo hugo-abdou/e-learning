@@ -1,5 +1,4 @@
 import { MediaTypes } from "@/@core/enums";
-import { Media } from "@/types";
 import { ComponentOptions } from "vue";
 import ImageType from "./ImageType.vue";
 import PdfType from "./PdfType.vue";
@@ -9,7 +8,7 @@ import VideoType from "./VideoType.vue";
 interface Props {
   preview?: boolean;
   aspectRatio?: string;
-  media: Media;
+  media: any;
 }
 
 export default {
@@ -19,6 +18,9 @@ export default {
     media: { type: Object, required: true },
   },
   setup(props: Props, { attrs, slots }) {
+    onMounted(() => {
+      console.log(props.media);
+    });
     if (props.preview) return () => h(Preview, { ...props, ...attrs }, slots);
     switch (props.media.type) {
       case MediaTypes.video:

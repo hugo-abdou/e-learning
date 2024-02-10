@@ -2,7 +2,7 @@
   <VRow align="start" class="gap-y-2 page-container">
     <VCol cols="12" md="8" class="py-0 h-100">
       <div v-if="selected" class="position-relative h-100">
-        <Media v-bind="events" :key="selected?.id" :media="selected">
+        <Media v-bind="events" :key="selected?.type" :media="selected">
           <template
             v-if="selected.type === MediaTypes.image && playList?.hasNext"
             #toolbar
@@ -40,7 +40,7 @@
     <VCol cols="12" md="4" class="rounded py-0">
       <VCard>
         <PerfectScrollbar :options="{ wheelPropagation: true }">
-          <CoursePlayList ref="playList" :course-id="Number(route.params.id)" />
+          <CoursePlayList ref="playList" :course-id="route.params.id" />
         </PerfectScrollbar>
       </VCard>
     </VCol>

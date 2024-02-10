@@ -47,7 +47,7 @@ class GetVideoFromBunnyJob implements ShouldQueue
             $preview = "https://$pull_zone.b-cdn.net/$guid/preview.webp";
             $low = "https://$pull_zone.b-cdn.net/$guid/playlist.m3u8";
             $media->update([
-                'disk' => 'remote',
+                'disk' => 'bunnycdn',
                 "name" => $res->title,
                 "data->duration" => $res->length,
                 "data->width" => $res->width / 60,

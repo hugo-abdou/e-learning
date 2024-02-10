@@ -19,15 +19,12 @@ class MediaRetryController extends Controller
     {
         $type = Str::before($media->mime_type, '/');
         $media->update(['status' => MediaStatus::Pending->value]);
-
-        // dd($media);
-
         // process Image and extract thumbnails and large images
         ProcessImageMediaJob::dispatchIf($type === 'image', $media->id, ["thumb" => 500, "large" => 800], ['disk' => 'public', 'path' => 'media/' . auth()->id()]);
 
         // convert  Video to HLS format and extract thumbnails and qualities [360,720,1080]
         if ($type === 'video') {
-            if ($media->disk === 'remote') {
+            if ($media->disk === 'bunnycdn') {
                 $library = explode('-', $media->uuid)[0];
                 $videoId = str_replace("{$library}-", '', $media->uuid);
                 GetVideoFromBunnyJob::dispatch($library, $videoId);

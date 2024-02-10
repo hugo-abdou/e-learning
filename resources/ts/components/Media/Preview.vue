@@ -69,7 +69,10 @@ const faild = () => (isError.value = true);
     >
       <VSpacer />
       <IconBtn
-        v-if="resource.status === MediaStatus.Error"
+        v-if="
+          resource.status === MediaStatus.Error ||
+          resource.status === MediaStatus.Processing
+        "
         @click="mediaStore.retry(resource.id)"
         icon="tabler-reload"
       />

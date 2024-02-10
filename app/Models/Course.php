@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class Course extends Model
 {
@@ -27,6 +28,17 @@ class Course extends Model
     ];
 
     protected $dates = ['schedule_at', 'close_at'];
+
+
+    // add slug to the course after creating it
+    protected static function booted()
+    {
+        static::created(function ($course) {
+            $course->slug = Str::slug($course->title . '-' . $course->id);
+            $course->save();
+        });
+    }
+
 
     /**
      * Get the default profile photo URL if no profile photo has been uploaded.

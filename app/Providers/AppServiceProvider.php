@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Storage\Storage as MyStorage;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
@@ -17,9 +16,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind('storage', function () {
-            return new MyStorage();
-        });
     }
 
     /**
@@ -31,13 +27,12 @@ class AppServiceProvider extends ServiceProvider
         Storage::extend('bunnycdn', function ($app, $config) {
             $adapter = new BunnyCDNAdapter(
                 new BunnyCDNClient(
-                    $config['storage_zone'],
-                    $config['api_key'],
-                    $config['region']
+                    config('services.bunnycdn.storage_zone'),
+                    config('services.bunnycdn.storage_key'),
+                    config('services.bunnycdn.region'),
                 ),
-                'https://storage.bunnycdn.com'
+                config('services.bunnycdn.pull_zone_url')
             );
-
             return new FilesystemAdapter(
                 new Filesystem($adapter, $config),
                 $adapter,

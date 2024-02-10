@@ -16,8 +16,8 @@ export const useCourseStore = defineStore({
     async getCourses(params: any): Promise<PaginationResponse<Course>> {
       return await $api.get("/courses", { params });
     },
-    async getCourse(id: number, params: {}) {
-      return await $api.get<Course>(`/courses/${id}`, { params });
+    async getCourse(slug: string, params: {}) {
+      return await $api.get<Course>(`/courses/${slug}`, { params });
     },
     async createCourse(data: CourseForm): Promise<Course> {
       return await $api.post("/courses", data);
@@ -41,7 +41,7 @@ export const useCourseStore = defineStore({
     },
 
     ///////////////////////////////////////////////////////////
-    async getChapters(course_id: number, params?: any) {
+    async getChapters(course_id: string, params?: any) {
       return await $api.get<PaginationResponse<Chapter>>(`/chapters`, {
         params: { course_id, ...params },
       });

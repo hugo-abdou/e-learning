@@ -5,6 +5,23 @@ namespace App\Storage;
 
 class S3Storage implements StorageInterface
 {
+
+    public function delete($path)
+    {
+        // delete file implementation
+    }
+
+    public function deleteDirectory($directory)
+    {
+        // delete directory implementation 
+    }
+
+    public function fileInfo($path)
+    {
+        // get file info implementation
+    }
+
+
     public function put($key, $data)
     {
         // Implement S3-specific storage logic here
