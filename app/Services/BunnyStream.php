@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use Guzzle\Http\Exception\ClientErrorResponseException;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class BunnyStream
@@ -75,11 +76,11 @@ class BunnyStream
     /**
      *@param array $data
      */
-    public function upload(string $library, string $guid, string $attachment)
+    public function upload(string $library, string $guid, string $filePath)
     {
         try {
             $res = $this->client->put("/library/$library/videos/$guid", [
-                'body' => $attachment,
+                'body' =>  file_get_contents($filePath), // Open the file for reading and pass it as the request body
                 'headers' => [
                     'Content-Type' => 'application/octet-stream',
                 ]
@@ -88,6 +89,7 @@ class BunnyStream
             $response->StatusCode = $res->getStatusCode();
             return $response;
         } catch (RequestException $e) {
+            Log::error($e->getMessage());
             if ($e->hasResponse()) {
                 return  json_decode($e->getResponse()->getBody());
             }
