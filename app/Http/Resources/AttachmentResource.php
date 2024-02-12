@@ -24,6 +24,8 @@ class AttachmentResource extends JsonResource
             "download" => $download,
             "visibility" => json_decode($this->pivot->visibility ?? '[]'),
             "watermark" => $this->pivot->watermark,
+            "width" => $this->data['width'] ?? 0,
+            "height" => $this->data['height'] ?? 0,
         ]);
         if ($download) $data['path'] = Storage::disk('public')->url($this->path);
         return $data;

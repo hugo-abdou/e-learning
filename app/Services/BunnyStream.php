@@ -45,9 +45,15 @@ class BunnyStream
                 'GET',
                 'library/' . $library . '/videos/' . $guid,
             );
-            $response = json_decode($res->getBody()->getContents());
-            $response->StatusCode = $res->getStatusCode();
-            return $response;
+            if ($res->getStatusCode() === 200) {
+                $response = json_decode($res->getBody()->getContents());
+                $response->StatusCode = $res->getStatusCode();
+                return $response;
+            }
+            return json_decode(json_encode([
+                'StatusCode' => $res->getStatusCode(),
+                'message' => $res->getReasonPhrase(),
+            ]));
         } catch (RequestException $e) {
             $res = $e->getResponse();
             return json_decode(json_encode([

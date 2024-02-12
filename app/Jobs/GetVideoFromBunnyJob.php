@@ -50,8 +50,8 @@ class GetVideoFromBunnyJob implements ShouldQueue
                 'disk' => 'bunnycdn',
                 "name" => $res->title,
                 "data->duration" => $res->length,
-                "data->width" => $res->width / 60,
-                "data->height" => $res->height / 60,
+                "data->width" => $res->width,
+                "data->height" => $res->height,
                 "status" => $res->status,
                 "path" => $path,
                 "conversions" => [
