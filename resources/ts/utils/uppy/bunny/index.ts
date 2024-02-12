@@ -20,7 +20,7 @@ export default class BunnyStreem {
   static BASE_URL = import.meta.env.VITE_BUNNY_BASE_URL;
   static LIBRARY_ID = import.meta.env.VITE_BUNNY_LIBRARY_ID;
   // @ts-ignore
-  static BUNNY_KEY = import.meta.env.VITE_BUNNY_API_KEY;
+  static BUNNY_KEY = import.meta.env.VITE_BUNNY_STREEM_API_KEY;
   static DEFAULT_HEADERS = {};
   private Clinet: AxiosInstance;
   private Events: { [key: string]: Function[] } = {};

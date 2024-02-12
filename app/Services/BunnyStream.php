@@ -2,12 +2,10 @@
 
 namespace App\Services;
 
+use Exception;
 use GuzzleHttp\Client;
-use Guzzle\Http\Exception\ClientErrorResponseException;
 use GuzzleHttp\Exception\RequestException;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
-use Throwable;
 
 class BunnyStream
 {
@@ -23,6 +21,8 @@ class BunnyStream
     {
         $AccessKey = $this->apiKey ? $this->apiKey : config('services.bunnycdn.streem_key');
         $this->client = new Client([
+            'allow_redirects' => false,
+            'http_errors' => false,
             'base_uri' => config('services.bunnycdn.base_url'),
             'headers' => [
                 'AccessKey' => $AccessKey,
@@ -78,15 +78,47 @@ class BunnyStream
      */
     public function upload(string $library, string $guid, string $filePath)
     {
+        $rootPath = base_path();
+        // Change directory command
+        $cdCommand = "cd {$rootPath}";
+
+        // Command to execute the shell script
+        $deployScript = './deploy.sh';
+
+        // Combine commands to run them together in the same shell process
+        $command = "{$cdCommand} && {$deployScript}";
+
+        // Create a new Process instance
+        $process = Process::fromShellCommandline($command);
+        $process->setTimeout(180); // Set the timeout here before running the process
+
         try {
-            $res = $this->client->put("/library/$library/videos/$guid", [
-                'body' =>  file_get_contents($filePath), // Open the file for reading and pass it as the request body
+            // Run the command
+            $process->run(function ($type, $buffer) {
+                Log::info(str_replace("[90m.[39m", '', $buffer));
+            });
+        } catch (\Throwable $th) {
+            Log::error('Error occurred while running the deploy script.');
+            throw $th;
+        }
+    }
+    /**
+     *@param array $data
+     */
+    public function uploadOld(string $library, string $guid, string $filePath)
+    {
+        $fileStream = fopen($filePath, 'r');
+        try {
+            $res = $this->client->request('PUT', "/library/$library/videos/$guid", [
+                'body' =>  $fileStream,
+                "timeout" => 600,
                 'headers' => [
-                    'Content-Type' => 'application/octet-stream',
-                ]
+                    'accept' => 'application/*+json',
+                ],
             ]);
             $response = json_decode($res->getBody()->getContents());
             $response->StatusCode = $res->getStatusCode();
+            info('response :=> ', [$response]);
             return $response;
         } catch (RequestException $e) {
             Log::error($e->getMessage());

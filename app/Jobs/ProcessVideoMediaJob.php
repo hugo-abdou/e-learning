@@ -55,6 +55,7 @@ class ProcessVideoMediaJob
             $presignedRes = $bunnyStream->presignedUpload($this->config['library'], $media->name);
             if ($presignedRes->StatusCode !== 200)  throw new \Exception($presignedRes->message);
 
+            // Storage::disk('bunnycdn')->put("/library/{$this->config['library']}/videos/$presignedRes->guid", file_get_contents($filePath));
             $uploadres = $bunnyStream->upload($this->config['library'], $presignedRes->guid, $filePath);
             if ($uploadres->StatusCode !== 200)  throw new \Exception($uploadres->message);
 
@@ -80,8 +81,8 @@ class ProcessVideoMediaJob
                 "status" => MediaStatus::Error->value,
             ]);
             Log::error('bunnycdn upload Error : ' . $media->id . ' - ' . $th->getMessage());
-            $this->fail($th->getMessage());
             $media->update($data);
+            throw $th;
         }
     }
 }

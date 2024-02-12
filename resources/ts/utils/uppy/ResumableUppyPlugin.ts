@@ -52,6 +52,30 @@ export default class ResumableUppyPlugin extends BasePlugin {
 
     for (let i = 0; i < fileIDs.length; i++) {
       const file = this.uppy.getFile(fileIDs[i]);
+
+      if (file.type?.includes("video/")) {
+        const bunnyStreem = new BunnyStreem();
+        try {
+          this.uppy.emit("upload-started", file);
+          bunnyStreem.onProgress("uploadProgress", (e: { loaded: number }) => {
+            this.uppy.emit("upload-progress", file, {
+              uploader: this,
+              bytesUploaded: e.loaded,
+              bytesTotal: file.size,
+            });
+          });
+          bunnyStreem.setFeild("title", file.meta.name);
+          const res = await bunnyStreem.store(
+            BunnyStreem.LIBRARY_ID,
+            file.data as File
+          );
+          const uploadResp = { status: 200, body: res };
+          this.uppy.emit("upload-success", file, uploadResp);
+        } catch (error) {
+          this.uppy.emit("upload-error", file, error);
+        }
+        return;
+      }
       this.resumable.addFile(file.data);
     }
   }
@@ -78,7 +102,6 @@ export default class ResumableUppyPlugin extends BasePlugin {
       } catch (error) {
         this.uppy.emit("upload-error", file, error);
       }
-      // await this.uploadVideo(file as File);
       return;
     }
   }

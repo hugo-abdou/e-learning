@@ -90,7 +90,7 @@ class ResumableUploadController extends Controller
             Storage::disk('tmp')->delete($media->path);
         }
 
-        ProcessVideoMediaJob::dispatchIf($type === 'video', $media->id, ['library' => config('services.bunnycdn.library')]);
+        // ProcessVideoMediaJob::dispatchIf($type === 'video', $media->id, ['library' => config('services.bunnycdn.library')]);
 
         // process Image and extract thumbnails and large images
         ProcessImageMediaJob::dispatchIf(

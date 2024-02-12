@@ -47,6 +47,7 @@
     "axios": "1.4.0",
     "chart.js": "^4.4.0",
     "cookie-es": "^1.0.0",
+    "dotenv": "^16.4.2",
     "editorjs-math": "^1.0.2",
     "hls.js": "^1.4.12",
     "jwt-decode": "^3.1.2",

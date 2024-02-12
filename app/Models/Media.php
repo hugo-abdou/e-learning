@@ -35,7 +35,7 @@ class Media extends Model
 
     public function getUrl(): string
     {
-        if (Str::contains($this->path, 'https://')) return $this->path;
+        if (Str::contains($this->path, 'https://')  || $this->disk === 'remote') return $this->path;
         return $this->filesystem($this->disk)->url($this->path);
     }
 
@@ -69,7 +69,7 @@ class Media extends Model
     public function getConversionUrl(string $name): ?string
     {
         if ($conversion = $this->getConversion($name)) {
-            if (Str::contains($conversion['path'], 'https://'))  return $conversion['path'];
+            if (Str::contains($conversion['path'], 'https://') || $conversion['disk'] === 'remote')  return $conversion['path'];
             return $this->filesystem($conversion['disk'])->url($conversion['path']);
         }
         return null;
