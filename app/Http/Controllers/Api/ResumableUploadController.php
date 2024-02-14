@@ -8,10 +8,9 @@ use App\Http\Resources\MediaResource;
 use App\Jobs\ProcessImageMediaJob;
 use App\Jobs\ProcessVideoMediaJob;
 use App\Models\Media;
-use App\Services\Resumable;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\File as HttpFile;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -24,38 +23,92 @@ class ResumableUploadController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $separator = DIRECTORY_SEPARATOR;
-        $tmpPath =  str_replace('/', $separator, 'tmp/media/' . auth()->id());
-
-
-        if (!Storage::directoryExists($tmpPath)) {
-            File::makeDirectory($tmpPath, $mode = 0777, true, true);
-        }
-
-        $resumable = new Resumable($request);
-
-        $resumable->tempFolder = $tmpPath;
-        $resumable->uploadFolder = $tmpPath;
-
-        $result =  $resumable->process();
-
-        switch ($result) {
-            case Response::HTTP_OK:
-                return response("Ok", Response::HTTP_OK);
-            case  Response::HTTP_CREATED:
-                $media = $this->completedResponce($tmpPath . DIRECTORY_SEPARATOR . $resumable->getOriginalFilename());
-                $this->prosseceMedia($media);
-                return response()->json(MediaResource::make(Media::find($media->id)), Response::HTTP_CREATED);
-            case Response::HTTP_NOT_FOUND:
-                return response(['message' => 'Chunk not found'], 204);
-            default:
-                return response(['message' => 'An error occurred'], 404);
-        }
+        if ($request->isMethod('GET')) return $this->chunkCheck($request);
+        if ($request->isMethod('POST')) return $this->upload($request);
+        throw new \Exception('Method not supported');
     }
+
+
+    private function chunkCheck(Request $request): JsonResponse
+    {
+        $identifier = (string) preg_replace('/[^0-9a-zA-Z_]/', '', (string) $request->input('resumableIdentifier'));
+        $chunk_number = (int) $request->input('resumableChunkNumber');
+        $chunk_file = 'multipart_' . $identifier . '.part' . $chunk_number;
+        if (Storage::disk('tmp')->exists($chunk_file)) {
+            return response()->json(['message' => 'Chunk not found'], JsonResponse::HTTP_OK);
+        }
+        return response()->json(['message' => 'Chunk does not exists'], JsonResponse::HTTP_NO_CONTENT);
+    }
+
+    private function upload(Request $request): JsonResponse
+    {
+        // get server max upload size
+        $upload_max_size = (int)ini_get('upload_max_filesize') || 1024 * 1024 * 1024; // 1GB
+
+        $file_name = $request->input('resumableFilename', 'file');
+        $destination = 'media/' . auth()->id() . '/' . $file_name;
+        // $destination = $request->input('resumableRelativePath');
+        $chunk_number = (int) $request->input('resumableChunkNumber');
+        $total_chunks = (int) $request->input('resumableTotalChunks');
+        $mimetype = (int) $request->input('resumableType');
+        $identifier = (string) preg_replace('/[^0-9a-zA-Z_]/', '', (string) $request->input('resumableIdentifier'));
+        $file = $request->file('file');
+
+        if (!$file || !$file->isValid() || $file->getSize() > $upload_max_size) {
+            return response()->json(['message' => 'Bad file'], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+        }
+        $prefix = 'multipart_' . $identifier;
+
+        if (Storage::disk('tmp')->exists($prefix . '_error')) {
+            return response()->json(['message' => 'Chunk too big'], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $stream = fopen($file->getPathName(), 'r');
+        Storage::disk('tmp')->put($prefix . '.part' . $chunk_number, $stream);
+        $uploaded_chunks =  Storage::disk('tmp')->allFiles();
+        $uploaded_chunks = preg_grep('/^' . preg_quote($prefix, '/') . '/',  $uploaded_chunks);
+        $chunks_size = 0;
+        foreach ($uploaded_chunks as $uploaded_chunk) {
+            $chunks_size += Storage::disk('tmp')->size($uploaded_chunk);
+        }
+
+        if ($chunks_size > $upload_max_size) {
+            foreach ($uploaded_chunks as $uploaded_chunk) {
+                Storage::disk('tmp')->delete($uploaded_chunk);
+            }
+            Storage::disk('tmp')->put($prefix . '_error', '');
+            return response()->json(['message' => 'Chunk too big'], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        // if all the chunks are present, create final file and store it
+        if (count($uploaded_chunks) >= $total_chunks) {
+            $finalContent = '';
+            for ($i = 1; $i <= $total_chunks; ++$i) {
+                $finalContent .= Storage::disk('tmp')->get($prefix . '.part' . $i);
+            }
+
+            $res = Storage::disk('tmp')->put($destination, $finalContent, ['mimetype' => $mimetype]);
+
+            if (!$res) {
+                return response()->json(['message' => 'Error storing file'], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+            }
+
+            // Delete the chunk files after combining them
+            foreach ($uploaded_chunks as $uploaded_chunk) {
+                Storage::disk('tmp')->delete($uploaded_chunk);
+            }
+
+            $media = $this->completedResponce($destination);
+            $this->prosseceMedia($media);
+            return response()->json(MediaResource::make(Media::find($media->id)), JsonResponse::HTTP_CREATED);
+        }
+        return response()->json(['message' => 'Uploaded'], JsonResponse::HTTP_OK);
+    }
+
 
     private function completedResponce(string $uploadPath): Media
     {
-        $file = new HttpFile(storage_path('app'  . DIRECTORY_SEPARATOR . $uploadPath));
+        $file = new HttpFile(storage_path('app'  . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . $uploadPath));
         $media = Media::create([
             'name' => pathinfo($file->getFilename(), PATHINFO_FILENAME),
             'mime_type' => $file->getMimeType(),
@@ -70,7 +123,6 @@ class ResumableUploadController extends Controller
         ]);
         return $media;
     }
-
     private function prosseceMedia(Media $media): void
     {
         $type = Str::before($media->mime_type, '/');
@@ -89,8 +141,7 @@ class ResumableUploadController extends Controller
             ]);
             Storage::disk('tmp')->delete($media->path);
         }
-
-        // ProcessVideoMediaJob::dispatchIf($type === 'video', $media->id, ['library' => config('services.bunnycdn.library')]);
+        ProcessVideoMediaJob::dispatchIf($type === 'video', $media->id, ['library' => config('services.bunnycdn.library')]);
 
         // process Image and extract thumbnails and large images
         ProcessImageMediaJob::dispatchIf(

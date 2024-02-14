@@ -84,35 +84,6 @@ class BunnyStream
      */
     public function upload(string $library, string $guid, string $filePath)
     {
-        $rootPath = base_path();
-        // Change directory command
-        $cdCommand = "cd {$rootPath}";
-
-        // Command to execute the shell script
-        $deployScript = './deploy.sh';
-
-        // Combine commands to run them together in the same shell process
-        $command = "{$cdCommand} && {$deployScript}";
-
-        // Create a new Process instance
-        $process = Process::fromShellCommandline($command);
-        $process->setTimeout(180); // Set the timeout here before running the process
-
-        try {
-            // Run the command
-            $process->run(function ($type, $buffer) {
-                Log::info(str_replace("[90m.[39m", '', $buffer));
-            });
-        } catch (\Throwable $th) {
-            Log::error('Error occurred while running the deploy script.');
-            throw $th;
-        }
-    }
-    /**
-     *@param array $data
-     */
-    public function uploadOld(string $library, string $guid, string $filePath)
-    {
         $fileStream = fopen($filePath, 'r');
         try {
             $res = $this->client->request('PUT', "/library/$library/videos/$guid", [

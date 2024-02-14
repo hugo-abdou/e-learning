@@ -32,23 +32,22 @@ async function createVideoEntry(libraryId) {
 async function uploadVideoFile(libraryId, videoId, videoFilePath) {
   const formData = new FormData();
   //   formData.append("file", fs.createReadStream(videoFilePath));
-  const file = fs.createReadStream(videoFilePath);
+  // create a file from the video file path
+
+  const file = fs.(videoFilePath);
 
   try {
     const response = await bunnyAxios.put(
       `library/${libraryId}/videos/${videoId}`,
       file,
       {
-        headers: {
-          "content-type": "application/*+json",
-          ...formData.getHeaders(),
-        },
+        headers: { "content-type": "application/*+json" },
       }
     );
     return response.data;
   } catch (error) {
-    console.error("Error uploading video file:", error.response.data);
-    // throw error;
+    // console.error("Error uploading video file:", error.response.data);
+    throw error;
   }
 }
 

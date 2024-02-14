@@ -36,7 +36,7 @@ export default class ResumableUppyPlugin extends BasePlugin {
         common: { "X-Requested-With": "XMLHttpRequest" },
         Authorization: `Bearer ${this.token}`,
       },
-      chunkSize: 1 * 1024 * 1024,
+      chunkSize: 1024 * 1024,
       simultaneousUploads: 1,
       maxChunkRetries: 3,
     });
@@ -53,29 +53,29 @@ export default class ResumableUppyPlugin extends BasePlugin {
     for (let i = 0; i < fileIDs.length; i++) {
       const file = this.uppy.getFile(fileIDs[i]);
 
-      if (file.type?.includes("video/")) {
-        const bunnyStreem = new BunnyStreem();
-        try {
-          this.uppy.emit("upload-started", file);
-          bunnyStreem.onProgress("uploadProgress", (e: { loaded: number }) => {
-            this.uppy.emit("upload-progress", file, {
-              uploader: this,
-              bytesUploaded: e.loaded,
-              bytesTotal: file.size,
-            });
-          });
-          bunnyStreem.setFeild("title", file.meta.name);
-          const res = await bunnyStreem.store(
-            BunnyStreem.LIBRARY_ID,
-            file.data as File
-          );
-          const uploadResp = { status: 200, body: res };
-          this.uppy.emit("upload-success", file, uploadResp);
-        } catch (error) {
-          this.uppy.emit("upload-error", file, error);
-        }
-        return;
-      }
+      // if (file.type?.includes("video/")) {
+      //   const bunnyStreem = new BunnyStreem();
+      //   try {
+      //     this.uppy.emit("upload-started", file);
+      //     bunnyStreem.onProgress("uploadProgress", (e: { loaded: number }) => {
+      //       this.uppy.emit("upload-progress", file, {
+      //         uploader: this,
+      //         bytesUploaded: e.loaded,
+      //         bytesTotal: file.size,
+      //       });
+      //     });
+      //     bunnyStreem.setFeild("title", file.meta.name);
+      //     const res = await bunnyStreem.store(
+      //       BunnyStreem.LIBRARY_ID,
+      //       file.data as File
+      //     );
+      //     const uploadResp = { status: 200, body: res };
+      //     this.uppy.emit("upload-success", file, uploadResp);
+      //   } catch (error) {
+      //     this.uppy.emit("upload-error", file, error);
+      //   }
+      //   return;
+      // }
       this.resumable.addFile(file.data);
     }
   }
