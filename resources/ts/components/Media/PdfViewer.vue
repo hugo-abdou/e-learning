@@ -60,7 +60,17 @@ defineExpose({ reset, next, prev, page, pages });
     <v-skeleton-loader
       v-else
       class="py-5"
-      :type="['heading', 'paragraph', 'paragraph']"
+      :type="[
+        'heading',
+        'paragraph',
+        'paragraph',
+        'paragraph',
+        'paragraph',
+        'paragraph',
+        'paragraph',
+        'paragraph',
+        'paragraph',
+      ]"
     ></v-skeleton-loader>
     <slot v-bind="{ reset, next, prev, page, pages }" />
   </div>

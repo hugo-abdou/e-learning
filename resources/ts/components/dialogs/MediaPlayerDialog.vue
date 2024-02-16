@@ -11,12 +11,12 @@ const style = computed(() => {
     };
 
     if (style.aspectRatio > 1) {
-      style.width = mediaStore.dialog.data.width;
-      style.maxWidth = "100%";
+      style.width = mediaStore.dialog.data.width + "px";
+      style.maxWidth = "80%";
     }
     if (style.aspectRatio < 1) {
-      style.height = mediaStore.dialog.data.height;
-      style.maxHeight = "100%";
+      style.height = mediaStore.dialog.data.height + "px";
+      style.maxHeight = "80%";
     }
     return style;
   }
@@ -25,8 +25,12 @@ const style = computed(() => {
 </script>
 
 <template>
-  <VDialog v-model="mediaStore.dialog.open">
+  <VDialog
+    content-class="h-auto w-auto"
+    :content-props="{ style }"
+    v-model="mediaStore.dialog.open"
+  >
     <DialogCloseBtn @click="mediaStore.dialog.open = false" />
-    <Media :media="mediaStore.dialog.data" :style="style" />
+    <Media :media="mediaStore.dialog.data" />
   </VDialog>
 </template>

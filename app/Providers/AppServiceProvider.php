@@ -2,11 +2,11 @@
 
 namespace App\Providers;
 
+use App\Services\BunnyCDNAdapter;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
 use League\Flysystem\Filesystem;
-use PlatformCommunity\Flysystem\BunnyCDN\BunnyCDNAdapter;
 use PlatformCommunity\Flysystem\BunnyCDN\BunnyCDNClient;
 
 class AppServiceProvider extends ServiceProvider

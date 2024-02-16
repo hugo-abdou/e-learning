@@ -55,9 +55,9 @@ class GetVideoFromBunnyJob implements ShouldQueue
                 "status" => $res->status,
                 "path" => $path,
                 "conversions" => [
-                    ["engine" => "ImageResize", "path" => $themb, "disk" => 'remote', "name" => "thumb"],
-                    ["engine" => "ImageResize", "path" => $preview, "disk" => 'remote', "name" => "preview"],
-                    ["engine" => "VideoResize", "path" => $low, "disk" => 'remote', "name" => "low"],
+                    ["engine" => "ImageResize", "path" => $themb, "disk" => 'bunnycdn', "name" => "thumb"],
+                    ["engine" => "ImageResize", "path" => $preview, "disk" => 'bunnycdn', "name" => "preview"],
+                    ["engine" => "VideoResize", "path" => $low, "disk" => 'bunnycdn', "name" => "low"],
                 ]
             ]);
             Log::info("Bunny CDN Video Status Changed : ", [$this->libraryId . '-' . $this->guid]);

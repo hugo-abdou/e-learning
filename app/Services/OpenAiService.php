@@ -16,12 +16,6 @@ class OpenAiService
      */
     public static function execute($context = null, string $message = "", int $maxTokens = 15000): string
     {
-        // $apiKey = 'openAiApiKey';
-
-        // if ($apiKey === null) {
-        //     throw new InvalidArgumentException('OpenAI API key is not provided in the configuration file.');
-        // }
-
         $input_data = [
             'temperature' => 0.7,
             'max_tokens' => $maxTokens,
@@ -40,12 +34,7 @@ class OpenAiService
         ];
 
         $response = Http::timeout(500)
-            // ->post('http://localhost:1234/v1/chat/completions', $input_data);
             ->post('https://cm-behaviour-expenditure-step.trycloudflare.com/v1/chat/completions', $input_data);
-        // withHeaders([
-        //     'Authorization' => 'Bearer '.$apiKey,
-        //     'Content-Type' => 'application/json',
-        // ])
 
 
         if ($response->failed()) {

@@ -1,15 +1,31 @@
 <script lang="ts" setup>
 import { Media } from "@/types";
 import { resolveDefaultThumbnal } from "@/utils";
+import { StyleValue } from "vue";
 interface Props {
   media: Media;
-  aspectRatio?: string;
+  aspectRatio?: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {});
-const style = computed(() => ({
-  aspectRatio: props.aspectRatio || props.media.width / props.media.height,
-}));
+const style = computed(() => {
+  const style: StyleValue = {
+    aspectRatio: props.aspectRatio || props.media.width / props.media.height,
+  };
+
+  // @ts-ignore
+  if (style?.aspectRatio > 1) {
+    style.width = props.media.width + "px";
+    style.maxWidth = "100%";
+  }
+  // @ts-ignore
+  if (style?.aspectRatio < 1) {
+    style.height = props.media.height + "px";
+    style.maxHeight = "100%";
+  }
+
+  return style;
+});
 
 const isError = ref(false);
 const thumb = computed(() => {
@@ -21,7 +37,7 @@ const faild = () => (isError.value = true);
 
 <template>
   <VCard
-    class="media-card h-100 bg-black d-flex justify-center align-center"
+    class="media-card bg-black d-flex justify-center align-center"
     :style="style"
   >
     <VImg

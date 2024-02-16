@@ -1,3 +1,34 @@
+<script setup lang="ts">
+import { DocumentMedia, Media } from "@/types";
+
+interface Props {
+  media: Media;
+  aspectRatio?: string;
+}
+const props = defineProps<Props>();
+const pdfViwer = ref<{
+  reset?: Function;
+  next?: Function;
+  prev?: Function;
+  page: number;
+  pages: number;
+}>({ page: 1, pages: 0 });
+
+const page = computed({
+  get: () => pdfViwer.value.page || 0,
+  set: (val) => {
+    pdfViwer.value.page = val;
+  },
+});
+const style = computed(() => ({
+  aspectRatio: "0.77",
+  height: "800px",
+  // width: "1080px",
+}));
+
+defineExpose({ ...pdfViwer.value });
+</script>
+
 <template>
   <VCard class="media-card" :style="style">
     <PdfViewer
@@ -28,32 +59,3 @@
     </VToolbar>
   </VCard>
 </template>
-
-<script setup lang="ts">
-import { DocumentMedia, Media } from "@/types";
-
-interface Props {
-  media: Media;
-  aspectRatio?: string;
-}
-const props = defineProps<Props>();
-const pdfViwer = ref<{
-  reset?: Function;
-  next?: Function;
-  prev?: Function;
-  page: number;
-  pages: number;
-}>({ page: 1, pages: 0 });
-
-const page = computed({
-  get: () => pdfViwer.value.page || 0,
-  set: (val) => {
-    pdfViwer.value.page = val;
-  },
-});
-const style = computed(() => ({
-  aspectRatio: props.aspectRatio || props.media.width / props.media.height,
-}));
-
-defineExpose({ ...pdfViwer.value });
-</script>

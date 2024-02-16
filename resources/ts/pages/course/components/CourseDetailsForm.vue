@@ -67,7 +67,15 @@ watch(
               }"
               :src="form.thumbnail"
               cover
-            />
+            >
+              <template v-slot:error>
+                <v-img
+                  class="mx-auto"
+                  cover
+                  src="/assets/Image_not_available.png"
+                />
+              </template>
+            </VImg>
             <!-- <Media
                 :media="{ thumb_url: form.thumbnail, status: 2, type: 'image' }"
                 aspect-ratio="1.77"

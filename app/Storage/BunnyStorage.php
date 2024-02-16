@@ -3,9 +3,6 @@
 namespace App\Storage;
 
 use Illuminate\Http\File;
-use League\Flysystem\Filesystem;
-use PlatformCommunity\Flysystem\BunnyCDN\BunnyCDNAdapter;
-use PlatformCommunity\Flysystem\BunnyCDN\BunnyCDNClient;
 
 class BunnyStorage implements StorageInterface
 {

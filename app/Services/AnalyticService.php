@@ -10,7 +10,6 @@ class  AnalyticService
 {
     static function getStorage(Request $request)
     {
-        // $owner = auth()->user()->isAgent() ? auth()->user()->admin : auth()->user();
         $mediaQuery = Media::query();
         $used_storage = Media::sum('size_total');
 

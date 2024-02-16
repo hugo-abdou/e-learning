@@ -1,25 +1,12 @@
 <template>
-  <div ref="container" v-if="props.items?.length">
-    <!-- @vue-expect-error -->
-    <VRow
-      class="me-0 mx-auto"
-      v-masonry
-      transition-duration="0.3s"
-      item-selector=".item"
-      :ref="(el) => (redrawVueMasonry = $redrawVueMasonry)"
-    >
+  <div>
+    <VRow class="me-0 mx-auto" ref="container">
       <VCol
         v-for="(item, index) in props.items"
-        :key="item.id + '_' + index"
-        class="item pa-2"
+        :key="item.id"
         v-bind="grid || { cols: 12, md: 4, sm: 6, xl: 3 }"
       >
-        <slot
-          :item="item"
-          :redrawVueMasonry="redrawVueMasonry"
-          :index="index"
-          >{{ item }}</slot
-        >
+        <slot :item="item" :index="index">{{ item }}</slot>
       </VCol>
     </VRow>
     <!-- @vue-ignore -->
@@ -33,10 +20,10 @@
 
 <script setup lang="ts" generic="T">
 import { GridColumn } from "@/@core/types";
+import autoAnimate from "@formkit/auto-animate";
 import { PropType } from "vue";
 
 const observer = ref();
-// const sentinel = ref();
 const container = ref();
 
 type Resource = T & { id: number };
@@ -47,7 +34,6 @@ const props = defineProps({
   grid: Object as PropType<GridColumn>,
 });
 const emit = defineEmits(["load"]);
-
 const handleIntersection = async (entries: any) => {
   const entry = entries[0];
   if (entry.isIntersecting) emit("load");
@@ -60,13 +46,9 @@ const sentinel = (el: HTMLElement) => {
   emit("load");
   observer.value.observe(el);
 };
-const redrawVueMasonry = ref<Function | null>(null);
 
 onUpdated(() => {
-  // @ts-ignore
-  if (typeof redrawVueMasonry?.value === "function") {
-    redrawVueMasonry.value();
-  }
+  autoAnimate(container.value.$el); // thats it!
 });
 onUnmounted(() => observer.value && observer.value.disconnect());
 </script>

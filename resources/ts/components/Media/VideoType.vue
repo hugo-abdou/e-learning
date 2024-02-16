@@ -35,11 +35,11 @@ const style = computed(() => {
   };
 
   if (style.aspectRatio > 1) {
-    style.width = props.media.width * 60 + "px";
+    style.width = props.media.width + "px";
     style.maxWidth = "100%";
   }
   if (style.aspectRatio < 1) {
-    style.height = props.media.height * 60 + "px";
+    style.height = props.media.height + "px";
     style.maxHeight = "100%";
   }
 
@@ -69,8 +69,8 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="h-100 d-flex justify-center align-center">
-    <VCard :style="style">
+  <div class="h-100 w-100 d-flex justify-center align-center">
+    <VCard :style="style" class="h-100">
       <iframe
         :ref="iframeInit"
         :src="`/embed/${media.uuid.replace('-', '/')}`"

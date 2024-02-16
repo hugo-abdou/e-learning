@@ -111,7 +111,8 @@ class MediaController extends Controller
         //         Storage::disk($conversion['disk'])->delete($conversion['path']);
         //     }
         // }
-        Storage::disk($media->disk)->delete($media->path);
+        // Storage::disk($media->disk)->delete($media->path);
+
         $media->delete();
         return response()->json(['message' => 'Media deleted successfully']);
     }

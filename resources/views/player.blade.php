@@ -86,9 +86,7 @@
             --plyr-captions-text-color: #fff;
             --plyr-font-weight-regular: 600;
             --plyr-font-weight-bold: 600;
-
             --plyr-font-family: 'Rubik';
-
             --webkit-text-track-display: none;
             --plyr-font-size-xlarge: 30px;
         }
@@ -104,9 +102,7 @@
 
         body {
             background-color: transparent;
-
             font-family: 'Rubik', sans-serif;
-
         }
 
         .container {
