@@ -17,7 +17,7 @@ class AnswerResource extends JsonResource
         return [
             'id' => $this->id,
             'option' => $this->option,
-            'is_correct' => $this->is_correct,
+            // 'is_correct' => $this->is_correct,
             'points' => $this->points,
         ];
     }

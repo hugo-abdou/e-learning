@@ -24,4 +24,14 @@ class Question extends Model
     {
         return $this->hasMany(Answer::class, 'question_id');
     }
+
+    /**
+     * Get the quiz that owns the Question
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function quiz(): BelongsTo
+    {
+        return $this->belongsTo(Quiz::class);
+    }
 }

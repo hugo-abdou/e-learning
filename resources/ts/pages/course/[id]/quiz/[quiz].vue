@@ -155,7 +155,8 @@ watch(() => route.params.quiz, loadQuiz, { immediate: true });
                 />
               </VCardItem>
             </template>
-            <template v-if="hasCorrectAnswer">
+            <!-- TODO: show correct answer not implimented yet -->
+            <template v-if="hasCorrectAnswer && false">
               <VCardTitle>{{ $t("quiz.correct_answer.title") }}</VCardTitle>
               <VCardSubtitle>
                 {{ $t("quiz.correct_answer.subtitle") }}
@@ -185,6 +186,7 @@ watch(() => route.params.quiz, loadQuiz, { immediate: true });
             v-if="tabs.length - 1 === currentQuestion"
             append-icon="tabler-check"
             color="success"
+            @click="nextStep"
           >
             {{ $t("submit") }}
           </VBtn>

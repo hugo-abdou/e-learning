@@ -58,7 +58,9 @@ export const useQuizzesStore = defineStore({
     async anwserQuestion(id: number, response: QuestionAnwser) {
       return await $api.post(`/questions/${id}/anwser`, {
         answers: response.answers,
-        custom_answer: JSON.stringify(response.custom_answer || {}),
+        custom_answer: response.custom_answer?.blocks.length
+          ? JSON.stringify(response.custom_answer)
+          : null,
       });
     },
   },

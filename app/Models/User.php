@@ -108,4 +108,22 @@ class User extends Authenticatable
     {
         return $this->hasMany(Quiz::class, 'author_id');
     }
+    /**
+     * Get all of the quizAttempts for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function quizAttempts(): HasMany
+    {
+        return $this->hasMany(UserQuizAttempt::class);
+    }
+    /**
+     * Get all of the questionAttempts for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function questionAttempts(): HasMany
+    {
+        return $this->hasMany(UserQuestionAttempt::class);
+    }
 }

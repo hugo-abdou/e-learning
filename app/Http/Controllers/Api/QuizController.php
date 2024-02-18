@@ -94,11 +94,32 @@ class QuizController extends Controller
     {
         $data = $request->validate([
             "answers" => "required|array",
-            "custom_answer" => "required|string",
+            "custom_answer" => "nullable|string",
         ]);
 
-        dd($data);
+        $answer = $question->answers()->where('is_correct', true)->whereIn('id', $data['answers'])->first();
+        $is_correct = boolval($answer);
 
+        DB::beginTransaction();
+        $questionAttempt = auth()->user()->questionAttempts()->firstOrCreate(
+            ["question_id" => $question->id],
+            [
+                "is_custom_answer" => $question->allow_custom_answer,
+                "custom_answer" => $data['custom_answer'],
+                "is_correct" => $is_correct,
+                "status" => $data['custom_answer'] && $question->allow_custom_answer ? 0 : 1,
+            ]
+        );
+        if ($is_correct) {
+            $quizAttempts = auth()->user()->quizAttempts()->updateOrCreate(
+                ["quiz_id" => $question->quiz->id]
+            );
+            $quizAttempts->update([
+                "status" => 0,
+                "score" => $quizAttempts->score + $answer->points,
+            ]);
+        }
+        DB::commit();
         return response()->json(['message' => 'Quiz deleted successfully']);
     }
 }
