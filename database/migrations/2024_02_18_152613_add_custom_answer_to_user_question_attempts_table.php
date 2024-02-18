@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('user_question_attempts', function (Blueprint $table) {
-            $table->json('custom_answer')->default(json_encode([]));
+            $table->json('custom_answer')->nullable();
             $table->boolean('is_custom_answer')->default(false);
             $table->smallInteger('status')->default(0);
         });
