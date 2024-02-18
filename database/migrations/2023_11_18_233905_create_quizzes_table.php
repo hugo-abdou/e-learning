@@ -31,8 +31,8 @@ return new class extends Migration
             $table->foreignId('quiz_id')->constrained('quizzes')->onDelete('cascade');
             $table->boolean('allow_custom_answer')->default(false);
             $table->boolean('show_answer_after_response')->default(false);
-            $table->json('question')->default('[]');
-            $table->json('answer')->default('[]');
+            $table->json('question')->default(json_encode([]));
+            $table->json('answer')->default(json_encode([]));
             $table->timestamps();
         });
 
