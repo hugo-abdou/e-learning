@@ -40,7 +40,8 @@
     <VCol cols="12" md="4" class="rounded py-0">
       <VCard>
         <PerfectScrollbar :options="{ wheelPropagation: true }">
-          <CoursePlayList ref="playList" :course-id="route.params.id" />
+          <!-- @vue-ignore -->
+          <LessonsPlayList ref="playList" :course-id="route.params.id" />
         </PerfectScrollbar>
       </VCard>
     </VCol>
@@ -124,6 +125,7 @@ const loadMedia = () => {
   }
 };
 
+// @ts-ignore
 watch(() => route.params.media, loadMedia, { immediate: true });
 </script>
 

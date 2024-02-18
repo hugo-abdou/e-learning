@@ -6,6 +6,7 @@ use App\Enums\CourseStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
@@ -98,5 +99,15 @@ class Course extends Model
     public function chapters(): HasMany
     {
         return $this->hasMany(Chapter::class)->orderBy('order', 'asc');
+    }
+
+    /**
+     * The quizzes that belong to the Chapter
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function quizzes(): BelongsToMany
+    {
+        return $this->belongsToMany(Quiz::class);
     }
 }

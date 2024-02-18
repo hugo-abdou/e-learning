@@ -53,3 +53,6 @@ export const useUserListStore = defineStore("UserListStore", {
     },
   },
 });
+
+if (import.meta.hot)
+  import.meta.hot.accept(acceptHMRUpdate(useUserListStore, import.meta.hot));

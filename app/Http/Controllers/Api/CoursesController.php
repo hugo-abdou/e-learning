@@ -8,6 +8,7 @@ use App\Filters\Sort;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CourseRequest;
 use App\Http\Resources\CourseResource;
+use App\Http\Resources\QuizResource;
 use App\Models\Course;
 use Closure;
 use Illuminate\Http\Request;
@@ -31,7 +32,7 @@ class CoursesController extends Controller
             Sort::class,
             new Search(['title', 'status', 'difficulty', 'description',])
         ])->thenReturn()
-            ->paginate($request->get('itemsPerPage', 10));
+            ->paginate($request->get('itemsPerPage', auth()->user()->courses()->count()));
         return CourseResource::collection($courses);
     }
 
@@ -68,5 +69,27 @@ class CoursesController extends Controller
     {
         $course->delete();
         return response()->json(['message' => 'Course deleted successfully']);
+    }
+    /**
+     * get quizzes related specified course.
+     */
+    public function quizzes(Course $course)
+    {
+        $quizzes =  Pipeline::send($course->quizzes())->through([
+            new Search(['title', 'description']),
+            Sort::class,
+        ])->thenReturn();
+        return QuizResource::collection($quizzes->paginate(request()->get('itemsPerPage', $quizzes->count())));
+    }
+    /**
+     * attach quizzes to the specified course.
+     */
+    public function attach_quizzes(Course $course)
+    {
+        $data = request()->validate([
+            'quizzes' => 'required|array',
+        ]);
+        $course->quizzes()->sync($data['quizzes']);
+        return response()->json(['message' => 'Quizzes attached successfully']);
     }
 }

@@ -25,7 +25,8 @@ class ChapterController extends Controller
         $chapters = auth()->user()
             ->courses()->where('slug', $request->get('course_id'))->firstOrFail()
             ->chapters()->with(['attachments'])
-            ->paginate($request->get('itemsPerPage', 10));
+            ->paginate($request->get('itemsPerPage', auth()->user()
+                ->courses()->count()));
         return ChapterResource::collection($chapters);
     }
 
@@ -43,7 +44,6 @@ class ChapterController extends Controller
                 'order' => $request->validated('order'),
             ]);
             $chapter->attachments()->sync($request->validated('attachments'));
-            $chapter->quizzes()->sync($request->validated('quizzes'));
             DB::commit();
             return ChapterResource::make($chapter);
         } catch (\Throwable $th) {
@@ -74,7 +74,6 @@ class ChapterController extends Controller
                 'order' => $request->validated('order'),
             ]);
             $chapter->attachments()->sync($request->validated('attachments'));
-            $chapter->quizzes()->sync($request->validated('quizzes'));
             DB::commit();
             return ChapterResource::make($chapter);
         } catch (\Throwable $th) {

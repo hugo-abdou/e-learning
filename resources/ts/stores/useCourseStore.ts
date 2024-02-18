@@ -5,6 +5,7 @@ import type {
   Course,
   CourseForm,
   PaginationResponse,
+  Quiz,
 } from "@/types";
 import type { AxiosResponse } from "axios";
 
@@ -39,7 +40,16 @@ export const useCourseStore = defineStore({
     async scheduleCourse(id: number, date: string) {
       return await $api.patch(`/courses/${id}/schedule`, { date });
     },
-
+    ///////////////////////////////////////////////////////////
+    async attachQuizzes(course_id: number, quizzes: number[]) {
+      return await $api.post(`/courses/${course_id}/quizzes`, { quizzes });
+    },
+    async getQuizzes(course_id: number, params?: any) {
+      return await $api.get<PaginationResponse<Quiz>>(
+        `/courses/${course_id}/quizzes`,
+        { params }
+      );
+    },
     ///////////////////////////////////////////////////////////
     async getChapters(course_id: string, params?: any) {
       return await $api.get<PaginationResponse<Chapter>>(`/chapters`, {

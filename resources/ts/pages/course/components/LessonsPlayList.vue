@@ -78,9 +78,7 @@ const chaptersStore = useCourseStore();
 const getPlaylist = debounce(async () => {
   try {
     isLoading.value = true;
-    const { data } = await chaptersStore.getChapters(props.courseId, {
-      itemsPerPage: 1000,
-    });
+    const { data } = await chaptersStore.getChapters(props.courseId, {});
     playlist.value = data.reduce(
       (result: Playlist, { attachments, title, id }, i) => {
         const filterdAttachments = attachments.filter((item) => {

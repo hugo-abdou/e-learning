@@ -31,7 +31,7 @@ class MediaController extends Controller
         if ($request->has('search')) {
             $query->where('name', 'like', '%' . $request->get('search') . '%');
         }
-        return MediaResource::collection($query->paginate($request->get('itemsPerPage', 10)));
+        return MediaResource::collection($query->paginate($request->get('itemsPerPage', Media::count())));
     }
     public function search(Request $request)
     {

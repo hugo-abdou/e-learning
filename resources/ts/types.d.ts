@@ -285,15 +285,16 @@ interface Course {
   duration: number;
   difficulty: CourseDifficulty;
   chapters: Chapter[];
+  quizzes: Quiz[];
   chaptersCount?: number;
-  // media?: string[];
   schedule_at: string;
   closed_at: string;
 }
 
 interface Quiz {
-  id: number | string;
+  id: number;
   title: string;
+  slug: string;
   description: string;
   status: QuizStatus;
   duration: number;
@@ -303,8 +304,10 @@ interface Quiz {
   closed_at?: string;
 }
 interface Question {
-  id: number | string;
+  id: number;
   allow_custom_answer: boolean;
+  show_answer_after_response: boolean;
+  answer: OutputData;
   question: OutputData;
   options: Options[];
 }
@@ -314,7 +317,10 @@ interface Options {
   points: number;
   is_correct: boolean;
 }
-
+interface QuestionAnwser {
+  custom_answer: OutputData | undefined;
+  answers: number[];
+}
 interface QuizForm
   extends Omit<
     Quiz,
@@ -330,7 +336,6 @@ interface Chapter {
   course_id?: number;
   title: string;
   attachments: Attachment[];
-  quizzes: Quiz[];
 }
 interface CourseForm
   extends Omit<
@@ -340,6 +345,7 @@ interface CourseForm
     | "duration"
     | "author"
     | "chapters"
+    | "quizzes"
     | "chaptersCount"
     | "schedule_at"
     | "closed_at"

@@ -6,6 +6,7 @@
 export {}
 declare global {
   const $api: typeof import('./resources/ts/utils/api')['$api']
+  const $resumable: typeof import('./resources/ts/utils/resumable')['$resumable']
   const COOKIE_MAX_AGE_1_YEAR: typeof import('./resources/ts/utils/constants')['COOKIE_MAX_AGE_1_YEAR']
   const EffectScope: typeof import('vue')['EffectScope']
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
@@ -368,6 +369,7 @@ import { UnwrapRef } from 'vue'
 declare module 'vue' {
   interface ComponentCustomProperties {
     readonly $api: UnwrapRef<typeof import('./resources/ts/utils/api')['$api']>
+    readonly $resumable: UnwrapRef<typeof import('./resources/ts/utils/resumable')['$resumable']>
     readonly COOKIE_MAX_AGE_1_YEAR: UnwrapRef<typeof import('./resources/ts/utils/constants')['COOKIE_MAX_AGE_1_YEAR']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
@@ -724,6 +726,7 @@ declare module 'vue' {
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
     readonly $api: UnwrapRef<typeof import('./resources/ts/utils/api')['$api']>
+    readonly $resumable: UnwrapRef<typeof import('./resources/ts/utils/resumable')['$resumable']>
     readonly COOKIE_MAX_AGE_1_YEAR: UnwrapRef<typeof import('./resources/ts/utils/constants')['COOKIE_MAX_AGE_1_YEAR']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>

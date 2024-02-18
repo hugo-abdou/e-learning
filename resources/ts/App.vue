@@ -64,7 +64,7 @@ onMounted(() => {
       )}`"
     >
       <ServerErrorLogger />
-      <RouterView class="mx-n5 mt-n3 mt-sm-0 mx-sm-0" />
+      <RouterView class="" />
       <ScrollToTop />
       <MediaPlayerDialog />
       <SnackBar />

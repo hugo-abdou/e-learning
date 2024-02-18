@@ -106,10 +106,18 @@ watchEffect(() => {
 
               <div>
                 <p class="stepper-title font-weight-medium mb-0">
-                  {{ $t(item.title) }}
+                  <slot name="title" :index="index" :title="$t(item.title)">
+                    {{ $t(item.title) }}
+                  </slot>
                 </p>
                 <span v-if="item.subtitle" class="stepper-subtitle">
-                  <span class="text-sm">{{ $t(item.subtitle) }}</span>
+                  <slot
+                    name="subtitle"
+                    :index="index"
+                    :subtitle="$t(item.subtitle)"
+                  >
+                    <span class="text-sm">{{ $t(item.subtitle) }}</span>
+                  </slot>
                 </span>
               </div>
             </div>
@@ -180,14 +188,22 @@ watchEffect(() => {
             <!-- 👉 title and subtitle -->
             <div class="d-flex flex-column justify-center">
               <div class="step-title font-weight-medium">
-                {{ $t(item.title) }}
+                <slot name="title" :index="index" :title="$t(item.title)">
+                  {{ $t(item.title) }}
+                </slot>
               </div>
 
               <div
                 v-if="item.subtitle"
                 class="step-subtitle text-sm text-disabled"
               >
-                {{ $t(item.subtitle) }}
+                <slot
+                  name="subtitle"
+                  :index="index"
+                  :subtitle="$t(item.subtitle)"
+                >
+                  <span class="text-sm">{{ $t(item.subtitle) }}</span>
+                </slot>
               </div>
             </div>
 

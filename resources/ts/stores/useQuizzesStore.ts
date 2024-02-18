@@ -1,5 +1,11 @@
 import { QuizStatus } from "@/@core/enums";
-import { PaginationResponse, Quiz, QuizForm, ResourceResponse } from "@/types";
+import {
+  PaginationResponse,
+  QuestionAnwser,
+  Quiz,
+  QuizForm,
+  ResourceResponse,
+} from "@/types";
 import { FetchOptions } from "ofetch";
 
 export const useQuizzesStore = defineStore({
@@ -49,5 +55,13 @@ export const useQuizzesStore = defineStore({
     ) {
       return await $api.patch(`/quizzes/${id}/schedule`, { date }, options);
     },
+    async anwserQuestion(id: number, response: QuestionAnwser) {
+      return await $api.post(`/questions/${id}/anwser`, {
+        answers: response.answers,
+        custom_answer: JSON.stringify(response.custom_answer || {}),
+      });
+    },
   },
 });
+if (import.meta.hot)
+  import.meta.hot.accept(acceptHMRUpdate(useQuizzesStore, import.meta.hot));

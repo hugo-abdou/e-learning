@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('author_id')->constrained('users')->onDelete('cascade');
             $table->string('title');
+            $table->string('slug');
             $table->text('description')->nullable();
             $table->integer('duration')->default(0);
             $table->enum('status', ['draft', 'private', 'published', 'scheduled', 'error', 'closed'])->default('draft');
@@ -29,7 +30,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('quiz_id')->constrained('quizzes')->onDelete('cascade');
             $table->boolean('allow_custom_answer')->default(false);
-            $table->text('question');
+            $table->boolean('show_answer_after_response')->default(false);
+            $table->text('question')->default('{}');
+            $table->text('answer')->default('{}');
             $table->timestamps();
         });
 

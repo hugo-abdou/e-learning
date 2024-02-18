@@ -1,12 +1,9 @@
 <template>
-  <div
-    style="--max-height: 100px"
-    ref="editorEl"
-    :id="holder"
-    class="py-5"
-  ></div>
+  <div style="--max-height: 100px" ref="editorEl" :id="holder"></div>
 </template>
 <script setup lang="ts">
+import { $resumable } from "@/utils/resumable";
+import { ResumableFile } from "@/utils/uppy/ResumableTypes";
 import Checklist from "@editorjs/checklist";
 import CodeTool from "@editorjs/code";
 import Delimiter from "@editorjs/delimiter";
@@ -23,6 +20,7 @@ import RawTool from "@editorjs/raw";
 import Table from "@editorjs/table";
 import Warning from "@editorjs/warning";
 import MathTex from "editorjs-math";
+
 interface Props {}
 const props = withDefaults(defineProps<EditorConfig & Props>(), {
   minHeight: 70,
@@ -51,24 +49,22 @@ const editorTools = {
     class: BookCoverToolfrom,
     config: {
       uploader: {
-        async uploadByFile(file: File) {
-          const formPost = new FormData();
-          formPost.append("file", file, file.name);
-          // your own uploading logic here
-          try {
-            const res = await $api.post<{ url: string }>(
-              "/media/upload",
-              formPost
+        uploadByFile(file: File) {
+          return new Promise((resolve, reject) => {
+            $resumable.addFile(file);
+            $resumable.on("fileAdded", (file: ResumableFile) => {
+              $resumable.upload();
+            });
+            $resumable.on(
+              "fileSuccess",
+              (file: ResumableFile, message: string) => {
+                if (message !== "Ok") {
+                  const res = JSON.parse(message);
+                  resolve({ success: 1, file: { url: res.url } });
+                }
+              }
             );
-            return {
-              success: 1,
-              file: {
-                url: res.url,
-              },
-            };
-          } catch (error) {
-            throw error;
-          }
+          });
         },
         async uploadByUrl(url: string) {
           console.log(url);
@@ -151,7 +147,7 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-  editor.value?.destroy();
+  if (editor.value) editor.value?.destroy();
 });
 
 defineExpose({ editor, id: props.holder });
@@ -194,8 +190,8 @@ defineExpose({ editor, id: props.holder });
 @media (hover: hover) {
   .ce-toolbar__settings-btn:hover,
   .ce-toolbar__plus:hover {
-    color: rgba(
-      var(--v-theme-background),
+    background-color: rgba(
+      var(--v-theme-surface),
       var(--v-high-emphasis-opacity)
     ) !important;
   }

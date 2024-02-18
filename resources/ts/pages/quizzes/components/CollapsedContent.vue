@@ -1,5 +1,5 @@
 <template>
-  <VCard v-bind="$attrs">
+  <VCard class="v-card--flat border" v-bind="$attrs">
     <template #append>
       <slot name="append" />
       <IconBtn

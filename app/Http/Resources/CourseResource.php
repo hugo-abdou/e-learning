@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources;
 
+
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -18,7 +20,7 @@ class CourseResource extends JsonResource
     {
         $data = [
             "id" => $this->id,
-            "title" => $this->title,
+            'title' => Str::title($this->title),
             "slug" => $this->slug,
             "description" => $this->description,
             "author" => $this->author->only(["id", "name", 'profile_photo_url']),
@@ -33,6 +35,9 @@ class CourseResource extends JsonResource
         if ($additional = json_decode($request->get('additional', "[]"))) {
             if (isset($additional->chaptersCount)) {
                 $data["chaptersCount"] = $this->chapters()->count();
+            }
+            if (isset($additional->quizzes)) {
+                $data["quizzes"] = QuizResource::collection($this->whenLoaded("quizzes"));
             }
             if (isset($additional->chapters)) {
                 $data["chapters"] = ChapterResource::collection($this->whenLoaded("chapters"));

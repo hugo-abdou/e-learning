@@ -72,12 +72,15 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
     Route::get('courses/{course:slug}', [CoursesController::class, 'show']);
     Route::patch('courses/{course}/publish', PublishCourseController::class);
     Route::patch('courses/{course}/schedule', ScheduleCourseController::class);
+    Route::get('courses/{course:slug}/quizzes', [CoursesController::class, 'quizzes']);
+    Route::post('courses/{course}/quizzes', [CoursesController::class, 'attach_quizzes']);
     Route::apiResource('chapters', ChapterController::class);
     Route::apiResource('analytics', AnalyticController::class);
     ////////////////////////////////////////////////////////////////////////////////
     Route::apiResource('quizzes', QuizController::class);
     Route::patch('quizzes/{quiz}/publish', PublishQuizController::class);
     Route::patch('quizzes/{quiz}/schedule', ScheduleQuizController::class);
+    Route::post('questions/{question}/anwser', [QuizController::class, 'store_store']);
     ////////////////////////////////////////////////////////////////////////////////
     Route::get('{resource}/{resourceId}/attachments', [AttachmentsController::class, 'index']);
     Route::get('{resource}/{resourceId}/attachments/{attachment}', [AttachmentsController::class, 'show']);

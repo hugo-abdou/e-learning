@@ -1,4 +1,5 @@
 import VueI18nPlugin from "@intlify/unplugin-vue-i18n/vite";
+import basicSsl from "@vitejs/plugin-basic-ssl";
 import vue from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
 import laravel from "laravel-vite-plugin";
@@ -18,6 +19,7 @@ import vuetify from "vite-plugin-vuetify";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
+    basicSsl(),
     // Docs: https://github.com/posva/unplugin-vue-router
     // ℹ️ This plugin should be placed before vue plugin
     VueRouter({
@@ -157,7 +159,8 @@ export default defineConfig({
     entries: ["./resources/ts/**/*.vue"],
   },
   server: {
-    hmr: { overlay: false },
+    https: true,
+    // hmr: { overlay: false },
     watch: {
       ignored: [`${__dirname}/storage/**/*.*`, `${__dirname}/public/**/*.*`],
     },

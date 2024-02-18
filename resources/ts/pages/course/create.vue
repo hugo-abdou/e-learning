@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { CourseStatus } from "@/@core/enums";
+import { CourseDifficulty, CourseStatus } from "@/@core/enums";
 import { useCourseStore } from "@/stores/useCourseStore";
-import type { Chapter, ChapterForm, Course, CourseForm } from "@/types";
+import type { Chapter, ChapterForm, CourseForm } from "@/types";
 import type { VForm } from "vuetify/components/VForm";
 definePage({
   meta: {
@@ -10,7 +10,6 @@ definePage({
     redirectIfNotVerified: true,
   },
 });
-const currentStep = ref(0);
 
 const visibility = ref<"publish" | "schedule">("publish");
 const publishStatus = ref<"Private" | "Published">("Private");
@@ -37,33 +36,53 @@ const steps = ref([
     id: 1,
     icon: "tabler-clipboard",
     title: "course.steps.details.title",
+    subtitle: "course.steps.details.subtitle",
     component: null as { formEl: VForm; validate: () => Promise<any> } | null,
   },
   {
     id: 2,
     icon: "grommet-icons:chapter-add",
     title: "course.steps.chapters.title",
+    subtitle: "course.steps.chapters.subtitle",
     component: null as { formEl: VForm; validate: () => Promise<any> } | null,
   },
   {
     id: 3,
+    icon: "fluent:quiz-new-20-regular",
+    title: "course.steps.quizzes.title",
+    subtitle: "course.steps.quizzes.subtitle",
+    component: null,
+  },
+  {
+    id: 4,
     icon: "mdi-publish",
     title: "course.steps.visibility.title",
+    subtitle: "course.steps.visibility.subtitle",
     component: null,
   },
 ]);
 
-const course = ref<Course>();
+const currentStep = ref(0);
+const idQuizDialogOpen = ref(false);
 
 const router = useRouter();
 const courseStore = useCourseStore();
 
 const form = ref<{
-  course: CourseForm | null;
+  course: CourseForm;
   chapters: ChapterForm[];
+
+  quizzes: number[];
 }>({
-  course: null,
+  course: {
+    description: "",
+    thumbnail: undefined,
+    difficulty: CourseDifficulty.Beginner,
+    status: CourseStatus.Draft,
+    title: "",
+  },
   chapters: [],
+  quizzes: [],
 });
 
 const nextStep = async () => {
@@ -105,6 +124,8 @@ const submit = async () => {
         courseStore.createChapter(course.id, form)
       )
     );
+    await courseStore.attachQuizzes(course.id, form.value.quizzes);
+
     if (visibility.value === "schedule")
       await courseStore.scheduleCourse(course.id, scheduleDate.value);
 
@@ -119,92 +140,120 @@ const submit = async () => {
 </script>
 
 <template>
-  <VRow align="center">
-    <!-- 👉 Stepper -->
-    <VCol>
-      <AppStepper :current-step="currentStep" :items="steps" />
-    </VCol>
+  <VCard>
+    <VCardText>
+      <AppStepper
+        icon-size="24"
+        class="stepper-icon-step-bg"
+        align="start"
+        :current-step="currentStep"
+        :items="steps"
+      />
+    </VCardText>
+    <VDivider class="mb-5" />
+    <VWindow
+      v-model="currentStep"
+      class="disable-tab-transition stepper-content mt-5"
+    >
+      <VWindowItem>
+        <VCardTitle>{{ $t("course.steps.details.title") }}</VCardTitle>
+        <VCardSubtitle>
+          {{ $t("course.steps.details.subtitle") }}
+        </VCardSubtitle>
+        <CourseDetailsForm :ref="el => (steps[0].component = el as null)" />
+      </VWindowItem>
 
-    <VCol cols="12">
-      <VWindow
-        v-model="currentStep"
-        class="disable-tab-transition stepper-content mt-5"
+      <VWindowItem>
+        <VCardTitle>{{ $t("course.steps.chapters.title") }}</VCardTitle>
+        <VCardSubtitle>
+          {{ $t("course.steps.chapters.subtitle") }}
+        </VCardSubtitle>
+        <CourseChaptersForm :ref="el => (steps[1].component = el as null)" />
+      </VWindowItem>
+      <VWindowItem>
+        <VCardItem>
+          <VCardTitle>{{ $t("course.steps.quizzes.title") }}</VCardTitle>
+          <VCardSubtitle>
+            {{ $t("course.steps.quizzes.subtitle") }}
+          </VCardSubtitle>
+          <CourseQuizzesForm v-model="form.quizzes" />
+        </VCardItem>
+      </VWindowItem>
+      <VWindowItem>
+        <VExpansionPanels
+          v-model="visibility"
+          mandatory="force"
+          style="max-width: 500px; margin-inline: auto"
+          variant="accordion"
+        >
+          <VExpansionPanel value="publish">
+            <VExpansionPanelTitle> Save or publish </VExpansionPanelTitle>
+            <VCardSubtitle class="mb-2">
+              Make your video public or private
+            </VCardSubtitle>
+            <VExpansionPanelText>
+              <!-- @vue-ignore -->
+              <CustomRadiosWithIcon
+                v-model:selected-radio="publishStatus"
+                :radio-content="publishStatusList"
+                :grid-column="{ md: '6' }"
+              />
+            </VExpansionPanelText>
+          </VExpansionPanel>
+          <VExpansionPanel value="schedule">
+            <VExpansionPanelTitle> Schedule </VExpansionPanelTitle>
+            <VCardSubtitle class="mb-2">
+              Select a date to make your video public.
+            </VCardSubtitle>
+            <VExpansionPanelText>
+              <DateTimePicker
+                v-model="scheduleDate"
+                style="width: min-content"
+                :config="{
+                  inline: true,
+                  enableTime: true,
+                  dateFormat: 'Z',
+                }"
+              />
+            </VExpansionPanelText>
+          </VExpansionPanel>
+        </VExpansionPanels>
+      </VWindowItem>
+    </VWindow>
+    <VCardActions class="d-flex justify-center pa-5">
+      <VBtn
+        variant="plain"
+        color="secondary"
+        :disabled="currentStep === 0"
+        @click="currentStep--"
       >
-        <VWindowItem>
-          <CourseDetailsForm :ref="el => (steps[0].component = el as null)" />
-        </VWindowItem>
-        <VWindowItem>
-          <CourseChaptersForm :ref="el => (steps[1].component = el as null)" />
-        </VWindowItem>
-        <VWindowItem>
-          <VExpansionPanels
-            v-model="visibility"
-            mandatory="force"
-            style="max-width: 500px; margin-inline: auto"
-            variant="accordion"
-          >
-            <VExpansionPanel value="publish">
-              <VExpansionPanelTitle> Save or publish </VExpansionPanelTitle>
-              <VCardSubtitle class="mb-2">
-                Make your video public or private
-              </VCardSubtitle>
-              <VExpansionPanelText>
-                <!-- @vue-ignore -->
-                <CustomRadiosWithIcon
-                  v-model:selected-radio="publishStatus"
-                  :radio-content="publishStatusList"
-                  :grid-column="{ md: '6' }"
-                />
-              </VExpansionPanelText>
-            </VExpansionPanel>
-            <VExpansionPanel value="schedule">
-              <VExpansionPanelTitle> Schedule </VExpansionPanelTitle>
-              <VCardSubtitle class="mb-2">
-                Select a date to make your video public.
-              </VCardSubtitle>
-              <VExpansionPanelText>
-                <DateTimePicker
-                  v-model="scheduleDate"
-                  style="width: min-content"
-                  :config="{
-                    inline: true,
-                    enableTime: true,
-                    dateFormat: 'Z',
-                  }"
-                />
-              </VExpansionPanelText>
-            </VExpansionPanel>
-          </VExpansionPanels>
-        </VWindowItem>
-      </VWindow>
+        <VIcon icon="tabler-arrow-left" start class="flip-in-rtl" />
+        {{ $t("previous") }}
+      </VBtn>
 
-      <div class="d-flex justify-space-between mt-8">
-        <VBtn
-          variant="plain"
-          color="secondary"
-          :disabled="currentStep === 0"
-          @click="currentStep--"
-        >
-          <VIcon icon="tabler-arrow-left" start class="flip-in-rtl" />
-          {{ $t("previous") }}
-        </VBtn>
+      <VBtn
+        v-if="steps.length - 1 === currentStep"
+        append-icon="tabler-check"
+        color="success"
+        @click="submit"
+      >
+        {{ $t(visibility) }}
+      </VBtn>
 
-        <VBtn
-          v-if="steps.length - 1 === currentStep"
-          append-icon="tabler-check"
-          color="success"
-          @click="submit"
-        >
-          {{ $t(visibility) }}
-        </VBtn>
-
-        <VBtn v-else variant="plain" @click="nextStep">
-          {{ $t("next") }}
-          <VIcon icon="tabler-arrow-right" end class="flip-in-rtl" />
-        </VBtn>
-      </div>
-    </VCol>
-  </VRow>
+      <VBtn v-else variant="plain" @click="nextStep">
+        {{ $t("next") }}
+        <VIcon icon="tabler-arrow-right" end class="flip-in-rtl" />
+      </VBtn>
+    </VCardActions>
+    <VDialog
+      :width="$vuetify.display.smAndDown ? 'auto' : 900"
+      v-model="idQuizDialogOpen"
+    >
+      <!-- 👉 Dialog close btn -->
+      <DialogCloseBtn @click="idQuizDialogOpen = false" />
+      <QuizzesForm status="Published" class="v-card--flat" />
+    </VDialog>
+  </VCard>
 </template>
 
 <style lang="scss">

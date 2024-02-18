@@ -23,15 +23,21 @@ class QuizRequest extends FormRequest
     {
         return [
             "title" => "required|string",
+            "slug" => "required|string",
             "description" => "required|string",
             "duration" => "required|integer",
+            // Questions validation rules
             "questions" => "required|array",
             "questions.*.allow_custom_answer" => "required|boolean",
+            "questions.*.show_answer_after_response" => "required|boolean",
             "questions.*.question" => "required|string",
+            "questions.*.answer" => "required|string",
+            // options validation rules
             "questions.*.options" => "required|array",
             "questions.*.options.*.option" => "required|string",
             "questions.*.options.*.points" => "required|integer",
             "questions.*.options.*.is_correct" => "required|boolean",
+            // Questions attachments rules
             "attachments.*" => 'nullable|array',
             "attachments.*.type" => 'nullable|string',
             "attachments.*.name" => 'nullable|string',

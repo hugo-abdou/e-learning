@@ -36,34 +36,33 @@ const faild = () => (isError.value = true);
 </script>
 
 <template>
-  <VCard
-    class="media-card bg-black d-flex justify-center align-center"
-    :style="style"
-  >
-    <VImg
-      :lazy-src="thumb"
-      :src="!isError ? props.media.url : '/assets/Image_not_available.png'"
-      @error="faild"
-      cover
-      :style="style"
-    >
-      <template v-slot:placeholder>
-        <div class="d-flex align-center justify-center fill-height">
-          <v-progress-circular
-            color="grey-lighten-4"
-            indeterminate
-          ></v-progress-circular>
-        </div>
-      </template>
-    </VImg>
-    <VToolbar
-      v-if="$slots.toolbar"
-      absolute
-      density="compact"
-      class="toolbar-actions px-2"
-    >
-      <VSpacer />
-      <slot name="toolbar" />
-    </VToolbar>
-  </VCard>
+  <div class="h-100 w-100 d-flex justify-center align-center">
+    <VCard class="media-card" :style="style">
+      <VImg
+        :lazy-src="thumb"
+        :src="!isError ? props.media.url : '/assets/Image_not_available.png'"
+        @error="faild"
+        cover
+        :style="style"
+      >
+        <template v-slot:placeholder>
+          <div class="d-flex align-center justify-center fill-height">
+            <v-progress-circular
+              color="grey-lighten-4"
+              indeterminate
+            ></v-progress-circular>
+          </div>
+        </template>
+      </VImg>
+      <VToolbar
+        v-if="$slots.toolbar"
+        absolute
+        density="compact"
+        class="toolbar-actions px-2"
+      >
+        <VSpacer />
+        <slot name="toolbar" />
+      </VToolbar>
+    </VCard>
+  </div>
 </template>

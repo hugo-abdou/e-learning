@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { VideoMedia } from "@/types";
+import { StyleValue } from "vue";
 
 defineOptions({ inheritAttrs: false });
 
@@ -29,15 +30,17 @@ interface Props {
 }
 const props = defineProps<Props>();
 const style = computed(() => {
-  const style = {
+  const style: StyleValue = {
     aspectRatio: (props.aspectRatio ||
       props.media.width / props.media.height) as number,
   };
 
+  // @ts-ignore
   if (style.aspectRatio > 1) {
     style.width = props.media.width + "px";
     style.maxWidth = "100%";
   }
+  // @ts-ignore
   if (style.aspectRatio < 1) {
     style.height = props.media.height + "px";
     style.maxHeight = "100%";

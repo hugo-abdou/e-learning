@@ -18,7 +18,6 @@ const useAnalyticsStore = defineStore("useAnalyticsStore", {
       return this.fetchAnalytics("project-statistics", params);
     },
     fetchProjectsTableStatistics(params?: any) {
-      // return this.fetchAnalytics("project-table-statistics", params);
       return new Promise<ResourceResponse<any>>((resolve, reject) => {
         $api
           .get<ResourceResponse<any>>("/analytics/project-table-statistics", {

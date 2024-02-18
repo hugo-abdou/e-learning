@@ -16,7 +16,6 @@ const props = withDefaults(defineProps<Props>(), {
     difficulty: CourseDifficulty.Beginner,
     status: CourseStatus.Draft,
     title: "",
-    prerequisite_id: "",
   }),
 });
 
@@ -54,102 +53,98 @@ watch(
 
 <template>
   <VForm ref="formEl">
-    <VCard>
-      <VCardItem>
-        <VRow class="mt-0">
-          <VCol cols="12" md="4">
-            <VImg
-              v-if="form.thumbnail"
-              v-bind="{
-                ...UploadBunAttrs,
-                style: 'min-height: 100%',
-                aspectRatio: 1.77,
-              }"
-              :src="form.thumbnail"
-              cover
-            >
-              <template v-slot:error>
-                <v-img
-                  class="mx-auto"
-                  cover
-                  src="/assets/Image_not_available.png"
-                />
-              </template>
-            </VImg>
-            <!-- <Media
-                :media="{ thumb_url: form.thumbnail, status: 2, type: 'image' }"
-                aspect-ratio="1.77"
-                deletable
-                preview
-                @on-delete="form.thumbnail = undefined"
-              /> -->
-            <template v-else>
-              <InfoTooltip
-                v-slot="{ props }"
-                :text="$t('media.upload.description')"
-              >
-                <VBtn
-                  v-bind="{
-                    ...props,
-                    ...UploadBunAttrs,
-                    style: 'min-height: 130px',
-                  }"
-                  @click="isUploaderopen = true"
-                >
-                  <div class="d-flex flex-column align-center">
-                    <VIcon icon="flat-color-icons:add-image" size="28" />
-                    <VLabel class="mt-2">
-                      {{ $t("media.thumbnale") }}
-                    </VLabel>
-                  </div>
-                </VBtn>
-              </InfoTooltip>
+    <VCardItem>
+      <VRow class="mt-0">
+        <VCol cols="12" md="4">
+          <VImg
+            v-if="form.thumbnail"
+            v-bind="{
+              ...UploadBunAttrs,
+              style: 'min-height: 100%',
+              aspectRatio: 1.77,
+            }"
+            :src="form.thumbnail"
+            cover
+          >
+            <template v-slot:error>
+              <v-img
+                class="mx-auto"
+                cover
+                src="/assets/Image_not_available.png"
+              />
             </template>
-          </VCol>
-          <VCol cols="12" md="8">
-            <VTextField
-              v-model="form.title"
-              :rules="[requiredValidator]"
-              :label="$t('course.fields.title.label')"
-              class="mb-5"
+          </VImg>
+          <!-- <Media
+              :media="{ thumb_url: form.thumbnail, status: 2, type: 'image' }"
+              aspect-ratio="1.77"
+              deletable
+              preview
+              @on-delete="form.thumbnail = undefined"
+            /> -->
+          <template v-else>
+            <InfoTooltip
+              v-slot="{ props }"
+              :text="$t('media.upload.description')"
             >
-              <template #append-inner>
-                <InfoTooltip :text="$t('course.fields.title.description')" />
-              </template>
-            </VTextField>
-            <VTextarea
-              v-model="form.description"
-              :rules="[requiredValidator]"
-              :label="$t('course.fields.description.label')"
-            >
-              <template #append-inner>
-                <InfoTooltip
-                  :text="$t('course.fields.description.description')"
-                />
-              </template>
-            </VTextarea>
-          </VCol>
-          <VCol cols="12" sm="6">
-            <AppSelect
-              v-model="form.difficulty"
-              :items="
-                Object.values(CourseDifficulty).map((val) => ({
-                  title: $t(`course.fields.difficulty.options.${val}`),
-                  value: val,
-                }))
-              "
-              :label="$t('course.fields.difficulty.label')"
-            >
-              <template #append-inner>
-                <InfoTooltip
-                  :text="$t('course.fields.difficulty.description')"
-                />
-              </template>
-            </AppSelect>
-          </VCol>
-        </VRow>
-      </VCardItem>
-    </VCard>
+              <VBtn
+                v-bind="{
+                  ...props,
+                  ...UploadBunAttrs,
+                  style: 'min-height: 130px',
+                }"
+                @click="isUploaderopen = true"
+              >
+                <div class="d-flex flex-column align-center">
+                  <VIcon icon="flat-color-icons:add-image" size="28" />
+                  <VLabel class="mt-2">
+                    {{ $t("media.thumbnale") }}
+                  </VLabel>
+                </div>
+              </VBtn>
+            </InfoTooltip>
+          </template>
+        </VCol>
+        <VCol cols="12" md="8">
+          <VTextField
+            v-model="form.title"
+            :rules="[requiredValidator]"
+            :label="$t('course.fields.title.label')"
+            class="mb-5"
+          >
+            <template #append-inner>
+              <InfoTooltip :text="$t('course.fields.title.description')" />
+            </template>
+          </VTextField>
+          <VTextarea
+            v-model="form.description"
+            :rules="[requiredValidator]"
+            :label="$t('course.fields.description.label')"
+          >
+            <template #append-inner>
+              <InfoTooltip
+                :text="$t('course.fields.description.description')"
+              />
+            </template>
+          </VTextarea>
+        </VCol>
+        <VCol cols="12" sm="6">
+          <AppSelect
+            v-model="form.difficulty"
+            :items="
+              Object.values(CourseDifficulty).map((val) => ({
+                title: $t(`course.fields.difficulty.options.${val}`),
+                value: val,
+              }))
+            "
+            :label="$t('course.fields.difficulty.label')"
+          >
+            <template #append-inner>
+              <InfoTooltip :text="$t('course.fields.difficulty.description')" />
+            </template>
+          </AppSelect>
+        </VCol>
+      </VRow>
+    </VCardItem>
   </VForm>
   <FileUploaderDialog
     v-model:is-dialog-visible="isUploaderopen"

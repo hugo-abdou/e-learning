@@ -8,6 +8,7 @@ use App\Filters\Sort;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\QuizRequest;
 use App\Http\Resources\QuizResource;
+use App\Models\Question;
 use App\Models\Quiz;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -24,7 +25,7 @@ class QuizController extends Controller
             new Search(['title', 'status', 'description']),
             Sort::class,
         ])->thenReturn();
-        return QuizResource::collection($quizzes->paginate($request->get('itemsPerPage', 10)));
+        return QuizResource::collection($quizzes->paginate($request->get('itemsPerPage', auth()->user()->quizzes()->count())));
     }
 
     /**
@@ -36,6 +37,7 @@ class QuizController extends Controller
         $quiz = auth()->user()->quizzes()
             ->create([
                 "title" => $request->validated("title"),
+                "slug" => $request->validated("slug"),
                 "description" => $request->validated("description"),
                 "duration" => $request->validated("duration"),
                 'status' => QuizStatus::Draft->value
@@ -43,7 +45,9 @@ class QuizController extends Controller
         collect($request->validated('questions', []))->each(function ($question) use ($quiz) {
             $createdQuestion = $quiz->questions()->create([
                 "allow_custom_answer" => $question['allow_custom_answer'],
+                "show_answer_after_response" => $question['show_answer_after_response'],
                 "question" => $question['question'],
+                "answer" => $question['answer'],
             ]);
             collect($question['options'])->each(function ($option) use ($createdQuestion) {
                 $createdQuestion->answers()->create([
@@ -61,9 +65,9 @@ class QuizController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($quiz)
+    public function show($quiz, Request $request)
     {
-        return QuizResource::make(Quiz::with(['chapters', 'chapters.attachments'])->findOrFail($quiz));
+        return QuizResource::make(Quiz::with($request->get('with', []))->findOrFail($quiz))->resolve();
     }
 
     /**
@@ -81,6 +85,20 @@ class QuizController extends Controller
     public function destroy(Quiz $quiz)
     {
         $quiz->delete();
+        return response()->json(['message' => 'Quiz deleted successfully']);
+    }
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function store_store(Question $question, Request $request)
+    {
+        $data = $request->validate([
+            "answers" => "required|array",
+            "custom_answer" => "required|string",
+        ]);
+
+        dd($data);
+
         return response()->json(['message' => 'Quiz deleted successfully']);
     }
 }

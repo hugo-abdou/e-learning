@@ -26,14 +26,4 @@ class Chapter extends Model
     {
         return $this->belongsTo(Course::class);
     }
-
-    /**
-     * The quizzes that belong to the Chapter
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function quizzes(): BelongsToMany
-    {
-        return $this->belongsToMany(Quiz::class);
-    }
 }

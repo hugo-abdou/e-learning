@@ -49,7 +49,7 @@ class UsersController extends Controller
             }
         ])
             ->thenReturn()
-            ->paginate($request->get('itemsPerPage', 10));
+            ->paginate($request->get('itemsPerPage', $query->count()));
 
         return UserResource::collection($records);
     }

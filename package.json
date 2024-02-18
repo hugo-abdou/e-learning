@@ -42,6 +42,7 @@
     "@tiptap/starter-kit": "^2.1.12",
     "@tiptap/vue-3": "^2.1.12",
     "@uppy/xhr-upload": "^2.1.0",
+    "@vitejs/plugin-basic-ssl": "^1.1.0",
     "@vueuse/core": "^10.4.1",
     "@vueuse/math": "^10.4.1",
     "apexcharts-clevision": "^3.28.5",

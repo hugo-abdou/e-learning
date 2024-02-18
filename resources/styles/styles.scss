@@ -83,3 +83,10 @@
 [data-fill-palette-color="secondary"] {
   fill: rgb(var(--v-theme-secondary)) !important;
 }
+
+@media (max-width: 768px) {
+  .layout-navbar,
+  .layout-page-content {
+    padding-inline: 0.8rem !important;
+  }
+}

@@ -9,7 +9,7 @@
 
     "upload": {
       "label": "Upload",
-      "description": "Upload a file from your desktop or choose one from your gallery"
+      "description": "Upload a files from your desktop or choose one from your gallery"
     }
   },
   "Didn't get the mail?": "Didn't get the mail?",
@@ -54,6 +54,45 @@
   "BROWSER": "BROWSER",
   "IP": "IP",
   "RECENT ACTIVITIES": "RECENT ACTIVITIES",
+  "quiz": {
+    "fields": {},
+    "steps": {
+      "details": {
+        "title": "Quiz Details",
+        "subtitle": "Provide detailed information about your Quiz"
+      },
+      "questions": {
+        "title": "Quiz Questions",
+        "subtitle": "Select the Attachments that are related to this quiz."
+      },
+      "attachments": {
+        "title": "Attachments",
+        "subtitle": "Select the Attachments that are related to this quiz."
+      },
+      "visibility": {
+        "title": "Visibility",
+        "subtitle": "Choose when to publish and who can see your Quiz."
+      }
+    },
+    "questions": {
+      "no_questions": "No questions added yet",
+      "points": "Points",
+      "question": "Question"
+    },
+    "answers": {
+      "title": "Answers",
+      "subtitle": "Provide detailed answers to each question in the quiz"
+    },
+    "custom_answer": {
+      "placeholder": "Type your answer here",
+      "title": "Custom Answer",
+      "subtitle": "Provide a personalized or unique response"
+    },
+    "correct_answer": {
+      "title": "Correct Answer",
+      "subtitle": "This is the correct answer. Take time to understand it for future learning."
+    }
+  },
   "course": {
     "fields": {
       "title": {
@@ -95,6 +134,9 @@
         "title": "Visibility",
         "subtitle": "Choose when to publish and who can see your video"
       }
+    },
+    "chapters": {
+      "no_chapters": "No chapters added yet"
     }
   },
   "chapter": {
@@ -114,14 +156,6 @@
       "visibility": {
         "label": "Visibility",
         "description": "Choose who can see this media, such as everyone, registered users, or specific groups."
-      },
-      "quizzes": {
-        "label": "Quizzes",
-        "description": "Select the quizzes that are related to this chapter."
-      },
-      "attachments": {
-        "label": "Attachments",
-        "description": "Select the quizzes that are related to this chapter."
       }
     }
   },

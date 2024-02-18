@@ -142,13 +142,19 @@ const currentTab = ref(0);
             />
           </VWindowItem>
           <VWindowItem>
-            <CoursePlayList v-if="course" :course-id="course?.slug" />
+            <LessonsPlayList v-if="course" :course-id="course?.slug" />
             <VSkeletonLoader
               v-else
               :type="Array(5).fill('list-item-avatar-three-line')"
             />
           </VWindowItem>
-          <VWindowItem> </VWindowItem>
+          <VWindowItem>
+            <QuizzesPlayList v-if="course" :course-id="course?.slug" />
+            <VSkeletonLoader
+              v-else
+              :type="Array(5).fill('list-item-avatar-three-line')"
+            />
+          </VWindowItem>
         </VWindow>
       </VCard>
     </VCol>

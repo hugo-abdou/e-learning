@@ -1,5 +1,5 @@
+import { $resumable } from "@/utils/resumable";
 import Uppy, { BasePlugin, PluginOptions } from "@uppy/core";
-import Resumable from "resumablejs";
 import { ResumableFile } from "./ResumableTypes";
 import BunnyStreem from "./bunny";
 
@@ -8,15 +8,12 @@ export default class ResumableUppyPlugin extends BasePlugin {
   id: string;
   type: string;
   resumable: any;
-  token: string;
 
   constructor(uppy: Uppy, opts?: PluginOptions | undefined) {
     super(uppy, opts);
     this.uppy = uppy;
     this.id = "ResumableUppyPlugin";
     this.type = "uploader";
-
-    this.token = useCookie("access_token").value as string;
 
     // Bind your methods
     this.upload = this.upload.bind(this);
@@ -29,17 +26,7 @@ export default class ResumableUppyPlugin extends BasePlugin {
 
   initResumable() {
     // Initialize Resumable.js with your configuration
-    this.resumable = new Resumable({
-      target: "/api/media/upload",
-      headers: {
-        Accept: "application/json",
-        common: { "X-Requested-With": "XMLHttpRequest" },
-        Authorization: `Bearer ${this.token}`,
-      },
-      chunkSize: 1024 * 1024,
-      simultaneousUploads: 1,
-      maxChunkRetries: 3,
-    });
+    this.resumable = $resumable;
   }
 
   async upload(fileIDs: string[]) {
@@ -148,17 +135,6 @@ export default class ResumableUppyPlugin extends BasePlugin {
         try {
           error = JSON.parse(_error);
         } catch (error) {}
-        // @ts-ignore
-        if (error?.message === "Unauthenticated.") {
-          const { access_token } = await $api.refreshAccessToken();
-          $this.token = access_token;
-        }
-        // @ts-ignore
-        if (error?.error === "invalid_request") {
-          useCookie("access_token").value = null;
-          useCookie("refresh_token").value = null;
-          await $api.refreshAccessToken();
-        }
         this.uppy.emit(
           "upload-error",
           this.uppy.getFile(file.file.uuid),

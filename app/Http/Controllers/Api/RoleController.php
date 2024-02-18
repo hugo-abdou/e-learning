@@ -32,7 +32,7 @@ class RoleController extends Controller
      */
     public function permissions(Request $request)
     {
-        return PermissionResource::collection(Permission::paginate($request->get('itemsPerPage', 100)));
+        return PermissionResource::collection(Permission::paginate($request->get('itemsPerPage', Permission::count())));
     }
 
     /**

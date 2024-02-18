@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { requiredValidator } from "@/@core/utils/validators";
 import Media from "@/components/Media";
+import useSnackBarStore from "@/components/SnackBar/useSnackBarStore";
 import { delay } from "@/helpers";
 import { useCourseStore } from "@/stores/useCourseStore";
-import type { ChapterForm, Media as MediaType, Quiz } from "@/types";
+import type { ChapterForm, Media as MediaType } from "@/types";
 import { UploadBunAttrs, scrollToTop } from "@/utils";
 import slugify from "slugify";
 import { VForm } from "vuetify/components/VForm";
@@ -17,11 +18,10 @@ const props = withDefaults(defineProps<Props>(), {
   chapters: () => [],
   gridType: "list",
 });
-
+const snakbar = useSnackBarStore();
 const courseStore = useCourseStore();
 const currentChapter = ref(0);
 const chaptersForm = ref<ChapterForm[]>(props.chapters);
-const quizzes = ref<Quiz[]>([]);
 
 // @ts-expect-error
 const formEl = ref<VForm>({});
@@ -47,19 +47,14 @@ const uploaderRules = computed(() => {
   };
 });
 
-const quizStore = useQuizzesStore();
 onMounted(() => {
   if (chaptersForm.value.length === 0)
     chaptersForm.value.push({
       title: "",
       attachments: [],
-      quizzes: [],
       order: 0,
       id: 0,
     });
-  quizStore
-    .getQuizzes({ params: { itemsPerPage: 1000 } })
-    .then(({ data }) => (quizzes.value = data));
 });
 
 const closeDialog = () => {
@@ -102,6 +97,10 @@ const validateChapters = () => {
 
       const { valid } = await formEl.value.validate();
       if (!valid) {
+        snakbar.add({
+          text: "Please fill all the required fields on chapter " + (i + 1),
+          color: "error",
+        });
         scrollToTop();
 
         return reject(new Error("validation faild"));
@@ -117,12 +116,13 @@ const addChapter = async () => {
     chaptersForm.value.push({
       title: "",
       attachments: [],
-      quizzes: [],
       order: chaptersForm.value.length,
       id: 0,
     });
     currentChapter.value++;
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const up = (index: number) => {
@@ -156,178 +156,145 @@ defineExpose({ formEl, validate });
 
 <template>
   <VForm ref="formEl">
-    <VExpansionPanels
-      v-model="currentChapter"
-      :class="chaptersForm.length > 1 && 'no-icon-rotate'"
-      variant="default"
+    <CollapsedContent
+      v-for="(chapter, i) in chaptersForm"
+      :key="i"
+      class="mt-5 ma-5"
+      prepend-icon="tabler-device-ipad-question"
+      :title="chapter.title || `Chapter ${i + 1}`"
     >
-      <VExpansionPanel v-for="(chapter, i) in chaptersForm" :key="i">
-        <VExpansionPanelTitle>
-          <VCardTitle
-            style="inline-size: 90%"
-            class="text-capitalize d-flex pr-0"
+      <template v-if="chaptersForm.length > 1" #append>
+        <IconBtn
+          variant="text"
+          :disabled="i === 0"
+          icon="mdi-arrow-up"
+          @click.stop="up(i)"
+        />
+        <IconBtn
+          variant="text"
+          :disabled="i + 1 >= chapters.length"
+          icon="mdi-arrow-down"
+          @click.stop="down(i)"
+        />
+        <IconBtn
+          variant="text"
+          icon="tabler-trash"
+          color="error"
+          @click.stop="deleteChapter(i)"
+        />
+        <!-- <IconBtn @click="copyQuestion(index)" icon="tabler-copy" />
+              <IconBtn
+                @click="removeQuestion(index)"
+                color="error"
+                icon="tabler-trash"
+              /> -->
+      </template>
+      <VCardText class="">
+        <VRow>
+          <VCol cols="12" class="mb-2">
+            <VTextField
+              v-model="chapter.title"
+              :rules="[requiredValidator]"
+              :label="$t('chapter.fields.title.label')"
+            />
+          </VCol>
+          <Masonry
+            v-slot="{ item: doc, index }"
+            class="w-100"
+            :items="chapter.attachments"
+            :grid="{ cols: '12' }"
           >
-            <span class="text-truncate">
-              {{ chapter.title || `Chapter ${i + 1}` }}
-            </span>
-            <VSpacer />
-          </VCardTitle>
-          <template v-if="chaptersForm.length > 1" #actions>
-            <VMenu transition="speed-dial-left" location="left center">
-              <template #activator="{ props }">
-                <ActionButton
-                  variant="plain"
-                  color="default"
-                  v-bind="props"
-                  icon="mdi-dots-vertical"
-                />
-              </template>
-              <VList class="mr-1 px-2 d-flex gap-1 bg-background">
-                <ActionButton
-                  variant="text"
-                  :disabled="i === 0"
-                  icon="mdi-arrow-up"
-                  @click.stop="up(i)"
-                />
-                <ActionButton
-                  variant="text"
-                  :disabled="i + 1 >= chapters.length"
-                  icon="mdi-arrow-down"
-                  @click.stop="down(i)"
-                />
-                <ActionButton
-                  variant="text"
-                  icon="tabler-trash"
-                  color="error"
-                  @click.stop="deleteChapter(i)"
-                />
-              </VList>
-            </VMenu>
-          </template>
-        </VExpansionPanelTitle>
-        <VExpansionPanelText class="border-t">
-          <VCardText class="mb-5">
-            <VRow>
-              <VCol cols="12" class="mb-2">
-                <VTextField
-                  v-model="chapter.title"
-                  :rules="[requiredValidator]"
-                  :label="$t('chapter.fields.title.label')"
-                />
-              </VCol>
-              <Masonry
-                v-slot="{ item: doc, index }"
-                class="w-100"
-                :items="chapter.attachments"
-                :grid="{ cols: '12' }"
+            <VCard class="bg-background">
+              <div
+                class="d-flex justify-space-between align-center flex-wrap flex-md-nowrap flex-column flex-md-row"
               >
-                <VCard class="bg-background">
-                  <div
-                    class="d-flex justify-space-between align-center flex-wrap flex-md-nowrap flex-column flex-md-row"
-                  >
-                    <div class="v-col-md-4 pa-0 pa-md-2 h-100">
-                      <Media
-                        :media="doc"
-                        preview
-                        deletable
-                        @delete="
-                          () => {
-                            chapter.attachments = chapter.attachments.filter(
-                              (_, i) => i !== index
-                            );
-                          }
-                        "
-                      />
-                    </div>
-                    <VDivider :vertical="$vuetify.display.mdAndUp" />
-                    <div class="v-col-md-8">
-                      <VCardText>
-                        <VTextField
-                          v-model="doc.name"
-                          :rules="[requiredValidator]"
-                          :label="$t('chapter.fields.title.label')"
-                        />
-                      </VCardText>
-                      <VCardText>
-                        <VSelect
-                          v-model="doc.visibility"
-                          :items="['Public', 'Plan A', 'Plan B']"
-                          :label="$t('chapter.fields.visibility.label')"
-                          :rules="[requiredValidator]"
-                          chips
-                          multiple
-                        >
-                          <template #append-inner>
-                            <InfoTooltip
-                              :text="
-                                $t('chapter.fields.visibility.description')
-                              "
-                            />
-                          </template>
-                        </VSelect>
-                      </VCardText>
-                      <VCardText class="d-flex justify-space-between">
-                        <VSwitch
-                          v-model="doc.download"
-                          :label="$t('chapter.fields.download.label')"
-                        />
+                <div class="v-col-md-4 pa-0 pa-md-2 h-100">
+                  <Media
+                    :media="doc"
+                    preview
+                    deletable
+                    @delete="
+                      () => {
+                        chapter.attachments = chapter.attachments.filter(
+                          (_, i) => i !== index
+                        );
+                      }
+                    "
+                  />
+                </div>
+                <VDivider :vertical="$vuetify.display.mdAndUp" />
+                <div class="v-col-md-8">
+                  <VCardText>
+                    <VTextField
+                      v-model="doc.name"
+                      :rules="[requiredValidator]"
+                      :label="$t('chapter.fields.title.label')"
+                    />
+                  </VCardText>
+                  <VCardText>
+                    <VSelect
+                      v-model="doc.visibility"
+                      :items="['Public', 'Plan A', 'Plan B']"
+                      :label="$t('chapter.fields.visibility.label')"
+                      :rules="[requiredValidator]"
+                      chips
+                      multiple
+                    >
+                      <template #append-inner>
                         <InfoTooltip
-                          :text="$t('chapter.fields.download.description')"
+                          :text="$t('chapter.fields.visibility.description')"
                         />
-                      </VCardText>
-                      <VCardText v-if="doc.type === 'pdf'">
-                        <VTextField
-                          v-model="doc.watermark"
-                          :label="$t('chapter.fields.watermark.label')"
-                        >
-                          <template #append-inner>
-                            <InfoTooltip
-                              :text="$t('chapter.fields.watermark.description')"
-                            />
-                          </template>
-                        </VTextField>
-                      </VCardText>
-                    </div>
-                  </div>
-                </VCard>
-              </Masonry>
-              <VCol cols="12" class="mb-4">
-                <VLabel :text="$t('chapter.fields.attachments.label')" />
-                <InfoTooltip
-                  v-slot="{ props }"
-                  text="upload the course materials that you prepare for this chapter"
-                >
-                  <VBtn
-                    v-bind="{ ...props, ...UploadBunAttrs }"
-                    style="block-size: 100%"
-                    @click="openDialog('upload-chapter-attachment')"
-                  >
-                    <div class="d-flex flex-column align-center">
-                      <VIcon icon="fluent:document-add-16-regular" size="32" />
-                      <VLabel class="mt-2">
-                        {{ $t("media.upload.label") }}
-                      </VLabel>
-                    </div>
-                  </VBtn>
-                </InfoTooltip>
-              </VCol>
-              <VCol cols="12" class="mb-4">
-                <AppSelect
-                  v-model="chapter.quizzes"
-                  :items="quizzes"
-                  label="Quizzes"
-                  item-value="id"
-                  placeholder="Select Quizzes"
-                  chips
-                  multiple
-                  closable-chips
-                />
-              </VCol>
-            </VRow>
-          </VCardText>
-        </VExpansionPanelText>
-      </VExpansionPanel>
-    </VExpansionPanels>
+                      </template>
+                    </VSelect>
+                  </VCardText>
+                  <VCardText class="d-flex justify-space-between">
+                    <VSwitch
+                      v-model="doc.download"
+                      :label="$t('chapter.fields.download.label')"
+                    />
+                    <InfoTooltip
+                      :text="$t('chapter.fields.download.description')"
+                    />
+                  </VCardText>
+                  <VCardText v-if="doc.type === 'pdf'">
+                    <VTextField
+                      v-model="doc.watermark"
+                      :label="$t('chapter.fields.watermark.label')"
+                    >
+                      <template #append-inner>
+                        <InfoTooltip
+                          :text="$t('chapter.fields.watermark.description')"
+                        />
+                      </template>
+                    </VTextField>
+                  </VCardText>
+                </div>
+              </div>
+            </VCard>
+          </Masonry>
+          <VCol cols="12" class="mb-4">
+            <VLabel :text="$t('chapter.fields.attachments.label')" />
+            <InfoTooltip
+              v-slot="{ props }"
+              text="upload the course materials that you prepare for this chapter"
+            >
+              <VBtn
+                v-bind="{ ...props, ...UploadBunAttrs }"
+                style="block-size: 100%"
+                @click="openDialog('upload-chapter-attachment')"
+              >
+                <div class="d-flex flex-column align-center">
+                  <VIcon icon="fluent:document-add-16-regular" size="32" />
+                  <VLabel class="mt-2">
+                    {{ $t("media.upload.label") }}
+                  </VLabel>
+                </div>
+              </VBtn>
+            </InfoTooltip>
+          </VCol>
+        </VRow>
+      </VCardText>
+    </CollapsedContent>
   </VForm>
   <div class="text-center">
     <VBtn
@@ -347,3 +314,9 @@ defineExpose({ formEl, validate });
     @done="setMediaFromUploader"
   />
 </template>
+
+<style>
+.v-expansion-panel::before {
+  box-shadow: none !important;
+}
+</style>
