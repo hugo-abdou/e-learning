@@ -127,7 +127,11 @@ const save = async () => {
         </VBtnToggle>
       </VCol>
       <VCol cols="12">
-        <VWindow v-model="currentStep" class="mt-5 overflow-visible">
+        <VWindow
+          :touch="false"
+          v-model="currentStep"
+          class="mt-5 overflow-visible"
+        >
           <VWindowItem>
             <CourseDetailsForm
               :ref="el => (steps[0].component = el as null)"

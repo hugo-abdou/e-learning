@@ -98,7 +98,7 @@ watch(() => route.params.quiz, loadQuiz, { immediate: true });
           </template>
         </AppStepper>
         <VDivider />
-        <VWindow v-model="currentQuestion">
+        <VWindow :touch="false" v-model="currentQuestion">
           <VWindowItem
             v-for="(question, index) in questions"
             :key="question.id"

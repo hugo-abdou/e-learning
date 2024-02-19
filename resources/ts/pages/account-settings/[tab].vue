@@ -42,11 +42,7 @@ const userData = computed<UserProperties>(() => userStore.user);
         </VTab>
       </VTabs>
 
-      <VWindow
-        v-model="activeTab"
-        class="mt-6 disable-tab-transition"
-        :touch="false"
-      >
+      <VWindow v-model="activeTab" class="mt-6 disable-tab-transition">
         <!-- Account -->
         <VWindowItem value="account">
           <!-- @vue-ignore -->

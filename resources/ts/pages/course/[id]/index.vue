@@ -37,23 +37,24 @@ const currentTab = ref(0);
         <VImg
           v-if="!loading"
           :src="course?.thumbnail"
-          style="aspect-ratio: 16/4"
+          style="aspect-ratio: 16/6"
           cover
         />
         <VSkeletonLoader v-else :type="['image', 'image']" />
-      </VCard>
-    </VCol>
-    <VCol cols="12">
-      <VCard>
-        <VTabs v-model="currentTab" grow>
-          <VTab
-            v-for="(item, i) in ['Overview', 'Lessons', 'Assignments']"
-            :key="item"
-            :value="i"
-          >
-            {{ item }}
-          </VTab>
-        </VTabs>
+
+        <VCardItem class="px-0">
+          <VTabs v-model="currentTab" grow>
+            <VTab
+              v-for="(item, i) in ['Overview', 'Lessons', 'Assignments']"
+              :key="item"
+              :value="i"
+              class="pb-5"
+            >
+              {{ item }}
+            </VTab>
+          </VTabs>
+        </VCardItem>
+
         <VWindow v-model="currentTab">
           <VWindowItem>
             <VCardItem v-if="!loading">

@@ -214,7 +214,11 @@ const save = () => {
 
     <!-- 👉 stepper content -->
     <VForm ref="formEl">
-      <VWindow v-model="currentStep" class="disable-tab-transition">
+      <VWindow
+        :touch="false"
+        v-model="currentStep"
+        class="disable-tab-transition"
+      >
         <VWindowItem>
           <VCardTitle> {{ $t("quiz.steps.details.title") }}</VCardTitle>
           <VCardSubtitle>

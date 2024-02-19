@@ -141,7 +141,7 @@ class Media extends Model
     {
         if (in_array(self::getExtensionFromMime($mime), ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
             return 'image';
-        } elseif (in_array(self::getExtensionFromMime($mime), ['mp4', 'avi', 'wmv', 'mov'])) {
+        } elseif (in_array(self::getExtensionFromMime($mime), ['mp4', 'avi', 'wmv', 'mov', 'webm'])) {
             return 'video';
         } elseif (in_array(self::getExtensionFromMime($mime), ['pdf'])) {
             return 'pdf';

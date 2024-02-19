@@ -2,8 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use PhpParser\Node\Stmt\Use_;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -44,5 +46,6 @@ class RoleSeeder extends Seeder
 
 
         $supperAdmin->syncPermissions(Permission::all());
+        User::find(1)->assignRole($supperAdmin);
     }
 }

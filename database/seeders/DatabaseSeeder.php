@@ -25,9 +25,6 @@ class DatabaseSeeder extends Seeder
         DB::unprepared($sql);
 
         // You can continue seeding other data if needed
-
-        $this->call([
-            // RoleSeeder::class
-        ]);
+        $this->call([]);
     }
 }

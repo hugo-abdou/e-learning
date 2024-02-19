@@ -46,11 +46,7 @@ getUser();
         </template>
       </VTabs>
 
-      <VWindow
-        v-model="userTab"
-        class="mt-6 disable-tab-transition"
-        :touch="false"
-      >
+      <VWindow v-model="userTab" class="mt-6 disable-tab-transition">
         <!-- Account -->
         <VWindowItem>
           <AccountSettingsAccount

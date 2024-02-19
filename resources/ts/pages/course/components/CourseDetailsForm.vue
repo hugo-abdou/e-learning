@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { CourseDifficulty, CourseStatus } from "@/@core/enums";
 import { requiredValidator } from "@/@core/utils/validators";
+import Media from "@/components/Media";
 import type { CourseForm, Media as MediaType } from "@/types";
 import { UploadBunAttrs } from "@/utils";
 import { VForm } from "vuetify/components/VForm";
@@ -38,7 +39,7 @@ const validate = async () => {
   }
 };
 const setThumbnale = (media: MediaType[]) => {
-  form.value.thumbnail = media[0].thumb_url;
+  form.value.thumbnail = media[0].url;
   isUploaderopen.value = false;
 };
 
@@ -56,7 +57,7 @@ watch(
     <VCardItem>
       <VRow class="mt-0">
         <VCol cols="12" md="4">
-          <VImg
+          <!-- <VImg
             v-if="form.thumbnail"
             v-bind="{
               ...UploadBunAttrs,
@@ -73,14 +74,16 @@ watch(
                 src="/assets/Image_not_available.png"
               />
             </template>
-          </VImg>
-          <!-- <Media
-              :media="{ thumb_url: form.thumbnail, status: 2, type: 'image' }"
-              aspect-ratio="1.77"
-              deletable
-              preview
-              @on-delete="form.thumbnail = undefined"
-            /> -->
+          </VImg> -->
+          <Media
+            v-if="form.thumbnail"
+            v-bind="UploadBunAttrs"
+            :media="{ thumb_url: form.thumbnail, status: 2, type: 'image' }"
+            aspect-ratio="1.77"
+            deletable
+            preview
+            @delete="form.thumbnail = undefined"
+          />
           <template v-else>
             <InfoTooltip
               v-slot="{ props }"

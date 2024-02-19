@@ -155,6 +155,7 @@ const submit = async () => {
     </VCardText>
     <VDivider class="mb-5" />
     <VWindow
+      :touch="false"
       v-model="currentStep"
       class="disable-tab-transition stepper-content mt-5"
     >

@@ -70,7 +70,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="d-flex h-100 w-100 justify-center align-center">
+  <div class="d-flex h-100 w-100 justify-center align-start">
     <VCard :style="style">
       <iframe
         :ref="iframeInit"
