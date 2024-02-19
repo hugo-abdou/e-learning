@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,9 +19,15 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'moikinge3@gmail.com',
         ]);
+        // Execute the SQL file
+        $sqlFile = database_path('/seeders/seeder-migration.sql');
+        $sql = file_get_contents($sqlFile);
+        DB::unprepared($sql);
+
+        // You can continue seeding other data if needed
 
         $this->call([
-            RoleSeeder::class
+            // RoleSeeder::class
         ]);
     }
 }

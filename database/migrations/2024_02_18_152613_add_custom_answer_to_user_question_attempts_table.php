@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('user_question_attempts', function (Blueprint $table) {
             $table->json('custom_answer')->nullable();
+            $table->json('answers')->nullable();
             $table->boolean('is_custom_answer')->default(false);
             $table->smallInteger('status')->default(0);
         });
@@ -28,6 +29,7 @@ return new class extends Migration
     {
         Schema::table('user_question_attempts', function (Blueprint $table) {
             $table->dropColumn('custom_answer');
+            $table->dropColumn('answers');
             $table->dropColumn('is_custom_answer');
             $table->dropColumn('status');
         });

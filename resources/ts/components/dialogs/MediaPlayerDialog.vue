@@ -1,22 +1,21 @@
 <script setup lang="ts">
 import { useMediaStore } from "@/stores/useMediaStore";
+import { StyleValue } from "vue";
 import Media from "../Media";
 
 const mediaStore = useMediaStore();
 const style = computed(() => {
   if (mediaStore.dialog.data) {
-    const style = {
+    const style: StyleValue = {
       aspectRatio: (mediaStore.dialog.data.width /
         mediaStore.dialog.data.height) as number,
     };
 
-    if (style.aspectRatio > 1) {
-      style.width = mediaStore.dialog.data.width + "px";
-      style.maxWidth = "80%";
+    if (Number(style.aspectRatio) > 1) {
+      style.maxWidth = "90%";
     }
-    if (style.aspectRatio < 1) {
-      style.height = mediaStore.dialog.data.height + "px";
-      style.maxHeight = "80%";
+    if (Number(style.aspectRatio) < 1) {
+      style.maxHeight = "90%";
     }
     return style;
   }

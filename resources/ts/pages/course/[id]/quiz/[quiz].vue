@@ -188,7 +188,7 @@ watch(() => route.params.quiz, loadQuiz, { immediate: true });
             color="success"
             @click="nextStep"
           >
-            {{ $t("submit") }}
+            {{ $t("Submit") }}
           </VBtn>
           <VBtn v-else @click="nextStep" variant="plain">
             {{ $t("next") }}

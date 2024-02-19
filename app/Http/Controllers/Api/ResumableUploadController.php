@@ -130,13 +130,13 @@ class ResumableUploadController extends Controller
             $content = Storage::disk('tmp')->get($media->path);
             Storage::disk($media->disk)->put($media->path, $content);
             $media->update([
-                'data->width' => "720",
-                'data->height' => "1080",
+                'data->width' => "1080",
+                'data->height' => "720",
                 'status' => MediaStatus::Completed->value,
                 'conversions' => [[
                     'engine' => 'pdf',
                     'path' => '/assets/pdf_placeholder.png',
-                    'disk' => 'bunnycdn',
+                    'disk' => 'remote',
                     'size' => $media->size,
                     'name' => 'thumb',
                 ]]

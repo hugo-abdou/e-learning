@@ -16,31 +16,31 @@ class RoleSeeder extends Seeder
      */
     public function run()
     {
-        $supperAdmin =   Role::create(['guard_name' => 'sanctum', 'name' => 'super_admin']);
-        Role::create(['guard_name' => 'sanctum', 'name' => 'instructor']);
-        Role::create(['guard_name' => 'sanctum', 'name' => 'student']);
-        Role::create(['guard_name' => 'sanctum', 'name' => 'admin']);
+        $supperAdmin =   Role::create(['guard_name' => 'api', 'name' => 'super_admin']);
+        Role::create(['guard_name' => 'api', 'name' => 'instructor']);
+        Role::create(['guard_name' => 'api', 'name' => 'student']);
+        Role::create(['guard_name' => 'api', 'name' => 'admin']);
 
         /////////////////////////
-        Permission::create(['guard_name' => 'sanctum', 'name' => 'read_User']);
-        Permission::create(['guard_name' => 'sanctum', 'name' => 'create_User']);
-        Permission::create(['guard_name' => 'sanctum', 'name' => 'update_User']);
-        Permission::create(['guard_name' => 'sanctum', 'name' => 'delete_User']);
+        Permission::create(['guard_name' => 'api', 'name' => 'read_User']);
+        Permission::create(['guard_name' => 'api', 'name' => 'create_User']);
+        Permission::create(['guard_name' => 'api', 'name' => 'update_User']);
+        Permission::create(['guard_name' => 'api', 'name' => 'delete_User']);
 
-        Permission::create(['guard_name' => 'sanctum', 'name' => 'read_Role']);
-        Permission::create(['guard_name' => 'sanctum', 'name' => 'create_Role']);
-        Permission::create(['guard_name' => 'sanctum', 'name' => 'update_Role']);
-        Permission::create(['guard_name' => 'sanctum', 'name' => 'delete_Role']);
+        Permission::create(['guard_name' => 'api', 'name' => 'read_Role']);
+        Permission::create(['guard_name' => 'api', 'name' => 'create_Role']);
+        Permission::create(['guard_name' => 'api', 'name' => 'update_Role']);
+        Permission::create(['guard_name' => 'api', 'name' => 'delete_Role']);
 
-        Permission::create(['guard_name' => 'sanctum', 'name' => 'read_Course']);
-        Permission::create(['guard_name' => 'sanctum', 'name' => 'create_Course']);
-        Permission::create(['guard_name' => 'sanctum', 'name' => 'update_Course']);
-        Permission::create(['guard_name' => 'sanctum', 'name' => 'delete_Course']);
+        Permission::create(['guard_name' => 'api', 'name' => 'read_Course']);
+        Permission::create(['guard_name' => 'api', 'name' => 'create_Course']);
+        Permission::create(['guard_name' => 'api', 'name' => 'update_Course']);
+        Permission::create(['guard_name' => 'api', 'name' => 'delete_Course']);
 
-        Permission::create(['guard_name' => 'sanctum', 'name' => 'read_Storage']);
-        Permission::create(['guard_name' => 'sanctum', 'name' => 'create_Storage']);
-        Permission::create(['guard_name' => 'sanctum', 'name' => 'update_Storage']);
-        Permission::create(['guard_name' => 'sanctum', 'name' => 'delete_Storage']);
+        Permission::create(['guard_name' => 'api', 'name' => 'read_Storage']);
+        Permission::create(['guard_name' => 'api', 'name' => 'create_Storage']);
+        Permission::create(['guard_name' => 'api', 'name' => 'update_Storage']);
+        Permission::create(['guard_name' => 'api', 'name' => 'delete_Storage']);
 
 
         $supperAdmin->syncPermissions(Permission::all());

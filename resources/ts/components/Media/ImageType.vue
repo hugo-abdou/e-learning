@@ -13,13 +13,11 @@ const style = computed(() => {
     aspectRatio: props.aspectRatio || props.media.width / props.media.height,
   };
 
-  // @ts-ignore
-  if (style?.aspectRatio > 1) {
+  if (Number(style.aspectRatio) > 1) {
     style.width = props.media.width + "px";
     style.maxWidth = "100%";
   }
-  // @ts-ignore
-  if (style?.aspectRatio < 1) {
+  if (Number(style.aspectRatio) < 1) {
     style.height = props.media.height + "px";
     style.maxHeight = "100%";
   }

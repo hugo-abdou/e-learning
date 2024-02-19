@@ -8,6 +8,7 @@ use App\Http\Resources\MediaResource;
 use App\Jobs\GetVideoFromBunnyJob;
 use App\Jobs\ProcessImageMediaJob;
 use App\Models\Media;
+use App\Services\BunnyStream;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -106,13 +107,28 @@ class MediaController extends Controller
 
     function destroy(Media $media)
     {
-        // foreach ($media->conversions as $conversion) {
-        //     if ($conversion['disk'] !== 'remote') {
-        //         Storage::disk($conversion['disk'])->delete($conversion['path']);
-        //     }
-        // }
-        // Storage::disk($media->disk)->delete($media->path);
 
+
+
+        foreach ($media->conversions as $conversion) {
+            if (config('filesystems.disks.' . $conversion['disk'])) {
+                if (!Str::contains($media->path, 'https://')) {
+                    Storage::disk($conversion['disk'])->delete($conversion['path']);
+                }
+            }
+        }
+
+        if (config('filesystems.disks.' . $media->disk)) {
+            if (Str::contains($media->path, 'https://')) {
+                if ($media->disk === 'bunnycdn') {
+                    $bunnyStreem = new BunnyStream();
+                    $uuid = explode('-', $media->uuid, 2);
+                    $bunnyStreem->deleteVideo($uuid[0], $uuid[1]);
+                }
+            } else {
+                Storage::disk($media->disk)->delete($media->path);
+            }
+        }
         $media->delete();
         return response()->json(['message' => 'Media deleted successfully']);
     }

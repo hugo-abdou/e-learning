@@ -54,8 +54,6 @@ class ProcessVideoMediaJob implements ShouldQueue
             $bunnyStream = new BunnyStream();
             $presignedRes = $bunnyStream->presignedUpload($this->config['library'], $media->name);
             if ($presignedRes->StatusCode !== 200)  throw new \Exception($presignedRes->message);
-
-            // Storage::disk('bunnycdn')->put("/library/{$this->config['library']}/videos/$presignedRes->guid", file_get_contents($filePath));
             $uploadres = $bunnyStream->upload($this->config['library'], $presignedRes->guid, $filePath);
             if ($uploadres->StatusCode !== 200)  throw new \Exception($uploadres->message);
 

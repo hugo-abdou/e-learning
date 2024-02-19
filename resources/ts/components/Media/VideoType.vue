@@ -35,14 +35,12 @@ const style = computed(() => {
       props.media.width / props.media.height) as number,
   };
 
-  // @ts-ignore
-  if (style.aspectRatio > 1) {
-    style.width = props.media.width + "px";
+  if (Number(style.aspectRatio) > 1) {
+    style.width = props.media.width * 10 + "px";
     style.maxWidth = "100%";
   }
-  // @ts-ignore
-  if (style.aspectRatio < 1) {
-    style.height = props.media.height + "px";
+  if (Number(style.aspectRatio) < 1) {
+    style.height = props.media.height * 10 + "px";
     style.maxHeight = "100%";
   }
 
@@ -72,8 +70,8 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="h-100 w-100 d-flex justify-center align-center">
-    <VCard :style="style" class="h-100">
+  <div class="d-flex h-100 w-100 justify-center align-center">
+    <VCard :style="style">
       <iframe
         :ref="iframeInit"
         :src="`/embed/${media.uuid.replace('-', '/')}`"

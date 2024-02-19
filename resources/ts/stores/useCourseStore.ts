@@ -17,7 +17,7 @@ export const useCourseStore = defineStore({
     async getCourses(params: any): Promise<PaginationResponse<Course>> {
       return await $api.get("/courses", { params });
     },
-    async getCourse(slug: string, params: {}) {
+    async getCourse(slug: string, params?: {}) {
       return await $api.get<Course>(`/courses/${slug}`, { params });
     },
     async createCourse(data: CourseForm): Promise<Course> {

@@ -110,11 +110,13 @@ export default class ResumableUppyPlugin extends BasePlugin {
     });
     this.resumable.on("fileProgress", (file: ResumableFile) => {
       const uppyFile = this.uppy.getFile(file.file.uuid);
-      this.uppy.emit("upload-progress", uppyFile, {
-        uploader: this,
-        bytesUploaded: file.progress(false) * uppyFile.size,
-        bytesTotal: uppyFile.size,
-      });
+      if (uppyFile) {
+        this.uppy.emit("upload-progress", uppyFile, {
+          uploader: this,
+          bytesUploaded: file.progress(false) * uppyFile.size,
+          bytesTotal: uppyFile.size,
+        });
+      }
     });
     this.resumable.on("fileSuccess", (file: ResumableFile, message: string) => {
       if (message !== "Ok") {

@@ -118,13 +118,16 @@ const submit = async () => {
   try {
     if (!form.value.course) throw new Error("Course not Found");
     const course = await courseStore.createCourse(form.value.course);
-
-    await Promise.all(
-      form.value.chapters.map((form) =>
-        courseStore.createChapter(course.id, form)
-      )
-    );
-    await courseStore.attachQuizzes(course.id, form.value.quizzes);
+    if (form.value.chapters.length) {
+      await Promise.all(
+        form.value.chapters.map((form) =>
+          courseStore.createChapter(course.id, form)
+        )
+      );
+    }
+    if (form.value.quizzes.length) {
+      await courseStore.attachQuizzes(course.id, form.value.quizzes);
+    }
 
     if (visibility.value === "schedule")
       await courseStore.scheduleCourse(course.id, scheduleDate.value);

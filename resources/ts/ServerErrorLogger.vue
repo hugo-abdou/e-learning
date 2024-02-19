@@ -45,7 +45,6 @@ $api.onError((ctx) => {
           <VIcon color="white" icon="tabler-x" />
         </VBtn>
       </VToolbar>
-
       <Prism
         v-if="jsonResponse"
         :style="{
@@ -56,7 +55,7 @@ $api.onError((ctx) => {
       >
         {{ jsonResponse }}
       </Prism>
-      <iframe v-else ref="iframe" style="border: 0; block-size: 100%" />
+      <iframe v-else ref="iframe" style="border: 0; block-size: 100vh" />
     </VCard>
   </VDialog>
 </template>

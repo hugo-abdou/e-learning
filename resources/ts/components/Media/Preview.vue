@@ -39,6 +39,18 @@ const playPreview = (type: keyof typeof MediaTypes | undefined) => {
   mediaStore.openMediaDialog(resource.value, type);
 };
 const faild = () => (isError.value = true);
+const retry = async () => {
+  resource.value = await mediaStore.retry(resource.value.id);
+};
+onMounted(() => {
+  // if (
+  //   [MediaStatus.Pending, MediaStatus.Processing].includes(
+  //     resource.value.status
+  //   )
+  // ) {
+  //   setTimeout(retry, 1000);
+  // }
+});
 </script>
 
 <template>
@@ -73,7 +85,7 @@ const faild = () => (isError.value = true);
           resource.status === MediaStatus.Error ||
           resource.status === MediaStatus.Processing
         "
-        @click="mediaStore.retry(resource.id)"
+        @click="retry"
         icon="tabler-reload"
       />
       <IconBtn

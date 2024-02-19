@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Enums\MediaStatus;
 use App\Models\Media;
 use App\Services\BunnyStream;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -12,7 +13,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class GetVideoFromBunnyJob implements ShouldQueue
+class GetVideoFromBunnyJob
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -32,8 +33,7 @@ class GetVideoFromBunnyJob implements ShouldQueue
 
         $media = Media::where('uuid', $this->libraryId . '-' . $this->guid)->first();
         if (!$media) {
-            $this->fail("Bunny CDN Video Not Found : " . $this->libraryId . '-' . $this->guid);
-            return;
+            throw new Exception("Bunny CDN Video Not Found : " . $this->libraryId . '-' . $this->guid);
         }
         try {
             Log::info('Bunny CDN Video start Prossesing : ', [$this->libraryId . '-' . $this->guid]);
@@ -52,7 +52,7 @@ class GetVideoFromBunnyJob implements ShouldQueue
                 "data->duration" => $res->length,
                 "data->width" => $res->width,
                 "data->height" => $res->height,
-                "status" => $res->status,
+                // "status" => $res->status,
                 "path" => $path,
                 "conversions" => [
                     ["engine" => "ImageResize", "path" => $themb, "disk" => 'bunnycdn', "name" => "thumb"],
@@ -64,7 +64,7 @@ class GetVideoFromBunnyJob implements ShouldQueue
         } catch (\Throwable $th) {
             $media->update(['status' => MediaStatus::Error->value, 'data->error' => $th->getMessage()]);
             Log::error("Bunny CDN Video Error", [$th->getMessage()]);
-            $this->fail("Bunny CDN Video Not Found : " . $th->getMessage());
+            throw $th;
         }
     }
 }
