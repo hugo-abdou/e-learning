@@ -145,10 +145,18 @@
     }
   },
   "chapter": {
+    "dialog": {
+      "title": "Add a new chapter",
+      "subtitle": "Provide detailed information about your chapter"
+    },
     "fields": {
       "title": {
         "label": "Title",
         "description": "A catchy title can help you hook viewers. When you create video titles, it’s a good idea to include keywords your audience is likely to use when looking for videos like yours."
+      },
+      "attachments": {
+        "title": "Attachments",
+        "subtitle": "Select the Attachments that are related to this quiz."
       },
       "watermark": {
         "label": "Watermark",

@@ -64,7 +64,7 @@ onMounted(() => {
       )}`"
     >
       <ServerErrorLogger />
-      <RouterView class="" />
+      <RouterView />
       <ScrollToTop />
       <MediaPlayerDialog />
       <SnackBar />

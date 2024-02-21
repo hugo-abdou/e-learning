@@ -6,8 +6,8 @@ import type {
   CourseForm,
   PaginationResponse,
   Quiz,
+  ResourceResponse,
 } from "@/types";
-import type { AxiosResponse } from "axios";
 
 export const useCourseStore = defineStore({
   id: "CourseStore",
@@ -41,10 +41,14 @@ export const useCourseStore = defineStore({
       return await $api.patch(`/courses/${id}/schedule`, { date });
     },
     ///////////////////////////////////////////////////////////
+
+    async detachQuizzes(course_id: number, quizzes: number[]) {
+      return await $api.delete(`/courses/${course_id}/quizzes`, { quizzes });
+    },
     async attachQuizzes(course_id: number, quizzes: number[]) {
       return await $api.post(`/courses/${course_id}/quizzes`, { quizzes });
     },
-    async getQuizzes(course_id: number, params?: any) {
+    async getQuizzes(course_id: string, params?: any) {
       return await $api.get<PaginationResponse<Quiz>>(
         `/courses/${course_id}/quizzes`,
         { params }
@@ -60,14 +64,20 @@ export const useCourseStore = defineStore({
     async createChapter(
       course_id: number,
       data: ChapterForm
-    ): Promise<AxiosResponse<Chapter>> {
+    ): Promise<ResourceResponse<Chapter>> {
       return await $api.post("/chapters", { ...data, course_id });
     },
-    async updateChapter(id: number, data: ChapterForm) {
+    async updateChapter(
+      id: number,
+      data: ChapterForm
+    ): Promise<ResourceResponse<Chapter>> {
       return await $api.put(`/chapters/${id}`, data);
     },
     async deleteChapter(id: number) {
       return await $api.delete(`/chapters/${id}`);
+    },
+    async reOrderChapters(data: { [key: string]: number }[]) {
+      return await $api.put(`/chapters/reorder`, { chapters: data });
     },
   },
 });

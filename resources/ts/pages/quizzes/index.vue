@@ -132,7 +132,12 @@ const publishQuiz = (
             <VSkeletonLoader class="pt-2" :type="['table-tbody']" />
           </template>
           <template #item.title="{ item }">
-            {{ item.title }} - ({{ item.duration }} min)
+            <div class="truncate" style="max-width: 30vw">
+              <VTooltip max-width="400" activator="parent">
+                ({{ item.duration }} min) - {{ item.title }}
+              </VTooltip>
+              ({{ item.duration }} min) - {{ item.title }}
+            </div>
           </template>
           <template #item.description="{ item }">
             <div class="truncate" style="max-width: 10vw">

@@ -74,7 +74,12 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
     Route::patch('courses/{course}/schedule', ScheduleCourseController::class);
     Route::get('courses/{course:slug}/quizzes', [CoursesController::class, 'quizzes']);
     Route::post('courses/{course}/quizzes', [CoursesController::class, 'attach_quizzes']);
+    Route::delete('courses/{course}/quizzes', [CoursesController::class, 'detach_quizzes']);
+    ////////////////////////////////////////////////////////////////////////////////
+    Route::put('/chapters/reorder', [ChapterController::class, 'reorder']);
     Route::apiResource('chapters', ChapterController::class);
+    ////////////////////////////////////////////////////////////////////////////////
+
     Route::apiResource('analytics', AnalyticController::class);
     ////////////////////////////////////////////////////////////////////////////////
     Route::apiResource('quizzes', QuizController::class);

@@ -102,27 +102,28 @@ class Api {
     body: any,
     options?: FetchOptions<"json"> | undefined
   ): Promise<T> {
-    return this.http(url, "POST", { body, ...options });
+    return this.http(url, "POST", { ...options, body });
   }
   put<T>(
     url: string,
     body: any,
     options?: FetchOptions<"json"> | undefined
   ): Promise<T> {
-    return this.http(url, "PUT", { body, ...options });
+    return this.http(url, "PUT", { ...options, body });
   }
   patch<T>(
     url: string,
     body: any,
     options?: FetchOptions<"json"> | undefined
   ): Promise<T> {
-    return this.http(url, "PATCH", { body, ...options });
+    return this.http(url, "PATCH", { ...options, body });
   }
   delete<T>(
     url: string,
+    body?: any,
     options?: FetchOptions<"json"> | undefined
   ): Promise<T> {
-    return this.http(url, "DELETE", options);
+    return this.http(url, "DELETE", { ...options, body });
   }
   async getAccessToken(
     username: string,

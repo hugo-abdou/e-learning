@@ -92,4 +92,15 @@ class CoursesController extends Controller
         $course->quizzes()->sync($data['quizzes']);
         return response()->json(['message' => 'Quizzes attached successfully']);
     }
+    /**
+     * attach quizzes to the specified course.
+     */
+    public function detach_quizzes(Course $course)
+    {
+        $data = request()->validate([
+            'quizzes' => 'required|array',
+        ]);
+        $course->quizzes()->detach($data['quizzes']);
+        return response()->json(['message' => 'Quizzes detached successfully']);
+    }
 }

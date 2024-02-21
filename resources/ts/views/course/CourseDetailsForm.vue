@@ -2,14 +2,13 @@
 import { CourseDifficulty, CourseStatus } from "@/@core/enums";
 import { requiredValidator } from "@/@core/utils/validators";
 import Media from "@/components/Media";
-import type { CourseForm, Media as MediaType } from "@/types";
+import type { Course, CourseForm, Media as MediaType } from "@/types";
 import { UploadBunAttrs } from "@/utils";
 import { VForm } from "vuetify/components/VForm";
 
 interface Props {
-  course?: CourseForm;
+  course?: CourseForm & { id?: number };
 }
-
 const props = withDefaults(defineProps<Props>(), {
   course: () => ({
     description: "",
@@ -20,36 +19,52 @@ const props = withDefaults(defineProps<Props>(), {
   }),
 });
 
-const emit = defineEmits<{}>();
-
-const isUploaderopen = ref(false);
-const form = ref<CourseForm>(props.course);
-
-// @ts-expect-error
+const emit = defineEmits<{
+  (e: "created", value: Course): void;
+  (e: "updated", value: Course): void;
+}>();
+// @ts-ignore
 const formEl = ref<VForm>({});
+const form = ref<CourseForm>(props.course);
+const isUploaderopen = ref(false);
+const loading = ref(false);
 
-const validate = async () => {
-  try {
-    const { valid } = await formEl.value.validate();
-    if (!valid) return Promise.reject(new Error("validation faild"));
-
-    return Promise.resolve(form.value);
-  } catch (error) {
-    throw error;
-  }
-};
 const setThumbnale = (media: MediaType[]) => {
   form.value.thumbnail = media[0].url;
   isUploaderopen.value = false;
 };
-
-defineExpose({ formEl, validate });
-watch(
-  () => props.course,
-  (val) => {
-    form.value = val;
+const courseStore = useCourseStore();
+const course = ref<Course>();
+const reset = () => {
+  formEl.value.reset();
+  form.value = props.course;
+};
+const submit = async (): Promise<Course> => {
+  try {
+    loading.value = true;
+    const { valid } = await formEl.value.validate();
+    if (!valid) throw new Error("Invalid form");
+    if (props.course.id) {
+      await courseStore.updateCourse(props.course.id, form.value);
+      emit("updated", { ...props.course, ...form.value } as Course);
+      return Promise.resolve({ ...props.course, ...form.value } as Course);
+    } else {
+      course.value = await courseStore.createCourse(form.value);
+      emit("created", course.value);
+      return Promise.resolve(course.value);
+    }
+  } catch (error) {
+    return Promise.reject(error);
+  } finally {
+    loading.value = false;
   }
-);
+};
+
+defineExpose({
+  submit,
+  reset,
+  form,
+});
 </script>
 
 <template>
@@ -57,24 +72,6 @@ watch(
     <VCardItem>
       <VRow class="mt-0">
         <VCol cols="12" md="4">
-          <!-- <VImg
-            v-if="form.thumbnail"
-            v-bind="{
-              ...UploadBunAttrs,
-              style: 'min-height: 100%',
-              aspectRatio: 1.77,
-            }"
-            :src="form.thumbnail"
-            cover
-          >
-            <template v-slot:error>
-              <v-img
-                class="mx-auto"
-                cover
-                src="/assets/Image_not_available.png"
-              />
-            </template>
-          </VImg> -->
           <Media
             v-if="form.thumbnail"
             v-bind="UploadBunAttrs"
@@ -148,6 +145,26 @@ watch(
         </VCol>
       </VRow>
     </VCardItem>
+    <VCardActions class="justify-center">
+      <slot
+        v-if="$slots.actions"
+        :submit="submit"
+        :reset="reset"
+        name="actions"
+      />
+      <template v-else>
+        <VBtn color="secondary" variant="tonal" @click="reset"> Reset </VBtn>
+        <VBtn
+          color="success"
+          variant="tonal"
+          @click="submit"
+          :loading="loading"
+          :disabled="loading"
+        >
+          Save
+        </VBtn>
+      </template>
+    </VCardActions>
   </VForm>
   <FileUploaderDialog
     v-model:is-dialog-visible="isUploaderopen"

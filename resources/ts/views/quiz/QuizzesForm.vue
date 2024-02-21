@@ -2,17 +2,19 @@
 import { QuizStatus } from "@/@core/enums";
 import Media from "@/components/Media";
 import type { Quiz, ResourceResponse } from "@/types";
-import { UploadBunAttrs, uuid } from "@/utils";
+import { UploadBunAttrs } from "@/utils";
 import EditorJS, { OutputData } from "@editorjs/editorjs";
 import slugify from "slugify";
 
 const emit = defineEmits<{
-  (e: "created", value: ResourceResponse<Quiz>): void;
+  (e: "created", value: Quiz): void;
 }>();
 const props = withDefaults(
   defineProps<{ status?: keyof typeof QuizStatus }>(),
   { status: "Draft" }
 );
+
+const uuid = () => new Date().getTime();
 
 const iconsSteps = ref([
   {
@@ -194,8 +196,8 @@ const saveStartOver = () => {
   });
 };
 const save = () => {
-  submit().then((res) => {
-    emit("created", res);
+  submit().then(({ data }) => {
+    emit("created", data);
   });
 };
 </script>
@@ -483,7 +485,6 @@ const save = () => {
           <VIcon icon="tabler-arrow-left" start class="flip-in-rtl" />
           Previous
         </VBtn>
-
         <template v-if="iconsSteps.length - 1 === currentStep">
           <VSpacer />
           <VBtn @click="saveStartOver" variant="outlined" color="success">
@@ -491,7 +492,6 @@ const save = () => {
           </VBtn>
           <VBtn @click="save" color="success"> {{ $t(visibility) }}</VBtn>
         </template>
-
         <VBtn v-else @click="next">
           Next
           <VIcon icon="tabler-arrow-right" end class="flip-in-rtl" />

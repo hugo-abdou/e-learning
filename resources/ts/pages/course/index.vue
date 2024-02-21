@@ -20,9 +20,8 @@ const loading = ref<boolean>(false);
 
 definePage({
   // beforeEnter: async () => {
-  //   console.log("test");
   //   const store = (await import("@/stores/useCourseStore")).useCourseStore();
-  //   console.log(await store.getCourses({}));
+  //   console.log(await store.getCourse("hugodododo"));
   // },
   meta: {
     redirectIfNotLoggedIn: true,
@@ -40,6 +39,7 @@ const options = ref<Options>({
 });
 
 const courseStore = useCourseStore();
+
 const deleteCourse = (id: number) =>
   courseStore.deleteCourse(id).then(getCourses);
 const publishCourse = (
@@ -49,7 +49,6 @@ const publishCourse = (
 
 const getCourses = debounce(() => {
   if (!courses.value.length) loading.value = true;
-
   courseStore
     .getCourses(options.value)
     .then(({ data, meta }) => {
@@ -66,6 +65,12 @@ const headers: DataTableHeader[] = [
   { title: "Difficulty", key: "difficulty", width: 70 },
   { title: "", key: "actions", sortable: false, width: 70 },
 ];
+
+const scheduleCourse = async (e: string) => {
+  await courseStore.scheduleCourse(Number(scheduledCourse.value), e);
+  scheduledCourse.value = null;
+  getCourses();
+};
 
 watch(
   Object.keys(options.value).map(
@@ -258,9 +263,9 @@ watch(
         </VDataTableServer>
         <!-- SECTION -->
       </VCard>
-      <CourseScheduleDialog
-        :course-id="scheduledCourse"
-        @done="(scheduledCourse = null), getCourses()"
+      <ScheduleDialog
+        :is-dialog-visible="!!scheduledCourse"
+        @select="scheduleCourse"
       />
     </VCol>
   </VRow>

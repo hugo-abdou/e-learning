@@ -260,7 +260,7 @@ interface DocumentMedia extends BaseMedia {
   watermark: string;
 }
 
-export type Media = ImageMedia | VideoMedia | DocumentMedia;
+export type Media = DocumentMedia | ImageMedia | VideoMedia;
 export type Attachment = Media & {
   visibility: string[];
   download: boolean;
