@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { CourseStatus } from "@/@core/enums";
 import { Chapter, Course, Quiz } from "@/types";
-import { UploadBunAttrs, resolveDefaultThumbnal } from "@/utils";
+import { resolveDefaultThumbnal } from "@/utils";
 import { debounce } from "lodash";
 import { VueDraggable } from "vue-draggable-plus";
 definePage({
@@ -190,6 +190,15 @@ const detachQuizzes = async (quiz: Quiz) => {
         :title="$t('course.steps.chapters.title')"
         :subtitle="$t('course.steps.chapters.subtitle')"
       >
+        <template #append>
+          <VBtn
+            color="primary"
+            outlined
+            class="mb-2"
+            @click="openDialog('chapter-dialog')"
+            >{{ $t("Add New Chapter") }}</VBtn
+          >
+        </template>
         <VCardItem v-if="chapters.length">
           <VueDraggable
             v-model="chapters"
@@ -253,25 +262,6 @@ const detachQuizzes = async (quiz: Quiz) => {
               </tbody>
             </VTable>
           </VueDraggable>
-        </VCardItem>
-        <VCardItem>
-          <InfoTooltip
-            v-slot="{ props }"
-            text="upload the course materials that you prepare for this chapter"
-          >
-            <VBtn
-              v-bind="{ ...props, ...UploadBunAttrs }"
-              style="block-size: 100%"
-              @click="openDialog('chapter-dialog')"
-            >
-              <div class="d-flex flex-column align-center">
-                <VIcon icon="fluent:document-add-16-regular" size="32" />
-                <VLabel class="mt-2">
-                  {{ $t("Add New Chapter") }}
-                </VLabel>
-              </div>
-            </VBtn>
-          </InfoTooltip>
         </VCardItem>
       </WizardSection>
       <WizardSection

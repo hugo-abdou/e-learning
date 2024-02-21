@@ -16,6 +16,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
+
+Route::get('/', fn () => view('home'));
+
 Route::post('deploy', [GitHubWebhookController::class, 'handle']);
 Route::post('/bunny_webhook', [MediaController::class, 'bunny_webhook'])->name('bunny_webhook');
 
