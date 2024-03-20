@@ -4,7 +4,7 @@ import type { Notification } from '@layouts/types'
 
 interface Props {
   notifications: Notification[]
-  badgeProps?: object
+  badgeProps?: unknown
   location?: any
 }
 interface Emit {
@@ -36,13 +36,6 @@ const markAllReadOrUnread = () => {
 const totalUnseenNotifications = computed(() => {
   return props.notifications.filter(item => item.isSeen === false).length
 })
-
-const toggleReadUnread = (isSeen: boolean, Id: number) => {
-  if (isSeen)
-    emit('unread', [Id])
-  else
-    emit('read', [Id])
-}
 </script>
 
 <template>
@@ -51,12 +44,11 @@ const toggleReadUnread = (isSeen: boolean, Id: number) => {
       v-bind="props.badgeProps"
       :model-value="props.notifications.some(n => !n.isSeen)"
       color="error"
-      dot
-      offset-x="2"
-      offset-y="3"
+      :content="totalUnseenNotifications"
+      class="notification-badge"
     >
       <VIcon
-        size="24"
+        size="26"
         icon="tabler-bell"
       />
     </VBadge>
@@ -65,35 +57,22 @@ const toggleReadUnread = (isSeen: boolean, Id: number) => {
       activator="parent"
       width="380px"
       :location="props.location"
-      offset="12px"
+      offset="14px"
       :close-on-content-click="false"
     >
       <VCard class="d-flex flex-column">
         <!-- 👉 Header -->
         <VCardItem class="notification-section">
-          <VCardTitle class="text-h6">
+          <VCardTitle class="text-lg">
             Notifications
           </VCardTitle>
 
           <template #append>
-            <VChip
-              v-show="props.notifications.some(n => !n.isSeen)"
-              size="small"
-              color="primary"
-              class="me-2"
-            >
-              {{ totalUnseenNotifications }} New
-            </VChip>
             <IconBtn
               v-show="props.notifications.length"
-              size="34"
               @click="markAllReadOrUnread"
             >
-              <VIcon
-                size="20"
-                color="high-emphasis"
-                :icon="!isAllMarkRead ? 'tabler-mail' : 'tabler-mail-opened' "
-              />
+              <VIcon :icon="!isAllMarkRead ? 'tabler-mail' : 'tabler-mail-opened' " />
 
               <VTooltip
                 activator="parent"
@@ -127,54 +106,50 @@ const toggleReadUnread = (isSeen: boolean, Id: number) => {
               >
                 <!-- Slot: Prepend -->
                 <!-- Handles Avatar: Image, Icon, Text -->
-                <div class="d-flex align-start gap-3">
-                  <VAvatar
-                    size="40"
-                    :color="notification.color && notification.icon ? notification.color : undefined"
-                    :image="notification.img || undefined"
-                    :icon="notification.icon || undefined"
-                    :variant="notification.img ? undefined : 'tonal' "
-                  >
-                    <span v-if="notification.text">{{ avatarText(notification.text) }}</span>
-                  </VAvatar>
-
-                  <div>
-                    <p class="text-sm font-weight-medium mb-1">
-                      {{ notification.title }}
-                    </p>
-                    <p
-                      class="text-body-2 mb-2"
-                      style=" letter-spacing: 0.4px !important; line-height: 18px;"
+                <template #prepend>
+                  <VListItemAction start>
+                    <VAvatar
+                      size="40"
+                      :color="notification.color && notification.icon ? notification.color : undefined"
+                      :image="notification.img || undefined"
+                      :icon="notification.icon || undefined"
+                      :variant="notification.img ? undefined : 'tonal' "
                     >
-                      {{ notification.subtitle }}
-                    </p>
-                    <p
-                      class="text-sm text-disabled mb-0"
-                      style=" letter-spacing: 0.4px !important; line-height: 18px;"
-                    >
-                      {{ notification.time }}
-                    </p>
-                  </div>
-                  <VSpacer />
+                      <span v-if="notification.text">{{ avatarText(notification.text) }}</span>
+                    </VAvatar>
+                  </VListItemAction>
+                </template>
 
-                  <div class="d-flex flex-column align-end">
-                    <VIcon
-                      size="10"
-                      icon="tabler-circle-filled"
+                <VListItemTitle class="font-weight-medium">
+                  {{ notification.title }}
+                </VListItemTitle>
+                <VListItemSubtitle>{{ notification.subtitle }}</VListItemSubtitle>
+                <span class="text-xs text-disabled">{{ notification.time }}</span>
+
+                <!-- Slot: Append -->
+                <template #append>
+                  <div class="d-flex flex-column align-center gap-4">
+                    <VBadge
+                      dot
                       :color="!notification.isSeen ? 'primary' : '#a8aaae'"
-                      :class="`${notification.isSeen ? 'visible-in-hover' : ''}`"
-                      class="mb-2"
-                      @click.stop="toggleReadUnread(notification.isSeen, notification.id)"
+                      :class="`${notification.isSeen ? 'visible-in-hover' : ''} ms-1`"
+                      @click.stop="$emit(notification.isSeen ? 'unread' : 'read', [notification.id])"
                     />
 
-                    <VIcon
-                      size="20"
-                      icon="tabler-x"
-                      class="visible-in-hover"
-                      @click="$emit('remove', notification.id)"
-                    />
+                    <div style="block-size: 28px; inline-size: 28px;">
+                      <IconBtn
+                        size="small"
+                        class="visible-in-hover"
+                        @click="$emit('remove', notification.id)"
+                      >
+                        <VIcon
+                          size="20"
+                          icon="tabler-x"
+                        />
+                      </IconBtn>
+                    </div>
                   </div>
-                </div>
+                </template>
               </VListItem>
             </template>
 
@@ -191,17 +166,14 @@ const toggleReadUnread = (isSeen: boolean, Id: number) => {
         <VDivider />
 
         <!-- 👉 Footer -->
-        <VCardText
+        <VCardActions
           v-show="props.notifications.length"
-          class="pa-4"
+          class="notification-footer"
         >
-          <VBtn
-            block
-            size="small"
-          >
+          <VBtn block>
             View All Notifications
           </VBtn>
-        </VCardText>
+        </VCardActions>
       </VCard>
     </VMenu>
   </IconBtn>
@@ -209,8 +181,11 @@ const toggleReadUnread = (isSeen: boolean, Id: number) => {
 
 <style lang="scss">
 .notification-section {
-  padding-block: 0.75rem;
-  padding-inline: 1rem;
+  padding: 14px !important;
+}
+
+.notification-footer {
+  padding: 6px !important;
 }
 
 .list-item-hover-class {
@@ -229,7 +204,17 @@ const toggleReadUnread = (isSeen: boolean, Id: number) => {
   .v-list-item {
     border-radius: 0 !important;
     margin: 0 !important;
-    padding-block: 0.75rem !important;
+
+    &[tabindex="-2"]:not(.v-list-item--active) {
+      &:hover,
+      &:focus-visible {
+        color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
+
+        .v-list-item-subtitle {
+          color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
+        }
+      }
+    }
   }
 }
 

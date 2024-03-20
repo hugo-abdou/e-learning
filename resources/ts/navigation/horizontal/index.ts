@@ -1,12 +1,17 @@
 export default [
-  {
-    title: 'Home',
-    to: { name: 'root' },
-    icon: { icon: 'tabler-smart-home' },
-  },
-  {
-    title: 'Second page',
-    to: { name: 'second-page' },
-    icon: { icon: 'tabler-file' },
-  },
-]
+    {
+        title: "Dashboard",
+        to: { name: "dashboard" },
+        icon: { icon: "tabler-smart-home" },
+    },
+    {
+        title: "Courses",
+        to: { name: "course-list" },
+        icon: { icon: "tabler-books" },
+    },
+    {
+        title: "Chat",
+        icon: { icon: "tabler-message-circle" },
+        to: "chat",
+    },
+];

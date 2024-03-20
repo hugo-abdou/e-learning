@@ -5,40 +5,36 @@ const { global } = useTheme()
 
 const authProviders = [
   {
-    icon: 'tabler-brand-facebook-filled',
+    icon: 'fa-facebook',
     color: '#4267b2',
-    colorInDark: '#497CE2',
+    colorInDark: '#4267b2',
   },
   {
-    icon: 'tabler-brand-twitter-filled',
-    color: '#1da1f2',
-    colorInDark: '#1da1f2',
-  },
-  {
-    icon: 'tabler-brand-github-filled',
-    color: '#272727',
-    colorInDark: '#fff',
-  },
-  {
-    icon: 'tabler-brand-google-filled',
+    icon: 'fa-google',
     color: '#dd4b39',
     colorInDark: '#db4437',
+  },
+  {
+    icon: 'fa-twitter',
+    color: '#1da1f2',
+    colorInDark: '#1da1f2',
   },
 ]
 </script>
 
 <template>
-  <div class="d-flex justify-center flex-wrap gap-1">
+  <div class="d-flex justify-center flex-wrap gap-3">
     <VBtn
       v-for="link in authProviders"
       :key="link.icon"
       icon
-      variant="text"
-      size="small"
+      variant="tonal"
+      size="38"
       :color="global.name.value === 'dark' ? link.colorInDark : link.color"
+      class="rounded"
     >
       <VIcon
-        size="20"
+        size="18"
         :icon="link.icon"
       />
     </VBtn>

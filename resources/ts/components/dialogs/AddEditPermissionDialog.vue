@@ -40,16 +40,18 @@ watch(props, () => {
     <!-- 👉 dialog close btn -->
     <DialogCloseBtn @click="onReset" />
 
-    <VCard class="pa-2 pa-sm-10">
-      <VCardText>
-        <!-- 👉 Title -->
-        <h4 class="text-h4 text-center mb-2">
+    <VCard class="pa-sm-8 pa-5">
+      <!-- 👉 Title -->
+      <VCardItem class="text-center">
+        <VCardTitle class="text-h5">
           {{ props.permissionName ? 'Edit' : 'Add' }} Permission
-        </h4>
-        <p class="text-body-1 text-center mb-6">
+        </VCardTitle>
+        <VCardSubtitle>
           {{ props.permissionName ? 'Edit' : 'Add' }}  permission as per your requirements.
-        </p>
+        </VCardSubtitle>
+      </VCardItem>
 
+      <VCardText class="mt-1">
         <!-- 👉 Form -->
         <VForm>
           <VAlert
@@ -58,15 +60,15 @@ watch(props, () => {
             variant="tonal"
             class="mb-6"
           >
-            <template #text>
-              By {{ props.permissionName ? 'editing' : 'adding' }} the permission name, you might break the system permissions functionality.
-            </template>
+            By editing the permission name, you might break the system permissions functionality. Please ensure you're absolutely certain before proceeding.
           </VAlert>
 
           <!-- 👉 Role name -->
-          <div class="d-flex gap-4 mb-6 flex-wrap flex-column flex-sm-row">
+          <div class="d-flex align-end gap-3 mb-3">
             <AppTextField
               v-model="currentPermissionName"
+              density="compact"
+              label="Permission Name"
               placeholder="Enter Permission Name"
             />
 

@@ -19,15 +19,18 @@ const dialogVisibleUpdate = (val: boolean) => {
 <template>
   <VDialog
     :model-value="props.isDialogVisible"
-    :width="$vuetify.display.smAndDown ? 'auto' : 1200"
+    class="v-dialog-xl"
     @update:model-value="dialogVisibleUpdate"
   >
     <!-- 👉 Dialog close btn -->
     <DialogCloseBtn @click="$emit('update:isDialogVisible', false)" />
 
-    <VCard class="pricing-dialog pa-2 pa-sm-10">
+    <VCard class="pricing-dialog pa-5 pa-sm-8">
       <VCardText>
-        <AppPricing md="4" />
+        <AppPricing
+          title="Subscription Plan"
+          md="4"
+        />
       </VCardText>
     </VCard>
   </VDialog>

@@ -41,8 +41,26 @@ declare module 'vue-router/auto/routes' {
   export interface RouteNamedMap {
     'root': RouteRecordInfo<'root', '/', Record<never, never>, Record<never, never>>,
     '$error': RouteRecordInfo<'$error', '/:error(.*)', { error: ParamValue<true> }, { error: ParamValue<false> }>,
+    'account-settings-tab': RouteRecordInfo<'account-settings-tab', '/account-settings/:tab', { tab: ParamValue<true> }, { tab: ParamValue<false> }>,
+    'attempts': RouteRecordInfo<'attempts', '/attempts', Record<never, never>, Record<never, never>>,
+    'categories': RouteRecordInfo<'categories', '/categories', Record<never, never>, Record<never, never>>,
+    'chat': RouteRecordInfo<'chat', '/chat', Record<never, never>, Record<never, never>>,
+    'course': RouteRecordInfo<'course', '/course', Record<never, never>, Record<never, never>>,
+    'course-id': RouteRecordInfo<'course-id', '/course/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
+    'course-id-edit': RouteRecordInfo<'course-id-edit', '/course/:id/edit', { id: ParamValue<true> }, { id: ParamValue<false> }>,
+    'course-id-quiz-quiz': RouteRecordInfo<'course-id-quiz-quiz', '/course/:id/quiz/:quiz', { id: ParamValue<true>, quiz: ParamValue<true> }, { id: ParamValue<false>, quiz: ParamValue<false> }>,
+    'course-id-watch-media': RouteRecordInfo<'course-id-watch-media', '/course/:id/watch/:media', { id: ParamValue<true>, media: ParamValue<true> }, { id: ParamValue<false>, media: ParamValue<false> }>,
+    'course-list': RouteRecordInfo<'course-list', '/my-courses', Record<never, never>, Record<never, never>>,
+    'course-create': RouteRecordInfo<'course-create', '/course/create', Record<never, never>, Record<never, never>>,
+    'dashboard': RouteRecordInfo<'dashboard', '/dashboard', Record<never, never>, Record<never, never>>,
+    'forgot-password': RouteRecordInfo<'forgot-password', '/forgot-password', Record<never, never>, Record<never, never>>,
+    'gallery': RouteRecordInfo<'gallery', '/gallery', Record<never, never>, Record<never, never>>,
     'login': RouteRecordInfo<'login', '/login', Record<never, never>, Record<never, never>>,
-    'second-page': RouteRecordInfo<'second-page', '/second-page', Record<never, never>, Record<never, never>>,
+    'not-authorized': RouteRecordInfo<'not-authorized', '/not-authorized', Record<never, never>, Record<never, never>>,
+    'register': RouteRecordInfo<'register', '/register', Record<never, never>, Record<never, never>>,
+    'roles': RouteRecordInfo<'roles', '/roles', Record<never, never>, Record<never, never>>,
+    'users': RouteRecordInfo<'users', '/users', Record<never, never>, Record<never, never>>,
+    'users-id': RouteRecordInfo<'users-id', '/users/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
   }
 }
 

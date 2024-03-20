@@ -5,19 +5,13 @@ interface Props {
   title?: string
   subtitle?: string
   customClass?: string
-  placeholder?: string
-  density?: 'comfortable' | 'compact' | 'default'
-  isReverse?: boolean
 }
 
 defineOptions({
   inheritAttrs: false,
 })
 
-const props = withDefaults(defineProps<Props>(), {
-  density: 'comfortable',
-  isReverse: false,
-})
+const props = defineProps<Props>()
 </script>
 
 <template>
@@ -29,29 +23,28 @@ const props = withDefaults(defineProps<Props>(), {
     :style="`background: url(${AppSearchHeaderBg});`"
   >
     <VCardText>
-      <slot name="title">
-        <h4 class="text-h4 mb-2 font-weight-medium">
-          {{ props.title }}
-        </h4>
-      </slot>
-      <div
-        class="d-flex"
-        :class="isReverse ? 'flex-column' : 'flex-column-reverse' "
+      <h3 class="text-h3 font-weight-medium">
+        {{ props.title }}
+      </h3>
+
+      <!-- 👉 Search Input -->
+      <VTextField
+        v-bind="$attrs"
+        placeholder="Search a question..."
+        class="search-header-input mx-auto my-3"
+        density="comfortable"
       >
-        <p class="mb-0">
-          {{ props.subtitle }}
-        </p>
-        <!-- 👉 Search Input -->
-        <div>
-          <AppTextField
-            v-bind="$attrs"
-            class="search-header-input mx-auto my-4"
-            :placeholder="props.placeholder"
-            :density="props.density"
-            prepend-inner-icon="tabler-search"
+        <template #prepend-inner>
+          <VIcon
+            icon="tabler-search"
+            size="23"
           />
-        </div>
-      </div>
+        </template>
+      </VTextField>
+
+      <p class="mb-0">
+        {{ props.subtitle }}
+      </p>
     </VCardText>
   </VCard>
 </template>
@@ -66,7 +59,13 @@ const props = withDefaults(defineProps<Props>(), {
 .search-header-input {
   border-radius: 0.375rem !important;
   background-color: rgb(var(--v-theme-surface));
-  max-inline-size: 28.125rem !important;
+  max-inline-size: 40.125rem !important;
+
+  .v-field__prepend-inner {
+    i {
+      inset-block-start: 3px !important;
+    }
+  }
 }
 
 @media (max-width: 37.5rem) {

@@ -23,34 +23,26 @@ const router = useRouter()
 <template>
   <IconBtn>
     <VIcon
-      size="24"
+      size="26"
       :icon="props.togglerIcon"
     />
 
     <VMenu
       activator="parent"
-      offset="12px"
+      offset="14px"
       location="bottom end"
     >
       <VCard
-        :width="$vuetify.display.smAndDown ? 330 : 380"
+        width="340"
         max-height="560"
         class="d-flex flex-column"
       >
-        <VCardItem class="py-3">
-          <h6 class="text-base font-weight-medium">
-            Shortcuts
-          </h6>
+        <VCardItem class="py-4">
+          <VCardTitle>Shortcuts</VCardTitle>
 
           <template #append>
-            <IconBtn
-              size="small"
-              color="high-emphasis"
-            >
-              <VIcon
-                size="20"
-                icon="tabler-plus"
-              />
+            <IconBtn>
+              <VIcon icon="tabler-layout-grid-add" />
             </IconBtn>
           </template>
         </VCardItem>
@@ -63,27 +55,21 @@ const router = useRouter()
               v-for="(shortcut, index) in props.shortcuts"
               :key="shortcut.title"
               cols="6"
-              class="text-center border-t cursor-pointer pa-6 shortcut-icon"
+              class="text-center border-t cursor-pointer pa-4 shortcut-icon"
               :class="(index + 1) % 2 ? 'border-e' : ''"
               @click="router.push(shortcut.to)"
             >
               <VAvatar
                 variant="tonal"
-                size="50"
+                size="48"
               >
-                <VIcon
-                  size="26"
-                  color="high-emphasis"
-                  :icon="shortcut.icon"
-                />
+                <VIcon :icon="shortcut.icon" />
               </VAvatar>
 
-              <h6 class="text-base font-weight-medium mt-3 mb-0">
+              <h6 class="text-base font-weight-medium mt-2 mb-0">
                 {{ shortcut.title }}
               </h6>
-              <p class="text-sm mb-0">
-                {{ shortcut.subtitle }}
-              </p>
+              <span class="text-sm">{{ shortcut.subtitle }}</span>
             </VCol>
           </VRow>
         </PerfectScrollbar>

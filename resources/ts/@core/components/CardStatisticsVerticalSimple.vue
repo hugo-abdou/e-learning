@@ -16,20 +16,17 @@ const props = withDefaults(defineProps<Props>(), {
     <VCardText class="d-flex flex-column align-center justify-center">
       <VAvatar
         v-if="props.icon"
-        size="40"
+        size="42"
         variant="tonal"
-        rounded
         :color="props.color"
       >
         <VIcon :icon="props.icon" />
       </VAvatar>
 
-      <h5 class="text-h5 pt-2 mb-1">
+      <h5 class="text-h5 my-2">
         {{ props.stats }}
       </h5>
-      <div class="text-body-1">
-        {{ props.title }}
-      </div>
+      <span class="text-body-2">{{ props.title }}</span>
     </VCardText>
   </VCard>
 </template>

@@ -1,9 +1,4 @@
 <script setup lang="ts">
-import keyboard from '@images/svg/keyboard.svg'
-import paper from '@images/svg/paper-send.svg'
-import rocket from '@images/svg/rocket.svg'
-import { themeConfig } from '@themeConfig'
-
 interface Props {
   isDialogVisible: boolean
 }
@@ -22,17 +17,17 @@ const dialogVisibleUpdate = (val: boolean) => {
 
 const referAndEarnSteps = [
   {
-    icon: paper,
+    icon: 'custom-paper',
     title: 'Send Invitation 👍🏻',
     subtitle: 'Send your referral link to your friend',
   },
   {
-    icon: keyboard,
+    icon: 'custom-keyboard',
     title: 'Registration 😎',
     subtitle: 'Let them register to our services',
   },
   {
-    icon: rocket,
+    icon: 'custom-rocket',
     title: 'Free Trial  🎉',
     subtitle: 'Your friend will get 30 days free trial',
   },
@@ -42,19 +37,19 @@ const referAndEarnSteps = [
 <template>
   <VDialog
     :model-value="props.isDialogVisible"
-    :width="$vuetify.display.smAndDown ? 'auto' : 800"
+    max-width="740"
     @update:model-value="dialogVisibleUpdate"
   >
     <!-- 👉 Dialog close btn -->
     <DialogCloseBtn @click="$emit('update:isDialogVisible', false)" />
 
-    <VCard class="pa-2 pa-sm-10">
-      <VCardText>
-        <h4 class="text-h4 text-center mb-2">
+    <VCard class="refer-and-earn-dialog">
+      <VCardText class="px-5 px-sm-16 pt-16 pb-10">
+        <h3 class="text-h3 text-center mb-3">
           Refer & Earn
-        </h4>
-        <p class="text-body-1 mb-6 text-center">
-          Invite your friend to <span class="text-capitalize">{{ themeConfig.app.title }}</span>, if they sign up, you and your friend will get 30 days free trial
+        </h3>
+        <p class="text-sm-body-1 text-center">
+          Invite your friend to vuexy, if they sign up, you and your friend will get 30 days free trial
         </p>
 
         <VRow class="text-center mt-8">
@@ -66,12 +61,12 @@ const referAndEarnSteps = [
           >
             <VAvatar
               variant="tonal"
-              size="88"
+              size="82"
               color="primary"
               rounded
             >
               <VIcon
-                size="40"
+                size="50"
                 :icon="step.icon"
               />
             </VAvatar>
@@ -79,54 +74,57 @@ const referAndEarnSteps = [
             <h5 class="text-h5 mt-4 mb-2">
               {{ step.title }}
             </h5>
-            <div>{{ step.subtitle }}</div>
+            <span>{{ step.subtitle }}</span>
           </VCol>
         </VRow>
 
-        <VDivider class="mt-12 mb-6" />
+        <VDivider class="my-10" />
 
-        <h5 class="text-h5 mb-6">
+        <h5 class="text-h5 mb-4">
           Invite your friends
         </h5>
 
+        <p class="mb-1 text-sm">
+          Enter your friend's email address and invite them to join Vuexy 😍
+        </p>
         <VForm
-          class="d-flex align-center flex-wrap gap-4"
+          class="d-flex align-center gap-4"
           @submit.prevent="() => {}"
         >
           <AppTextField
+            density="compact"
             placeholder="johnDoe@gmail.com"
-            label="Enter your friend's email address and invite them to join Vuexy 😍"
           />
 
-          <VBtn
-            class="align-self-end"
-            type="submit"
-          >
-            Send
+          <VBtn type="submit">
+            Submit
           </VBtn>
         </VForm>
 
-        <h5 class="text-h5 my-6">
+        <h5 class="text-h5 mb-4 mt-7">
           Share the referral link
         </h5>
 
+        <p class="mb-1 text-sm">
+          You can also copy and send it or share it on your social media. 🚀
+        </p>
         <VForm
           class="d-flex align-center flex-wrap gap-4"
           @submit.prevent="() => {}"
         >
           <AppTextField
-            placeholder="http://pixinvent.link"
-            label="You can also copy and send it or share it on your social media. 🚀"
-            class="refer-link-input"
+            density="compact"
+            placeholder="http://referral.link"
+            class="refer-link-input me-1"
           >
             <template #append-inner>
               <VBtn variant="text">
-                Copy link
+                COPY LINK
               </VBtn>
             </template>
           </AppTextField>
 
-          <div class="d-flex align-self-end gap-1">
+          <div class="d-flex gap-3">
             <VBtn
               icon
               class="rounded"
@@ -176,6 +174,10 @@ const referAndEarnSteps = [
 .refer-link-input {
   .v-field--appended {
     padding-inline-end: 0;
+  }
+
+  .v-field__append-inner {
+    padding-block-start: 0.125rem;
   }
 }
 </style>

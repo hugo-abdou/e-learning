@@ -14,9 +14,8 @@ interface Emit {
 const props = defineProps<Props>()
 const emit = defineEmits<Emit>()
 
-const updateSelectedOption = (value: string | null) => {
-  if (value !== null)
-    emit('update:selectedRadio', value)
+const updateSelectedOption = (value: string) => {
+  emit('update:selectedRadio', value)
 }
 </script>
 
@@ -24,7 +23,6 @@ const updateSelectedOption = (value: string | null) => {
   <VRadioGroup
     v-if="props.radioContent"
     :model-value="props.selectedRadio"
-    class="custom-input-wrapper"
     @update:model-value="updateSelectedOption"
   >
     <VRow>
@@ -42,17 +40,17 @@ const updateSelectedOption = (value: string | null) => {
           </div>
           <slot :item="item">
             <div class="flex-grow-1">
-              <div class="d-flex align-center mb-2">
+              <div class="d-flex align-center mb-1">
                 <h6 class="cr-title text-base">
                   {{ item.title }}
                 </h6>
                 <VSpacer />
                 <span
                   v-if="item.subtitle"
-                  class="text-disabled text-body-2"
+                  class="text-disabled text-base"
                 >{{ item.subtitle }}</span>
               </div>
-              <p class="text-body-2 mb-0">
+              <p class="text-sm mb-0">
                 {{ item.desc }}
               </p>
             </div>
@@ -67,7 +65,7 @@ const updateSelectedOption = (value: string | null) => {
 .custom-radio {
   display: flex;
   align-items: flex-start;
-  gap: 0.25rem;
+  gap: 0.375rem;
 
   .v-radio {
     margin-block-start: -0.45rem;
@@ -75,7 +73,6 @@ const updateSelectedOption = (value: string | null) => {
 
   .cr-title {
     font-weight: 500;
-    line-height: 1.375rem;
   }
 }
 </style>

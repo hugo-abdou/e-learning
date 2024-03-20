@@ -20,28 +20,28 @@ const authMethods = [
   {
     icon: 'tabler-settings',
     title: 'Authenticator Apps',
-    desc: 'Get code from an app like Google Authenticator or Microsoft Authenticator.',
-    value: 'authApp',
+    subtitle: 'Get code from an app like Google Authenticator or Microsoft Authenticator.',
+    method: 'authApp',
   },
   {
     icon: 'tabler-message',
     title: 'SMS',
-    desc: 'We will send a code via SMS if you need to use your backup login method.',
-    value: 'sms',
+    subtitle: 'We will send a code via SMS if you need to use your backup login method.',
+    method: 'sms',
   },
 ]
 
-const selectedMethod = ref('authApp')
+const selectedMethod = ref(['authApp'])
 const isAuthAppDialogVisible = ref(false)
 const isSmsDialogVisible = ref(false)
 
 const openSelectedMethodDialog = () => {
-  if (selectedMethod.value === 'authApp') {
+  if (selectedMethod.value[0] === 'authApp') {
     isAuthAppDialogVisible.value = true
     isSmsDialogVisible.value = false
     emit('update:isDialogVisible', false)
   }
-  if (selectedMethod.value === 'sms') {
+  if (selectedMethod.value[0] === 'sms') {
     isAuthAppDialogVisible.value = false
     isSmsDialogVisible.value = true
     emit('update:isDialogVisible', false)
@@ -51,47 +51,58 @@ const openSelectedMethodDialog = () => {
 
 <template>
   <VDialog
-    :width="$vuetify.display.smAndDown ? 'auto' : 800"
+    max-width="787"
     :model-value="props.isDialogVisible"
     @update:model-value="(val) => $emit('update:isDialogVisible', val)"
   >
     <!-- Dialog close btn -->
     <DialogCloseBtn @click="$emit('update:isDialogVisible', false)" />
 
-    <VCard class="pa-2 pa-sm-10">
-      <VCardText>
-        <!-- 👉 Title -->
-        <div class="mb-6">
-          <h4 class="text-h4 text-center mb-2">
-            Select Authentication Method
-          </h4>
-          <p class="text-body-1 text-center mb-6">
+    <VCard class="pa-5 pa-sm-8">
+      <VCardItem class="text-center">
+        <VCardTitle class="text-h3 mb-3">
+          Select Authentication Method
+        </VCardTitle>
+        <VCardSubtitle>
+          <span class="text-base">
             You also need to select a method by which the proxy authenticates to the directory serve.
-          </p>
-          <CustomRadios
-            v-model:selected-radio="selectedMethod"
-            :radio-content="authMethods"
-            :grid-column="{ cols: '12' }"
+          </span>
+        </VCardSubtitle>
+      </VCardItem>
+
+      <VCardText>
+        <VList
+          v-model:selected="selectedMethod"
+          mandatory
+          variant="outlined"
+          class="card-list auth-method-card"
+          :class="$vuetify.display.xs ? 'responsive-card' : ''"
+        >
+          <VListItem
+            v-for="item of authMethods"
+            :key="item.title"
+            rounded
+            :value="item.method"
+            class="py-5 px-6 my-6"
+            :class="selectedMethod[0] === item.method && 'text-primary'"
           >
-            <template #default="items">
-              <div class="d-flex flex-column">
-                <div class="d-flex gap-1 mb-2">
-                  <VIcon
-                    :icon="items.item.icon"
-                    size="20"
-                    class="text-high-emphasis"
-                  />
-                  <h6 class="text-h6">
-                    {{ items.item.title }}
-                  </h6>
-                </div>
-                <p class="text-body-2 mb-0">
-                  {{ items.item.desc }}
-                </p>
-              </div>
+            <template #prepend>
+              <VIcon
+                :icon="item.icon"
+                size="38"
+              />
             </template>
-          </CustomRadios>
-        </div>
+
+            <VListItemTitle class="mb-2">
+              <span class="text-xl font-weight-medium">
+                {{ item.title }}
+              </span>
+            </VListItemTitle>
+            <p class="text-base mb-0">
+              {{ item.subtitle }}
+            </p>
+          </VListItem>
+        </VList>
 
         <div class="d-flex gap-4 justify-center">
           <VBtn @click="openSelectedMethodDialog">
@@ -102,7 +113,7 @@ const openSelectedMethodDialog = () => {
             variant="tonal"
             @click="$emit('update:isDialogVisible', false)"
           >
-            Cancel
+            Close
           </VBtn>
         </div>
       </VCardText>
@@ -118,3 +129,36 @@ const openSelectedMethodDialog = () => {
     :mobile-number="props.smsCode"
   />
 </template>
+
+<style lang="scss">
+.auth-method-card {
+  &.card-list .v-list-item {
+    padding-block: 20px !important;
+    padding-inline: 30px !important;
+  }
+
+  .v-list-item--active:not(.v-list-group__header) {
+    background-color: transparent !important;
+    color: rgb(var(--v-theme-primary)) !important;
+
+    .v-list-item__overlay{
+      opacity: 0;
+    }
+  }
+
+  &.responsive-card {
+    .v-list-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      text-align: center;
+
+      .v-list-item__prepend {
+        svg {
+          margin: 0;
+        }
+      }
+    }
+  }
+}
+</style>

@@ -2,7 +2,6 @@
 @use "@layouts/styles/placeholders";
 @use "@layouts/styles/mixins" as layoutMixins;
 @use "@configured-variables" as variables;
-@use "@styles/variables/_vuetify.scss" as vuetify;
 
 // 👉 Avatar group
 .v-avatar-group {
@@ -52,10 +51,6 @@
   border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
   opacity: 1;
   white-space: normal;
-
-  +.v-label {
-    letter-spacing: normal;
-  }
 
   &:hover {
     border-color: rgba(var(--v-border-color), 0.25);
@@ -132,23 +127,8 @@
   }
 }
 
-// 👉 Expansion panel
-.v-expansion-panels.customized-panels {
-  border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
-  border-radius: vuetify.$border-radius-root;
-
-  .v-expansion-panel-title {
-    background-color: rgb(var(--v-theme-expansion-panel-text-custom-bg));
-    border-block-end: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
-    margin-block-end: -1px;
-  }
-
-  .v-expansion-panel-text__wrapper {
-    padding: 20px;
-  }
-}
-
 // v-tab with pill support
+
 .v-tabs.v-tabs-pill {
   .v-tab.v-btn {
     border-radius: 6px !important;
@@ -162,7 +142,7 @@
 
 // loop for all colors bg
 @each $color-name in variables.$theme-colors-name {
-  body .v-tabs.v-tabs-pill {
+  .v-tabs.v-tabs-pill {
     .v-slide-group-item--active.v-tab--selected.text-#{$color-name} {
       background-color: rgb(var(--v-theme-#{$color-name}));
       color: rgb(var(--v-theme-on-#{$color-name})) !important;
@@ -182,4 +162,11 @@
 // 👉 Switch
 .v-switch .v-selection-control:not(.v-selection-control--dirty) .v-switch__thumb {
   color: #fff !important;
+}
+
+// 👉 Textarea
+.v-textarea .v-field__input {
+  /* stylelint-disable-next-line property-no-vendor-prefix */
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
 }

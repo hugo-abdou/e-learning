@@ -13,8 +13,6 @@ const props = withDefaults(defineProps<Props>(), {
 <template>
   <IconBtn
     variant="elevated"
-    size="30"
-    :ripple="false"
     class="v-dialog-close-btn"
   >
     <VIcon

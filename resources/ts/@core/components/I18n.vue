@@ -16,7 +16,7 @@ const { locale } = useI18n({ useScope: 'global' })
 <template>
   <IconBtn>
     <VIcon
-      size="24"
+      size="26"
       icon="tabler-language"
     />
 
@@ -24,7 +24,7 @@ const { locale } = useI18n({ useScope: 'global' })
     <VMenu
       activator="parent"
       :location="props.location"
-      offset="12px"
+      offset="14px"
     >
       <!-- List -->
       <VList

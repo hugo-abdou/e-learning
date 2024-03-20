@@ -28,7 +28,6 @@ export const defineThemeConfig = (userConfig: UserThemeConfig): { themeConfig: U
       horizontalNav: {
         type: userConfig.horizontalNav.type,
         transition: userConfig.horizontalNav.transition,
-        popoverOffset: userConfig.horizontalNav.popoverOffset,
       },
       icons: {
         chevronDown: userConfig.icons.chevronDown,

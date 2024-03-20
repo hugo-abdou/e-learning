@@ -10,7 +10,6 @@ import { VInput, makeVInputProps } from 'vuetify/lib/components/VInput/VInput'
 
 // @ts-expect-error There won't be declaration file for it
 import { filterInputAttrs } from 'vuetify/lib/util/helpers'
-
 import { useConfigStore } from '@core/stores/config'
 
 // inherit Attribute make false
@@ -33,7 +32,7 @@ const props = defineProps({
   },
   modelModifiers: Object as PropType<Record<string, boolean>>,
   ...makeVInputProps({
-    density: 'comfortable',
+    density: 'compact',
     hideDetails: 'auto',
   }),
   ...makeVFieldProps({
@@ -56,11 +55,12 @@ const configStore = useConfigStore()
 const attrs = useAttrs()
 
 const [rootAttrs, compAttrs] = filterInputAttrs(attrs)
-const inputProps = ref(VInput.filterProps(props))
-const fieldProps = ref(filterFieldProps(props))
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const [{ modelValue: _, ...inputProps }] = VInput.filterProps(props)
+const [fieldProps] = filterFieldProps(props)
 
 const refFlatPicker = ref()
-
 const { focused } = useFocus(refFlatPicker)
 const isCalendarOpen = ref(false)
 const isInlinePicker = ref(false)
@@ -69,12 +69,6 @@ const isInlinePicker = ref(false)
 if (compAttrs.config && compAttrs.config.inline) {
   isInlinePicker.value = compAttrs.config.inline
   Object.assign(compAttrs, { altInputClass: 'inlinePicker' })
-}
-
-compAttrs.config = {
-  ...compAttrs.config,
-  prevArrow: '<i class="tabler-chevron-left v-icon" style="font-size: 20px; height: 20px; width: 20px;"></i>',
-  nextArrow: '<i class="tabler-chevron-right v-icon" style="font-size: 20px; height: 20px; width: 20px;"></i>',
 }
 
 // v-field clear prop
@@ -114,17 +108,7 @@ const emitModelValue = (val: string) => {
   emit('update:modelValue', val)
 }
 
-watch(() => props, () => {
-  fieldProps.value = filterFieldProps(props)
-  inputProps.value = VInput.filterProps(props)
-},
-{
-  deep: true,
-  immediate: true,
-})
-
 const elementId = computed(() => {
-  // @ts-expect-error id or label will be there
   const _elementIdToken = fieldProps.id || fieldProps.label
 
   return _elementIdToken ? `app-picker-field-${_elementIdToken}-${Math.random().toString(36).slice(2, 7)}` : undefined
@@ -136,7 +120,7 @@ const elementId = computed(() => {
     <!-- v-input -->
     <VLabel
       v-if="fieldProps.label"
-      class="mb-1 text-body-2"
+      class="mb-1 text-body-2 text-high-emphasis"
       :for="elementId"
       :text="fieldProps.label"
     />
@@ -176,7 +160,7 @@ const elementId = computed(() => {
                 :model-value="modelValue"
                 :placeholder="props.placeholder"
                 :readonly="isReadonly.value"
-                class="flat-picker-custom-style h-100 w-100"
+                class="flat-picker-custom-style"
                 :disabled="isReadonly.value"
                 @on-open="isCalendarOpen = true"
                 @on-close="isCalendarOpen = false"
@@ -189,7 +173,7 @@ const elementId = computed(() => {
                 :value="modelValue"
                 :placeholder="props.placeholder"
                 :readonly="isReadonly.value"
-                class="flat-picker-custom-style h-100 w-100"
+                class="flat-picker-custom-style"
                 type="text"
               >
             </div>
@@ -212,8 +196,6 @@ const elementId = computed(() => {
 </template>
 
 <style lang="scss">
-@use "@core-scss/template/mixins" as templateMixins;
-
 /* stylelint-disable no-descending-specificity */
 @use "flatpickr/dist/flatpickr.css";
 @use "@core-scss/base/mixins";
@@ -229,7 +211,7 @@ const elementId = computed(() => {
 }
 
 $heading-color: rgba(var(--v-theme-on-background), var(--v-high-emphasis-opacity));
-$body-color: rgba(var(--v-theme-on-background), var(--v-high-emphasis-opacity));
+$body-color: rgba(var(--v-theme-on-background), var(--v-medium-emphasis-opacity));
 $disabled-color: rgba(var(--v-theme-on-background), var(--v-disabled-opacity));
 
 // hide the input when your picker is inline
@@ -245,34 +227,36 @@ input[altinputclass="inlinePicker"] {
   @include mixins.elevation(6);
 
   background-color: rgb(var(--v-theme-surface));
-  inline-size: 16.875rem;
+  inline-size: 16.625rem;
+  margin-block-start: 0.1875rem;
 
-  .flatpickr-day:focus {
-    border-color: rgba(var(--v-border-color), var(--v-border-opacity));
-    background: rgba(var(--v-border-color), var(--v-border-opacity));
+  .flatpickr-day:focus{
+    border-color: rgba(var(--v-border-color),var(--v-border-opacity));
+    background:  rgba(var(--v-border-color),var(--v-border-opacity));
   }
 
   .flatpickr-rContainer {
     .flatpickr-weekdays {
-      block-size: 1.25rem;
-      padding-inline: 0.5625rem;
+      block-size: 2.125rem;
+      padding-inline: 0.875rem;
     }
 
     .flatpickr-days {
-      min-inline-size: 16.875rem;
+      min-inline-size: 16.625rem;
 
       .dayContainer {
         justify-content: center !important;
-        inline-size: 16.875rem;
-        min-inline-size: 16.875rem;
-        padding-block: 0.75rem 0.5rem;
+        inline-size: 16.625rem;
+        min-inline-size: 16.625rem;
+        padding-block-end: 0.75rem;
+        padding-block-start: 0;
 
         .flatpickr-day {
-          block-size: 2.25rem;
+          block-size: 2.125rem;
           font-size: 0.9375rem;
-          line-height: 2.25rem;
+          line-height: 2.125rem;
           margin-block-start: 0 !important;
-          max-inline-size: 2.25rem;
+          max-inline-size: 2.125rem;
         }
       }
     }
@@ -282,16 +266,12 @@ input[altinputclass="inlinePicker"] {
     color: $body-color;
 
     &.today {
-      &:not(.selected) {
-        border: none !important;
-        background: rgba(var(--v-theme-primary), 0.24);
-        color: rgb(var(--v-theme-primary));
-      }
+      border-color: rgb(var(--v-theme-primary));
 
       &:hover {
-        border: none !important;
-        background: rgba(var(--v-theme-primary), 0.24);
-        color: rgb(var(--v-theme-primary));
+        border-color: rgb(var(--v-theme-primary));
+        background: transparent;
+        color: $body-color;
       }
     }
 
@@ -301,7 +281,7 @@ input[altinputclass="inlinePicker"] {
       background: rgb(var(--v-theme-primary));
       color: rgb(var(--v-theme-on-primary));
 
-      @include templateMixins.custom-elevation(var(--v-theme-primary), "sm");
+      @include mixins.elevation(2);
     }
 
     &.inRange,
@@ -313,11 +293,11 @@ input[altinputclass="inlinePicker"] {
     }
 
     &.startRange {
-      @include templateMixins.custom-elevation(var(--v-theme-primary), "sm");
+      @include mixins.elevation(2);
     }
 
     &.endRange {
-      @include templateMixins.custom-elevation(var(--v-theme-primary), "sm");
+      @include mixins.elevation(2);
     }
 
     &.startRange,
@@ -343,20 +323,18 @@ input[altinputclass="inlinePicker"] {
 
     &:hover {
       border-color: transparent;
-      background: rgba(var(--v-theme-on-surface), 0.06);
+      background: rgba(var(--v-theme-on-surface), 0.08);
     }
   }
 
   .flatpickr-weekday {
     color: $heading-color;
     font-size: 0.8125rem;
-    font-weight: 400;
-    inline-size: 2.25rem;
-    line-height: 1.25rem;
+    font-weight: 500;
   }
 
   .flatpickr-days {
-    inline-size: 16.875rem;
+    inline-size: 16.625rem;
   }
 
   &::after,
@@ -365,14 +343,11 @@ input[altinputclass="inlinePicker"] {
   }
 
   .flatpickr-months {
+    border-block-end: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+
     .flatpickr-prev-month,
     .flatpickr-next-month {
-      color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity));
       fill: $body-color;
-
-      &:hover {
-        color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity));
-      }
 
       &:hover i,
       &:hover svg {
@@ -391,13 +366,9 @@ input[altinputclass="inlinePicker"] {
   }
 
   &.hasTime.open {
-    .flatpickr-innerContainer + .flatpickr-time {
-      block-size: auto;
-      border-block-start: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
-    }
-
     .flatpickr-time {
-      border-block-start: none;
+      border-color: rgba(var(--v-border-color), var(--v-border-opacity));
+      block-size: auto;
     }
 
     .flatpickr-hour,
@@ -454,7 +425,7 @@ input[altinputclass="inlinePicker"] {
 
 // week sections
 .flatpickr-weekdays {
-  margin-block: 0.375rem;
+  margin-block: 12px;
 }
 
 // Month and year section
@@ -469,8 +440,7 @@ input[altinputclass="inlinePicker"] {
     border-radius: 4px;
     color: $heading-color;
     font-size: 0.9375rem;
-    font-weight: 400;
-    line-height: 1.375rem;
+    font-weight: 500;
     transition: all 0.15s ease-out;
 
     span {
@@ -482,7 +452,7 @@ input[altinputclass="inlinePicker"] {
     }
 
     .numInput.cur-year {
-      font-weight: 400;
+      font-weight: 500;
     }
   }
 }
@@ -500,19 +470,14 @@ input[altinputclass="inlinePicker"] {
   .flatpickr-next-month {
     display: flex;
     align-items: center;
-    justify-content: center;
-    padding: 0;
     border-radius: 5rem;
-    background: rgba(var(--v-theme-on-surface), var(--v-selected-opacity));
-    block-size: 1.875rem;
-    inline-size: 1.875rem;
-    inset-block-start: 15px !important;
-
-    &.flatpickr-disabled {
-      display: inline;
-      opacity: var(--v-disabled-opacity);
-      pointer-events: none;
-    }
+    background: rgba(var(--v-theme-surface-variant), var(--v-selected-opacity));
+    block-size: 1.75rem;
+    inline-size: 1.75rem;
+    inset-block-start: 0.75rem !important;
+    margin-block: 0.1875rem;
+    padding-block: 0.25rem;
+    padding-inline: 0.4375rem;
   }
 
   .flatpickr-next-month {
@@ -521,7 +486,7 @@ input[altinputclass="inlinePicker"] {
 
   .flatpickr-prev-month {
     /* stylelint-disable-next-line liberty/use-logical-spec */
-    right: 3.65rem;
+    right: 3.8rem;
     left: unset !important;
   }
 
@@ -539,5 +504,10 @@ input[altinputclass="inlinePicker"] {
       text-align: start;
     }
   }
+}
+
+// Update hour font-weight
+.flatpickr-time input.flatpickr-hour {
+  font-weight: 400;
 }
 </style>

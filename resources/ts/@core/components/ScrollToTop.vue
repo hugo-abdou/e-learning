@@ -10,15 +10,14 @@ const scrollToTop = () => {
 </script>
 
 <template>
-  <Transition
-    name="app-transition-zoom-fade"
+  <VScaleTransition
     style="transform-origin: center;"
+    class="scroll-to-top d-print-none"
   >
     <VBtn
       v-show="y > 200"
       icon
       density="comfortable"
-      class="scroll-to-top d-print-none"
       @click="scrollToTop"
     >
       <VIcon
@@ -26,7 +25,7 @@ const scrollToTop = () => {
         icon="tabler-arrow-up"
       />
     </VBtn>
-  </Transition>
+  </VScaleTransition>
 </template>
 
 <style lang="scss">

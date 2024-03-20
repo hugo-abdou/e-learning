@@ -24,7 +24,7 @@ const label = computed(() => useAttrs().label as string | undefined)
     <VLabel
       v-if="label"
       :for="elementId"
-      class="mb-1 text-body-2"
+      class="mb-1 text-body-2 text-high-emphasis"
       :text="label"
     />
     <VTextarea

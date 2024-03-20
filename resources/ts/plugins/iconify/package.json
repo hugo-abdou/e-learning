@@ -1,3 +1,4 @@
 {
-  "type": "commonjs"
+  "name": "iconify-plugin",
+  "description": "This is dummy file to allow running build-icons scripts even with \"type\": \"module\" in root package.json file"
 }

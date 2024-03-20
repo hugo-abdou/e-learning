@@ -17,7 +17,6 @@ body .apexcharts-canvas {
       border-color: rgba(var(--v-border-color), var(--v-border-opacity));
       background: rgb(var(--v-theme-surface));
       font-weight: 500;
-      padding-inline: 10px;
     }
 
     &.apexcharts-theme-light {
@@ -88,14 +87,6 @@ body .apexcharts-canvas {
 
   .apexcharts-marker {
     box-shadow: none;
-  }
-
-  .apexcharts-tooltip-marker {
-    margin-inline-end: 0.625rem;
-
-    @include layoutsMixins.rtl {
-      margin-inline: 0 0.625rem !important;
-    }
   }
 
   .apexcharts-legend-marker {

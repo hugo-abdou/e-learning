@@ -57,13 +57,12 @@ interface BundleScriptConfig {
 }
 
 const sources: BundleScriptConfig = {
-
   svg: [
-    // {
-    //   dir: 'resources/images/iconify-svg',
-    //   monotone: true,
-    //   prefix: 'custom',
-    // },
+    {
+      dir: 'resources/images/iconify-svg',
+      monotone: false,
+      prefix: 'custom',
+    },
 
     // {
     //   dir: 'emojis',
@@ -88,16 +87,11 @@ const sources: BundleScriptConfig = {
     // Iconify JSON file (@iconify/json is a package name, /json/ is directory where files are, then filename)
     require.resolve('@iconify-json/tabler/icons.json'),
     {
-      filename: require.resolve('@iconify-json/mdi/icons.json'),
-      icons: [
-        'close-circle',
-        'language-javascript',
-        'language-typescript',
-      ],
-    },
-    {
       filename: require.resolve('@iconify-json/fa/icons.json'),
       icons: [
+        'facebook',
+        'google',
+        'twitter',
         'circle',
       ],
     },

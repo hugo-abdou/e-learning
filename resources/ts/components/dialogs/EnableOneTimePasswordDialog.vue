@@ -31,23 +31,26 @@ const dialogModelValueUpdate = (val: boolean) => {
 
 <template>
   <VDialog
-    :width="$vuetify.display.smAndDown ? 'auto' : 900"
+    max-width="787"
     :model-value="props.isDialogVisible"
     @update:model-value="dialogModelValueUpdate"
   >
     <!-- Dialog close btn -->
     <DialogCloseBtn @click="dialogModelValueUpdate(false)" />
 
-    <VCard class="pa-2 pa-sm-10">
-      <VCardText>
-        <!-- 👉 Title -->
-        <h5 class="text-h5 mb-2">
+    <VCard class="pa-5 pa-sm-8">
+      <VCardItem class="text-start">
+        <VCardTitle class="text-h6 font-weight-medium mb-2">
           Verify Your Mobile Number for SMS
-        </h5>
-        <p class="text-body-1 mb-6">
-          Enter your mobile phone number with country code and  we will send you a verification code.
-        </p>
+        </VCardTitle>
+        <VCardSubtitle>
+          <span class="text-base">
+            Enter your mobile phone number with country code and  we will send you a verification code.
+          </span>
+        </VCardSubtitle>
+      </VCardItem>
 
+      <VCardText class="pt-6">
         <VForm @submit.prevent="() => {}">
           <AppTextField
             v-model="phoneNumber"
@@ -55,7 +58,7 @@ const dialogModelValueUpdate = (val: boolean) => {
             label="Phone Number"
             placeholder="+1 123 456 7890"
             type="number"
-            class="mb-6"
+            class="mb-5"
           />
 
           <div class="d-flex flex-wrap justify-end gap-4">

@@ -29,51 +29,56 @@ const resetAuthCode = () => {
 
 <template>
   <VDialog
-    :width="$vuetify.display.smAndDown ? 'auto' : 900"
+    max-width="787"
     :model-value="props.isDialogVisible"
     @update:model-value="(val) => $emit('update:isDialogVisible', val)"
   >
     <!-- Dialog close btn -->
     <DialogCloseBtn @click="$emit('update:isDialogVisible', false)" />
 
-    <VCard class="pa-2 pa-sm-10">
-      <VCardText>
-        <!-- 👉 Title -->
-        <h4 class="text-h4 text-center mb-6">
+    <VCard class="pa-5 pa-sm-8">
+      <VCardItem>
+        <VCardTitle class="text-h5 font-weight-medium text-center">
           Add Authenticator App
-        </h4>
-        <h5 class="text-h5 mb-2">
-          Authenticator Apps
-        </h5>
+        </VCardTitle>
+      </VCardItem>
 
-        <p class="text-body-1 mb-6">
+      <VCardText class="pt-3">
+        <h6 class="text-lg font-weight-medium mb-2">
+          Authenticator Apps
+        </h6>
+
+        <p class="mb-6">
           Using an authenticator app like Google Authenticator, Microsoft Authenticator, Authy, or 1Password, scan the QR code. It will generate a 6 digit code for you to enter below.
         </p>
 
-        <div class="mb-6">
+        <div class="mb-4">
           <VImg
-            width="150"
+            width="122"
             :src="themeselectionQr"
             class="mx-auto"
           />
         </div>
 
         <VAlert
-          title="ASDLKNASDA9AHS678dGhASD78AB"
-          text="If you are unable to scan the QR code, you can manually enter the secret key below."
-          variant="tonal"
-          color="warning"
-        />
+          color="light-warning"
+          class="text-warning"
+        >
+          <span class="text-lg font-weight-medium">ASDLKNASDA9AHS678dGhASD78AB</span>
+          <p class="mb-0">
+            If you are unable to scan the QR code, you can manually enter the secret key below.
+          </p>
+        </VAlert>
         <VForm @submit.prevent="() => {}">
           <AppTextField
             v-model="authCode"
             name="auth-code"
             label="Enter Authentication Code"
             placeholder="123 456"
-            class="mt-4 mb-6"
+            class="mb-4"
           />
 
-          <div class="d-flex justify-end flex-wrap gap-4">
+          <div class="d-flex justify-end flex-wrap gap-3">
             <VBtn
               color="secondary"
               variant="tonal"

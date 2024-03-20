@@ -2,21 +2,33 @@
 import { useStorage } from '@vueuse/core'
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
 import { useTheme } from 'vuetify'
-import { staticPrimaryColor, staticPrimaryDarkenColor } from '@/plugins/vuetify/theme'
+import { staticPrimaryColor } from '@/plugins/vuetify/theme'
 import { Direction, Layout, Skins, Theme } from '@core/enums'
 import { useConfigStore } from '@core/stores/config'
-import horizontalLight from '@images/customizer-icons/horizontal-light.svg'
 import { AppContentLayoutNav, ContentWidth } from '@layouts/enums'
 import { cookieRef, namespaceConfig } from '@layouts/stores/config'
 import { themeConfig } from '@themeConfig'
 
-import borderSkin from '@images/customizer-icons/border-light.svg'
-import collapsed from '@images/customizer-icons/collapsed-light.svg'
-import compact from '@images/customizer-icons/compact-light.svg'
-import defaultSkin from '@images/customizer-icons/default-light.svg'
-import ltrSvg from '@images/customizer-icons/ltr-light.svg'
-import rtlSvg from '@images/customizer-icons/rtl-light.svg'
-import wideSvg from '@images/customizer-icons/wide-light.svg'
+import borderSkinDark from '@images/customizer-icons/border-dark.svg'
+import borderSkinLight from '@images/customizer-icons/border-light.svg'
+import collapsedDark from '@images/customizer-icons/collapsed-dark.svg'
+import collapsedLight from '@images/customizer-icons/collapsed-light.svg'
+import compactDark from '@images/customizer-icons/compact-dark.svg'
+import compactLight from '@images/customizer-icons/compact-light.svg'
+import darkThemeDark from '@images/customizer-icons/dark-theme-dark.svg'
+import darkThemeLight from '@images/customizer-icons/dark-theme-light.svg'
+import defaultSkinDark from '@images/customizer-icons/default-dark.svg'
+import defaultSkinLight from '@images/customizer-icons/default-light.svg'
+import lightThemeDark from '@images/customizer-icons/light-theme-dark.svg'
+import lightThemeLight from '@images/customizer-icons/light-theme-light.svg'
+import ltrDark from '@images/customizer-icons/ltr-dark.svg'
+import ltrLight from '@images/customizer-icons/ltr-light.svg'
+import rtlDark from '@images/customizer-icons/rtl-dark.svg'
+import rtlLight from '@images/customizer-icons/rtl-light.svg'
+import systemThemeDark from '@images/customizer-icons/system-theme-dark.svg'
+import systemThemeLight from '@images/customizer-icons/system-theme-light.svg'
+import wideDark from '@images/customizer-icons/wide-dark.svg'
+import wideLight from '@images/customizer-icons/wide-light.svg'
 
 const isNavDrawerOpen = ref(false)
 
@@ -25,57 +37,57 @@ const configStore = useConfigStore()
 // 👉 Primary Color
 const vuetifyTheme = useTheme()
 
-const colors: { main: string; darken: string }[] = [
-  { main: staticPrimaryColor, darken: '#675DD8' },
-  { main: '#0D9394', darken: '#0C8485' },
-  { main: '#FFB400', darken: '#E6A200' },
-  { main: '#FF4C51', darken: '#E64449' },
-  { main: '#16B1FF', darken: '#149FE6' },
-]
-
-const customPrimaryColor = ref('#663131')
+const colors = [staticPrimaryColor, '#0D9394', '#FFAB1D', '#EB3D63', '#2092EC']
+const customPrimaryColor = ref('#ffffff')
 
 watch(
   () => configStore.theme,
   () => {
     const cookiePrimaryColor = cookieRef(`${vuetifyTheme.name.value}ThemePrimaryColor`, null).value
 
-    if (cookiePrimaryColor && !colors.some(color => color.main === cookiePrimaryColor))
+    if (cookiePrimaryColor && !colors.includes(cookiePrimaryColor))
       customPrimaryColor.value = cookiePrimaryColor
   },
   { immediate: true },
 )
 
 // ℹ️ It will set primary color for current theme only
-const setPrimaryColor = useDebounceFn((color: { main: string; darken: string }) => {
-  vuetifyTheme.themes.value[vuetifyTheme.name.value].colors.primary = color.main
-  vuetifyTheme.themes.value[vuetifyTheme.name.value].colors['primary-darken-1'] = color.darken
+const setPrimaryColor = useDebounceFn((color: string) => {
+  vuetifyTheme.themes.value[vuetifyTheme.name.value].colors.primary = color
 
   // ℹ️ We need to store this color value in cookie so vuetify plugin can pick on next reload
-  cookieRef<string | null>(`${vuetifyTheme.name.value}ThemePrimaryColor`, null).value = color.main
-  cookieRef<string | null>(`${vuetifyTheme.name.value}ThemePrimaryDarkenColor`, null).value = color.darken
+  cookieRef<string | null>(`${vuetifyTheme.name.value}ThemePrimaryColor`, null).value = color
 
   // ℹ️ Update initial loader color
-  useStorage<string | null>(namespaceConfig('initial-loader-color'), null).value = color.main
+  useStorage<string | null>(namespaceConfig('initial-loader-color'), null).value = color
 }, 100)
+
+const lightTheme = useGenerateImageVariant(lightThemeLight, lightThemeDark)
+const darkTheme = useGenerateImageVariant(darkThemeLight, darkThemeDark)
+const systemTheme = useGenerateImageVariant(systemThemeLight, systemThemeDark)
+const defaultSkin = useGenerateImageVariant(defaultSkinLight, defaultSkinDark)
+const borderSkin = useGenerateImageVariant(borderSkinLight, borderSkinDark)
+const collapsed = useGenerateImageVariant(collapsedLight, collapsedDark)
+const compact = useGenerateImageVariant(compactLight, compactDark)
+const compactContent = useGenerateImageVariant(compactLight, compactDark)
+const wideContent = useGenerateImageVariant(wideLight, wideDark)
+const ltrImg = useGenerateImageVariant(ltrLight, ltrDark)
+const rtlImg = useGenerateImageVariant(rtlLight, rtlDark)
 
 // 👉 Mode
 const themeMode = computed(() => {
   return [
     {
-      bgImage: 'tabler-sun',
+      bgImage: lightTheme.value,
       value: Theme.Light,
-      label: 'Light',
     },
     {
-      bgImage: 'tabler-moon-stars',
+      bgImage: darkTheme.value,
       value: Theme.Dark,
-      label: 'Dark',
     },
     {
-      bgImage: 'tabler-device-desktop-analytics',
+      bgImage: systemTheme.value,
       value: Theme.System,
-      label: 'System',
     },
   ]
 })
@@ -84,12 +96,12 @@ const themeMode = computed(() => {
 const themeSkin = computed(() => {
   return [
     {
-      bgImage: defaultSkin,
+      bgImage: defaultSkin.value,
       value: Skins.Default,
       label: 'Default',
     },
     {
-      bgImage: borderSkin,
+      bgImage: borderSkin.value,
       value: Skins.Bordered,
       label: 'Bordered',
     },
@@ -102,17 +114,17 @@ const currentLayout = ref<'vertical' | 'collapsed' | 'horizontal'>(configStore.i
 const layouts = computed(() => {
   return [
     {
-      bgImage: defaultSkin,
+      bgImage: defaultSkin.value,
       value: Layout.Vertical,
       label: 'Vertical',
     },
     {
-      bgImage: collapsed,
+      bgImage: collapsed.value,
       value: Layout.Collapsed,
       label: 'Collapsed',
     },
     {
-      bgImage: horizontalLight,
+      bgImage: compact.value,
       value: Layout.Horizontal,
       label: 'Horizontal',
     },
@@ -144,12 +156,12 @@ watch(
 const contentWidth = computed(() => {
   return [
     {
-      bgImage: compact,
+      bgImage: compactContent.value,
       value: ContentWidth.Boxed,
       label: 'Compact',
     },
     {
-      bgImage: wideSvg,
+      bgImage: wideContent.value,
       value: ContentWidth.Fluid,
       label: 'Wide',
     },
@@ -162,12 +174,12 @@ const currentDir = ref(configStore.isAppRTL ? 'rtl' : 'ltr')
 const direction = computed(() => {
   return [
     {
-      bgImage: ltrSvg,
+      bgImage: ltrImg.value,
       value: Direction.Ltr,
       label: 'Left to right',
     },
     {
-      bgImage: rtlSvg,
+      bgImage: rtlImg.value,
       value: Direction.Rtl,
       label: 'Right to left',
     },
@@ -229,34 +241,28 @@ watch([
 
 // remove all theme related values from localStorage
 const resetCustomizer = async () => {
-  if (isCookieHasAnyValue.value) {
-    // reset themeConfig values
-    vuetifyTheme.themes.value.light.colors.primary = staticPrimaryColor
-    vuetifyTheme.themes.value.dark.colors.primary = staticPrimaryColor
-    vuetifyTheme.themes.value.light.colors['primary-darken-1'] = staticPrimaryDarkenColor
-    vuetifyTheme.themes.value.dark.colors['primary-darken-1'] = staticPrimaryDarkenColor
+  // reset themeConfig values
+  vuetifyTheme.themes.value.light.colors.primary = staticPrimaryColor
+  vuetifyTheme.themes.value.dark.colors.primary = staticPrimaryColor
 
-    configStore.theme = themeConfig.app.theme
-    configStore.skin = themeConfig.app.skin
-    configStore.isVerticalNavSemiDark = themeConfig.verticalNav.isVerticalNavSemiDark
-    configStore.appContentLayoutNav = themeConfig.app.contentLayoutNav
-    configStore.appContentWidth = themeConfig.app.contentWidth
-    configStore.isAppRTL = isActiveLangRTL.value
-    configStore.isVerticalNavCollapsed = themeConfig.verticalNav.isVerticalNavCollapsed
-    useStorage<string | null>(namespaceConfig('initial-loader-color'), null).value = staticPrimaryColor
-    currentLayout.value = themeConfig.app.contentLayoutNav
+  configStore.theme = themeConfig.app.theme
+  configStore.skin = themeConfig.app.skin
+  configStore.isVerticalNavSemiDark = themeConfig.verticalNav.isVerticalNavSemiDark
+  configStore.appContentLayoutNav = themeConfig.app.contentLayoutNav
+  configStore.appContentWidth = themeConfig.app.contentWidth
+  configStore.isAppRTL = isActiveLangRTL.value
+  configStore.isVerticalNavCollapsed = themeConfig.verticalNav.isVerticalNavCollapsed
+  useStorage<string | null>(namespaceConfig('initial-loader-color'), null).value = staticPrimaryColor
+  currentLayout.value = 'vertical'
 
-    cookieRef('lightThemePrimaryColor', null).value = null
-    cookieRef('darkThemePrimaryColor', null).value = null
-    cookieRef('lightThemePrimaryDarkenColor', null).value = null
-    cookieRef('darkThemePrimaryDarkenColor', null).value = null
+  cookieRef('lightThemePrimaryColor', null).value = null
+  cookieRef('darkThemePrimaryColor', null).value = null
 
-    await nextTick()
+  await nextTick()
 
-    isCookieHasAnyValue.value = false
+  isCookieHasAnyValue.value = false
 
-    customPrimaryColor.value = '#ffffff'
-  }
+  customPrimaryColor.value = '#ffffff'
 }
 </script>
 
@@ -264,6 +270,7 @@ const resetCustomizer = async () => {
   <div class="d-lg-block d-none">
     <VBtn
       icon
+      size="small"
       class="app-customizer-toggler rounded-s-lg rounded-0"
       style="z-index: 1001;"
       @click="isNavDrawerOpen = true"
@@ -278,10 +285,9 @@ const resetCustomizer = async () => {
       v-model="isNavDrawerOpen"
       temporary
       touchless
-      border="none"
+      border="0"
       location="end"
       width="400"
-      elevation="10"
       :scrim="false"
       class="app-customizer"
     >
@@ -291,9 +297,7 @@ const resetCustomizer = async () => {
           <h6 class="text-h6">
             Theme Customizer
           </h6>
-          <p class="text-body-2 mb-0">
-            Customize & Preview in Real Time
-          </p>
+          <span class="text-body-1">Customize & Preview in Real Time</span>
         </div>
 
         <div class="d-flex align-center gap-1">
@@ -308,13 +312,12 @@ const resetCustomizer = async () => {
               v-show="isCookieHasAnyValue"
               dot
               color="error"
-              offset-x="-29"
-              offset-y="-14"
+              offset-x="-30"
+              offset-y="-15"
             />
 
             <VIcon
-              size="24"
-              color="high-emphasis"
+              size="22"
               icon="tabler-refresh"
             />
           </VBtn>
@@ -328,8 +331,7 @@ const resetCustomizer = async () => {
           >
             <VIcon
               icon="tabler-x"
-              color="high-emphasis"
-              size="24"
+              size="22"
             />
           </VBtn>
         </div>
@@ -347,42 +349,40 @@ const resetCustomizer = async () => {
           :divider="false"
         >
           <!-- 👉 Primary Color -->
-          <div class="d-flex flex-column gap-2">
-            <h6 class="text-h6">
+          <div class="d-flex flex-column gap-3">
+            <h6 class="text-base font-weight-medium">
               Primary Color
             </h6>
 
             <div
-              class="d-flex app-customizer-primary-colors"
-              style="column-gap: 0.75rem; margin-block-start: 2px;"
+              class="d-flex align-center gap-x-3"
+              style="column-gap: 0.7rem;"
             >
               <div
                 v-for="color in colors"
-                :key="color.main"
+                :key="color"
                 style="
-              border-radius: 0.375rem;
-              outline: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
-              padding-block: 0.5rem;
-              padding-inline: 0.625rem;"
-                class="primary-color-wrapper cursor-pointer"
-                :class="vuetifyTheme.current.value.colors.primary === color.main ? 'active' : ''"
-                :style="vuetifyTheme.current.value.colors.primary === color.main ? `outline-color: ${color.main}; outline-width:2px;` : `--v-color:${color.main}`"
+                border-radius: 0.375rem;
+                outline: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+                padding-block: 0.625rem;
+                padding-inline: 0.625rem;"
+                class="cursor-pointer"
+                :style="vuetifyTheme.current.value.colors.primary === color ? `outline-color: ${color}; outline-width:2px;` : ''"
                 @click="setPrimaryColor(color)"
               >
                 <div
-                  style="border-radius: 0.375rem;block-size: 2.125rem; inline-size: 1.8938rem;"
-                  :style="{ backgroundColor: color.main }"
+                  style="border-radius: 0.375rem;block-size: 1.875rem; inline-size: 1.875rem;"
+                  :style="{ backgroundColor: color }"
                 />
               </div>
 
               <div
-                class="primary-color-wrapper cursor-pointer d-flex align-center"
+                class="cursor-pointer"
                 style="
               border-radius: 0.375rem;
               outline: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
-              padding-block: 0.5rem;
+              padding-block: 0.625rem;
               padding-inline: 0.625rem;"
-                :class="vuetifyTheme.current.value.colors.primary === customPrimaryColor ? 'active' : ''"
                 :style="vuetifyTheme.current.value.colors.primary === customPrimaryColor ? `outline-color: ${customPrimaryColor}; outline-width:2px;` : ''"
               >
                 <VBtn
@@ -393,7 +393,7 @@ const resetCustomizer = async () => {
                   style="border-radius: 0.375rem;"
                 >
                   <VIcon
-                    size="20"
+                    size="22"
                     icon="tabler-color-picker"
                     :color="vuetifyTheme.current.value.colors.primary === customPrimaryColor ? 'rgb(var(--v-theme-on-primary))' : ''"
                   />
@@ -409,7 +409,7 @@ const resetCustomizer = async () => {
                         v-model="customPrimaryColor"
                         mode="hex"
                         :modes="['hex']"
-                        @update:model-value="setPrimaryColor({ main: customPrimaryColor, darken: customPrimaryColor })"
+                        @update:model-value="setPrimaryColor"
                       />
                     </VListItem>
                   </VList>
@@ -419,8 +419,8 @@ const resetCustomizer = async () => {
           </div>
 
           <!-- 👉 Theme -->
-          <div class="d-flex flex-column gap-2">
-            <h6 class="text-h6">
+          <div class="d-flex flex-column gap-3">
+            <h6 class="text-base font-weight-medium">
               Theme
             </h6>
 
@@ -429,30 +429,12 @@ const resetCustomizer = async () => {
               v-model:selected-radio="configStore.theme"
               :radio-content="themeMode"
               :grid-column="{ cols: '4' }"
-              class="customizer-skins"
-            >
-              <template #label="item">
-                <span class="text-sm text-medium-emphasis mt-1">{{ item?.label }}</span>
-              </template>
-
-              <template #content="{ item }">
-                <div
-                  class="customizer-skins-icon-wrapper d-flex align-center justify-center py-3 w-100"
-                  style="min-inline-size: 100%;"
-                >
-                  <VIcon
-                    size="30"
-                    :icon="item.bgImage"
-                    color="high-emphasis"
-                  />
-                </div>
-              </template>
-            </CustomRadiosWithImage>
+            />
           </div>
 
           <!-- 👉 Skin -->
-          <div class="d-flex flex-column gap-2">
-            <h6 class="text-h6">
+          <div class="d-flex flex-column gap-3">
+            <h6 class="text-base font-weight-medium">
               Skins
             </h6>
 
@@ -470,12 +452,12 @@ const resetCustomizer = async () => {
 
           <!-- 👉 Semi Dark -->
           <div
-            class="align-center justify-space-between"
+            class="mt-4 align-center justify-space-between"
             :class="vuetifyTheme.global.name.value === 'light' && configStore.appContentLayoutNav === AppContentLayoutNav.Vertical ? 'd-flex' : 'd-none'"
           >
             <VLabel
               for="customizer-semi-dark"
-              class="text-h6 text-high-emphasis"
+              class="text-high-emphasis"
             >
               Semi Dark Menu
             </VLabel>
@@ -494,7 +476,7 @@ const resetCustomizer = async () => {
         <!-- SECTION LAYOUT -->
         <CustomizerSection title="Layout">
           <!-- 👉 Layouts -->
-          <div class="d-flex flex-column gap-2">
+          <div class="d-flex flex-column gap-3">
             <h6 class="text-base font-weight-medium">
               Layout
             </h6>
@@ -512,7 +494,7 @@ const resetCustomizer = async () => {
           </div>
 
           <!-- 👉 Content Width -->
-          <div class="d-flex flex-column gap-2">
+          <div class="d-flex flex-column gap-3">
             <h6 class="text-base font-weight-medium">
               Content
             </h6>
@@ -530,7 +512,7 @@ const resetCustomizer = async () => {
           </div>
 
           <!-- 👉 Direction -->
-          <div class="d-flex flex-column gap-2">
+          <div class="d-flex flex-column gap-3">
             <h6 class="text-base font-weight-medium">
               Direction
             </h6>
@@ -558,61 +540,24 @@ const resetCustomizer = async () => {
   .customizer-section {
     display: flex;
     flex-direction: column;
-    padding: 1.5rem;
+    padding: 1.25rem;
     gap: 1.5rem;
   }
 
   .customizer-heading {
-    padding-block: 1rem;
-    padding-inline: 1.5rem;
-  }
-
-  .custom-input-wrapper {
-    .v-col {
-      padding-inline: 10px;
-    }
-
-    .v-label.custom-input {
-      border: none;
-      color: rgb(var(--v-theme-on-surface));
-      outline: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
-    }
+    padding-block: 1.125rem;
+    padding-inline: 1.25rem;
   }
 
   .v-navigation-drawer__content {
     display: flex;
     flex-direction: column;
   }
-
-  .v-label.custom-input.active {
-    border-color: transparent;
-    outline: 2px solid rgb(var(--v-theme-primary));
-  }
-
-  .v-label.custom-input:not(.active):hover {
-    border-color: rgba(var(--v-border-color), 0.22);
-  }
-
-  .customizer-skins {
-    .custom-input.active {
-      .customizer-skins-icon-wrapper {
-        background-color: rgba(var(--v-global-theme-primary), var(--v-selected-opacity));
-      }
-    }
-  }
-
-  .app-customizer-primary-colors {
-    .primary-color-wrapper:not(.active) {
-      &:hover {
-        outline-color: rgba(var(--v-border-color), 0.22) !important;
-      }
-    }
-  }
 }
 
 .app-customizer-toggler {
   position: fixed !important;
-  inset-block-start: 20%;
+  inset-block-start: 50%;
   inset-inline-end: 0;
 }
 </style>

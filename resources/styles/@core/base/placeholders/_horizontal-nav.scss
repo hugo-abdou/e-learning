@@ -71,12 +71,13 @@
 // Styles for third level item icon/ (e.g. Reduce the icon's size of nested group's nav links (Top level group > Sub group > [Nav links]))
 %third-level-nav-item-icon {
   font-size: variables.$horizontal-nav-third-level-icon-size;
-  margin-inline: calc((variables.$horizontal-nav-items-icon-size - variables.$horizontal-nav-third-level-icon-size) / 2) 0.75rem;
+  margin-inline-end: 0.75rem;
 
   /*
     ℹ️ `margin-inline` will be (normal icon font-size - small icon font-size) / 2
     (1.5rem - 0.9rem) / 2 => 0.6rem / 2 => 0.3rem
   */
+  margin-inline-start: calc((variables.$horizontal-nav-items-icon-size - variables.$horizontal-nav-third-level-icon-size) / 2);
 }
 
 // Horizontal nav item title

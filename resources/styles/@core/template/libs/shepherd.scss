@@ -1,20 +1,14 @@
 @use "shepherd.js/dist/css/shepherd.css";
-@use "@core-scss/base/mixins";
 @use "@styles/variables/_vuetify.scss" as variables;
 
 .shepherd-button {
   border-radius: variables.$button-border-radius;
   block-size: 1.75rem;
-  color: #fff;
   font-size: 0.8125rem;
   font-weight: variables.$button-font-weight;
   margin-inline-end: 0.75rem;
   padding-block: 0.25rem;
   padding-inline: 1rem;
-
-  &:not(:disabled):hover {
-    color: #fff;
-  }
 }
 
 .shepherd-footer {
@@ -72,8 +66,6 @@
 .shepherd-element {
   border-radius: variables.$card-border-radius;
   background: transparent;
-
-  @include mixins.elevation(6);
 }
 
 .nextBtnClass,

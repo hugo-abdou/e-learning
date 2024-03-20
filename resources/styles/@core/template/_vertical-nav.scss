@@ -1,32 +1,25 @@
 @use "@configured-variables" as variables;
 @use "@core-scss/base/mixins";
-@use "@layouts/styles/mixins" as layoutsMixins;
 
 .layout-nav-type-vertical {
   // 👉 Layout Vertical nav
   .layout-vertical-nav {
-    color: rgba(var(--v-theme-on-background), var(--v-high-emphasis-opacity));
-
-    @include mixins.elevation(4);
+    @include mixins.elevation(2);
 
     .nav-header {
-      padding-inline-end: 0.125rem;
-
       .app-logo {
         .app-title {
           font-size: 22px;
         }
       }
-    }
 
-    .nav-items {
-      padding-block: 0.25rem;
+     
     }
 
     // 👉 Nav group & Link
     .nav-link,
     .nav-group {
-      /* shadow cut issue fix */
+      // shadow cut issue fix
       margin-block-end: -0.5rem;
       padding-block-end: 0.5rem;
 
@@ -35,13 +28,16 @@
       }
     }
 
-    .nav-section-title .placeholder-icon {
-      margin-inline-start: 0.0625rem;
-      transform: scaleX(1.6);
-
-      @include layoutsMixins.rtl {
-        margin-inline-start: 0.125rem;
+    // 👉 Nav group active
+    .nav-group.active {
+      > .nav-group-label {
+        color: rgba(var(--v-theme-on-background), var(--v-high-emphasis-opacity));
+        font-weight: 500;
       }
+    }
+
+    .nav-section-title .placeholder-icon {
+      margin-inline-start: 0.3rem;
     }
   }
 }

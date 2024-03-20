@@ -1,43 +1,34 @@
-import type { IconAliases, IconProps } from 'vuetify'
+import type { IconAliases } from 'vuetify'
 
-import checkboxChecked from '@images/svg/checkbox-checked.svg'
-import checkboxIndeterminate from '@images/svg/checkbox-indeterminate.svg'
-import checkboxUnchecked from '@images/svg/checkbox-unchecked.svg'
-import radioChecked from '@images/svg/radio-checked.svg'
-import radioUnchecked from '@images/svg/radio-unchecked.svg'
-
-const customIcons: Record<string, unknown> = {
-  'mdi-checkbox-blank-outline': checkboxUnchecked,
-  'mdi-checkbox-marked': checkboxChecked,
-  'mdi-minus-box': checkboxIndeterminate,
-  'mdi-radiobox-marked': radioChecked,
-  'mdi-radiobox-blank': radioUnchecked,
-}
-
-const aliases: Partial<IconAliases> = {
+const aliases: IconAliases = {
   calendar: 'tabler-calendar',
   collapse: 'tabler-chevron-up',
   complete: 'tabler-check',
   cancel: 'tabler-x',
   close: 'tabler-x',
-  delete: 'tabler-circle-x-filled',
-  clear: 'tabler-circle-x',
+  delete: 'tabler-x',
+  clear: 'tabler-x',
   success: 'tabler-circle-check',
   info: 'tabler-info-circle',
-  warning: 'tabler-alert-triangle',
-  error: 'tabler-alert-circle',
+  warning: 'tabler-alert-circle',
+  error: 'tabler-x',
   prev: 'tabler-chevron-left',
-  ratingEmpty: 'tabler-star',
-  ratingFull: 'tabler-star-filled',
-  ratingHalf: 'tabler-star-half-filled',
   next: 'tabler-chevron-right',
+  checkboxOn: 'custom-checkbox-checked',
+  checkboxOff: 'custom-checkbox-unchecked',
+  checkboxIndeterminate: 'custom-checkbox-indeterminate',
   delimiter: 'tabler-circle',
   sort: 'tabler-arrow-up',
   expand: 'tabler-chevron-down',
   menu: 'tabler-menu-2',
   subgroup: 'tabler-caret-down',
   dropdown: 'tabler-chevron-down',
+  radioOn: 'custom-radio-checked',
+  radioOff: 'custom-radio-unchecked',
   edit: 'tabler-pencil',
+  ratingEmpty: 'custom-star-empty',
+  ratingFull: 'custom-star-fill',
+  ratingHalf: 'custom-star-half',
   loading: 'tabler-refresh',
   first: 'tabler-player-skip-back',
   last: 'tabler-player-skip-forward',
@@ -50,29 +41,17 @@ const aliases: Partial<IconAliases> = {
 }
 
 export const iconify = {
-  component: (props: IconProps) => {
-    // Load custom SVG directly instead of going through icon component
-    if (typeof props.icon === 'string') {
-      const iconComponent = customIcons[props.icon]
+  component: (props: any) => h(
+    props.tag,
+    {
+      ...props,
+      class: [props.class, props.icon],
 
-      if (iconComponent)
-        return h(iconComponent)
-    }
-
-    return h(
-      props.tag,
-      {
-        ...props,
-
-        // As we are using class based icons
-        class: [props.icon],
-
-        // Remove used props from DOM rendering
-        tag: undefined,
-        icon: undefined,
-      },
-    )
-  },
+      // Remove used props from DOM rendering
+      tag: undefined,
+      icon: undefined,
+    },
+  ),
 }
 
 export const icons = {

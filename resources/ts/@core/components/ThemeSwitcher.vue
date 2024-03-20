@@ -24,7 +24,7 @@ watch(
   <IconBtn color="rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity))">
     <VIcon
       :icon="props.themes.find(t => t.name === configStore.theme)?.icon"
-      size="24"
+      size="26"
     />
 
     <VTooltip
@@ -37,13 +37,9 @@ watch(
 
     <VMenu
       activator="parent"
-      offset="12px"
-      :width="180"
+      offset="14px"
     >
-      <VList
-        v-model:selected="selectedItem"
-        mandatory
-      >
+      <VList v-model:selected="selectedItem">
         <VListItem
           v-for="{ name, icon } in props.themes"
           :key="name"

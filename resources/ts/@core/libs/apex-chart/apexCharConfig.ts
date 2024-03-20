@@ -148,6 +148,7 @@ export const getBarChartConfig = (themeColors: ThemeInstance['themes']['value'][
         borderRadius: 8,
         barHeight: '30%',
         horizontal: true,
+        startingShape: 'rounded',
       },
     },
     grid: {
@@ -261,7 +262,7 @@ export const getRadialBarChartConfig = (themeColors: ThemeInstance['themes']['va
         hollow: { size: '30%' },
         track: {
           margin: 15,
-          background: themeColors.variables['track-bg'],
+          background: themeColors.colors['grey-100'],
         },
         dataLabels: {
           name: {

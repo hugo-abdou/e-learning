@@ -1,8 +1,6 @@
 @use "@core-scss/template/placeholders" as *;
 
 .layout-horizontal-nav {
-  color: rgba(var(--v-theme-on-background), var(--v-high-emphasis-opacity));
-
   // SECTION Nav Group
   .nav-group,
   .nav-link {
@@ -14,17 +12,8 @@
 
       .nav-group.active {
         > .popper-triggerer .nav-group-label {
+          color: rgba(var(--v-theme-on-background), var(--v-high-emphasis-opacity));
           font-weight: 500;
-        }
-      }
-
-      .nav-group.sub-item .sub-item {
-        .nav-group-label .nav-item-icon {
-          color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
-        }
-
-        a:not(.router-link-exact-active) .nav-item-icon {
-          color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
         }
       }
 
@@ -33,6 +22,12 @@
           font-weight: 500;
         }
       }
+    }
+  }
+
+  .nav-group {
+    .nav-group-arrow {
+      font-size: 1.125rem;
     }
   }
 

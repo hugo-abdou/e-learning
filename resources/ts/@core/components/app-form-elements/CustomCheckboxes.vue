@@ -14,17 +14,14 @@ interface Emit {
 const props = defineProps<Props>()
 const emit = defineEmits<Emit>()
 
-const updateSelectedOption = (value: string[] | null) => {
-  if (typeof value !== 'boolean' && value !== null)
+const updateSelectedOption = (value: string[] | boolean) => {
+  if (typeof value !== 'boolean')
     emit('update:selectedCheckbox', value)
 }
 </script>
 
 <template>
-  <VRow
-    v-if="props.checkboxContent && props.selectedCheckbox"
-    class="custom-input-wrapper"
-  >
+  <VRow v-if="props.checkboxContent && props.selectedCheckbox">
     <VCol
       v-for="item in props.checkboxContent"
       :key="item.title"
@@ -43,14 +40,14 @@ const updateSelectedOption = (value: string[] | null) => {
         </div>
         <slot :item="item">
           <div class="flex-grow-1">
-            <div class="d-flex align-center mb-2">
+            <div class="d-flex align-center mb-1">
               <h6 class="cr-title text-base">
                 {{ item.title }}
               </h6>
               <VSpacer />
               <span
                 v-if="item.subtitle"
-                class="text-disabled text-body-2"
+                class="text-disabled text-base"
               >{{ item.subtitle }}</span>
             </div>
             <p class="text-sm mb-0">
@@ -75,7 +72,6 @@ const updateSelectedOption = (value: string[] | null) => {
 
   .cr-title {
     font-weight: 500;
-    line-height: 1.375rem;
   }
 }
 </style>

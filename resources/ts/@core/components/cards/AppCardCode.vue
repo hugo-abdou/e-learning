@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { getHighlighter } from 'shikiji'
-import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
+import 'prismjs'
+import 'prismjs/themes/prism-tomorrow.css'
+import Prism from 'vue-prism-component'
 
 type CodeLanguages = 'ts' | 'js'
 
@@ -26,21 +27,10 @@ const preferredCodeLanguage = useCookie<CodeLanguages>('preferredCodeLanguage', 
 const isCodeShown = ref(false)
 
 const { copy, copied } = useClipboard({ source: computed(() => props.code[preferredCodeLanguage.value]) })
-
-const highlighter = await getHighlighter({
-  themes: ['dracula', 'dracula-soft'],
-  langs: ['vue'],
-})
-
-const codeSnippet = highlighter.codeToHtml(props.code[preferredCodeLanguage.value], {
-  lang: 'vue',
-  theme: 'dracula',
-})
 </script>
 
 <template>
-  <!-- eslint-disable regex/invalid -->
-  <VCard class="app-card-code">
+  <VCard>
     <VCardItem>
       <VCardTitle>{{ props.title }}</VCardTitle>
       <template #append>
@@ -70,28 +60,25 @@ const codeSnippet = highlighter.codeToHtml(props.code[preferredCodeLanguage.valu
             <VBtnToggle
               v-model="preferredCodeLanguage"
               mandatory
+              variant="outlined"
               density="compact"
             >
               <VBtn
                 value="ts"
-                icon
-                :variant="preferredCodeLanguage === 'ts' ? 'tonal' : 'text'"
-                :color="preferredCodeLanguage === 'ts' ? 'primary' : ''"
+                :color="preferredCodeLanguage === 'ts' ? 'primary' : 'default'"
               >
                 <VIcon
-                  icon="mdi-language-typescript"
+                  icon="custom-typescript"
                   :color="preferredCodeLanguage === 'ts' ? 'primary' : 'secondary'"
                 />
               </VBtn>
 
               <VBtn
                 value="js"
-                icon
-                :variant="preferredCodeLanguage === 'js' ? 'tonal' : 'text'"
-                :color="preferredCodeLanguage === 'js' ? 'primary' : ''"
+                :color="preferredCodeLanguage === 'js' ? 'primary' : 'default'"
               >
                 <VIcon
-                  icon="mdi-language-javascript"
+                  icon="custom-javascript"
                   :color="preferredCodeLanguage === 'js' ? 'primary' : 'secondary'"
                 />
               </VBtn>
@@ -99,13 +86,13 @@ const codeSnippet = highlighter.codeToHtml(props.code[preferredCodeLanguage.valu
           </div>
 
           <div class="position-relative">
-            <PerfectScrollbar
-              style="border-radius: 6px;max-block-size: 500px;"
-              :options="{ wheelPropagation: false, suppressScrollX: false }"
+            <Prism
+              :key="props.code[preferredCodeLanguage]"
+              :language="props.codeLanguage"
+              :style="$vuetify.locale.isRtl ? 'text-align: right' : 'text-align: left'"
             >
-              <!-- eslint-disable-next-line vue/no-v-html -->
-              <span v-html="codeSnippet" />
-            </PerfectScrollbar>
+              {{ props.code[preferredCodeLanguage] }}
+            </Prism>
             <IconBtn
               class="position-absolute app-card-code-copy-icon"
               color="white"
@@ -124,29 +111,15 @@ const codeSnippet = highlighter.codeToHtml(props.code[preferredCodeLanguage.valu
 </template>
 
 <style lang="scss">
-@use "@styles/variables/vuetify.scss";
-
-code[class*="language-"],
-pre[class*="language-"] {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  font-size: 14px;
-}
+@use "@styles/variables/_vuetify.scss";
 
 :not(pre) > code[class*="language-"],
 pre[class*="language-"] {
   border-radius: vuetify.$card-border-radius;
-  max-block-size: 500px;
 }
 
 .app-card-code-copy-icon {
   inset-block-start: 1.2em;
   inset-inline-end: 0.8em;
-}
-
-.app-card-code {
-  .shiki {
-    padding: 0.75rem;
-    text-wrap: wrap;
-  }
 }
 </style>

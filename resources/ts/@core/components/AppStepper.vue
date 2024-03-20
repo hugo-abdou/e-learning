@@ -1,371 +1,346 @@
 <script setup lang="ts">
 interface Item {
-  title: string
-  icon?: string | object
-  size?: string
-  subtitle?: string
+    title: string;
+    icon?: string;
+    size?: string;
+    subtitle?: string;
 }
 
-type Direction = 'vertical' | 'horizontal'
+type Direction = "vertical" | "horizontal";
 
 interface Props {
-  items: Item[]
-  currentStep?: number
-  direction?: Direction
-  iconSize?: string | number
-  isActiveStepValid?: boolean
-  align?: 'start' | 'center' | 'end' | 'default'
+    items: Item[];
+    currentStep?: number;
+    direction?: Direction;
+    iconSize?: string | number;
+    isActiveStepValid?: boolean;
+    align?: "start" | "center" | "end";
 }
 
 interface Emit {
-  (e: 'update:currentStep', value: number): void
+    (e: "update:currentStep", value: number): void;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  currentStep: 0,
-  direction: 'horizontal',
-  iconSize: 60,
-  isActiveStepValid: undefined,
-  align: 'default',
-})
+    currentStep: 0,
+    direction: "horizontal",
+    iconSize: 52,
+    isActiveStepValid: undefined,
+    align: "center",
+});
 
-const emit = defineEmits<Emit>()
-
-const currentStep = ref(props.currentStep || 0)
+const emit = defineEmits<Emit>();
+const stepper = ref<HTMLElement>();
+const currentStep = ref(props.currentStep || 0);
 
 // check if step is completed or active and return class name accordingly
-const activeOrCompletedStepsClasses = computed(() => (index: number) => (
-  index < currentStep.value
-    ? 'stepper-steps-completed'
-    : index === currentStep.value ? 'stepper-steps-active' : ''
-))
+const activeOrCompletedStepsClasses = computed(() => (index: number) => index < currentStep.value ? "stepper-steps-completed" : index === currentStep.value ? "stepper-steps-active" : "");
 
 // check if step is horizontal and not last step
-const isHorizontalAndNotLastStep = computed(() => (index: number) => (
-  props.direction === 'horizontal'
-  && props.items.length - 1 !== index
-))
+const isHorizontalAndNotLastStep = computed(() => (index: number) => props.direction === "horizontal" && props.items.length - 1 !== index);
 
 // check if validation is enabled
 const isValidationEnabled = computed(() => {
-  return props.isActiveStepValid !== undefined
-})
+    return props.isActiveStepValid !== undefined;
+});
 
 watchEffect(() => {
-  // we need to check undefined because if we pass 0 as currentStep it will be falsy
-  if (
-    props.currentStep !== undefined
-    && props.currentStep < props.items.length
-    && props.currentStep >= 0
-  )
-    currentStep.value = props.currentStep
+    // we need to check undefined because if we pass 0 as currentStep it will be falsy
+    if (props.currentStep !== undefined && props.currentStep < props.items.length && props.currentStep >= 0) currentStep.value = props.currentStep;
 
-  emit('update:currentStep', currentStep.value)
-})
+    emit("update:currentStep", currentStep.value);
+});
+const parent = useParentElement();
 </script>
 
 <template>
-  <VSlideGroup
-    v-model="currentStep"
-    class="app-stepper"
-    show-arrows
-    :direction="props.direction"
-    :class="`app-stepper-${props.align} ${props.items[0].icon ? 'app-stepper-icons' : ''}`"
-  >
-    <VSlideGroupItem
-      v-for="(item, index) in props.items"
-      :key="item.title"
-      :value="index"
+    <VSlideGroup
+        v-model="currentStep"
+        class="app-stepper"
+        show-arrows
+        :direction="props.direction"
+        :class="`app-stepper-${props.align}`"
     >
-      <div
-        class="cursor-pointer app-stepper-step pa-1"
-        :class="[
-          (!props.isActiveStepValid && (isValidationEnabled)) && 'stepper-steps-invalid',
-          activeOrCompletedStepsClasses(index),
-        ]"
-        @click="!isValidationEnabled && emit('update:currentStep', index)"
-      >
-        <!-- SECTION stepper step with icon -->
-        <template v-if="item.icon">
-          <div class="stepper-icon-step text-high-emphasis d-flex align-center ">
-            <!-- 👉 icon and title -->
+        <VSlideGroupItem
+            v-for="(item, index) in props.items"
+            :key="item.title"
+            :value="index"
+            ref="stepper"
+        >
             <div
-              class="d-flex align-center gap-x-3 step-wrapper"
-              :class="[props.direction === 'horizontal' && 'flex-column']"
+                class="cursor-pointer mx-1"
+                :class="[!props.isActiveStepValid && isValidationEnabled && 'stepper-steps-invalid', activeOrCompletedStepsClasses(index)]"
+                @click="!isValidationEnabled && emit('update:currentStep', index)"
             >
-              <div class="stepper-icon">
-                <template v-if="typeof item.icon === 'object'">
-                  <Component :is="item.icon" />
+                <!-- SECTION stepper step with icon -->
+                <template v-if="item.icon">
+                    <div class="stepper-icon-step text-high-emphasis d-flex align-center gap-2">
+                        <!-- 👉 icon and title -->
+                        <div
+                            class="d-flex align-center gap-4 step-wrapper"
+                            :class="[props.direction === 'horizontal' && 'flex-column']"
+                        >
+                            <div class="stepper-icon">
+                                <VIcon
+                                    :icon="item.icon"
+                                    :size="item.size || props.iconSize"
+                                />
+                            </div>
+
+                            <div
+                                :style="{
+                                    width: Number(parent?.clientWidth) - 220 + 'px',
+                                }"
+                            >
+                                <VCardTitle class="stepper-title pl-0">
+                                    <slot
+                                        name="title"
+                                        :index="index"
+                                        :title="$t(item.title)"
+                                    >
+                                        {{ $t(item.title) }}
+                                    </slot>
+                                </VCardTitle>
+                                <VCardSubtitle
+                                    v-if="item.subtitle"
+                                    class="stepper-subtitle pl-0"
+                                >
+                                    <slot
+                                        name="subtitle"
+                                        :index="index"
+                                        :subtitle="$t(item.subtitle)"
+                                    >
+                                        <span class="text-sm">{{ $t(item.subtitle) }}</span>
+                                    </slot>
+                                </VCardSubtitle>
+                            </div>
+                        </div>
+
+                        <!-- 👉 append chevron -->
+                        <VIcon
+                            v-if="false"
+                            class="flip-in-rtl stepper-chevron-indicator mx-6"
+                            size="24"
+                            icon="tabler-chevron-right"
+                        />
+                    </div>
                 </template>
+                <!-- !SECTION  -->
+                <!-- SECTION stepper step without icon -->
+                <template v-else>
+                    <div class="d-flex align-center gap-x-4">
+                        <div class="d-flex align-center gap-2">
+                            <div class="d-flex align-center justify-center">
+                                <!-- 👉 custom circle icon -->
+                                <template v-if="index >= currentStep">
+                                    <VBtn
+                                        v-if="!isValidationEnabled || props.isActiveStepValid || index !== currentStep"
+                                        size="40"
+                                        :variant="index === currentStep ? 'elevated' : 'tonal'"
+                                        :color="index === currentStep ? 'primary' : 'default'"
+                                    >
+                                        <h5
+                                            class="text-h5"
+                                            :style="index === currentStep ? { color: '#fff' } : ''"
+                                        >
+                                            {{ index + 1 }}
+                                        </h5>
+                                    </VBtn>
 
-                <VIcon
-                  v-else
-                  :icon="item.icon"
-                  :size="item.size || props.iconSize"
-                />
-              </div>
+                                    <VIcon
+                                        v-else
+                                        icon="tabler-alert-circle"
+                                        size="24"
+                                        color="error"
+                                    />
+                                </template>
 
-              <div>
-                <p class="stepper-title font-weight-medium mb-0">
-                  {{ item.title }}
-                </p>
-                <p
-                  v-if="item.subtitle"
-                  class="stepper-subtitle mb-0"
-                >
-                  {{ item.subtitle }}
-                </p>
-              </div>
+                                <!-- 👉 step completed icon -->
+
+                                <VBtn
+                                    v-else
+                                    class="stepper-icon"
+                                    variant="tonal"
+                                    color="primary"
+                                    size="40"
+                                >
+                                    <h5
+                                        class="text-h5"
+                                        style="color: rgb(var(--v-theme-primary))"
+                                    >
+                                        {{ index + 1 }}
+                                    </h5>
+                                </VBtn>
+                            </div>
+                        </div>
+
+                        <!-- 👉 title and subtitle -->
+                        <div class="d-flex flex-column justify-center">
+                            <div class="step-title font-weight-medium">
+                                <slot
+                                    name="title"
+                                    :index="index"
+                                    :title="$t(item.title)"
+                                >
+                                    {{ $t(item.title) }}
+                                </slot>
+                            </div>
+
+                            <div
+                                v-if="item.subtitle"
+                                class="step-subtitle text-sm text-disabled"
+                            >
+                                <slot
+                                    name="subtitle"
+                                    :index="index"
+                                    :subtitle="$t(item.subtitle)"
+                                >
+                                    <span class="text-sm">{{ $t(item.subtitle) }}</span>
+                                </slot>
+                            </div>
+                        </div>
+
+                        <!-- 👉 stepper step icon -->
+                        <div
+                            v-if="isHorizontalAndNotLastStep(index)"
+                            class="stepper-step-line"
+                        >
+                            <VIcon
+                                icon="tabler-chevron-right"
+                                size="24"
+                            />
+                        </div>
+                    </div>
+                </template>
+                <!-- !SECTION  -->
             </div>
-
-            <!-- 👉 append chevron -->
-            <VIcon
-              v-if="isHorizontalAndNotLastStep(index)"
-              class="flip-in-rtl stepper-chevron-indicator mx-6"
-              size="20"
-              icon="tabler-chevron-right"
-            />
-          </div>
-        </template>
-        <!-- !SECTION  -->
-
-        <!-- SECTION stepper step without icon -->
-        <template v-else>
-          <div class="d-flex align-center gap-x-3">
-            <div>
-              <!-- 👉 custom circle icon -->
-              <template v-if="index >= currentStep">
-                <VAvatar
-                  v-if="(!isValidationEnabled || props.isActiveStepValid || index !== currentStep)"
-                  size="38"
-                  rounded
-                  :variant="index === currentStep ? 'elevated' : 'tonal'"
-                  :color="index === currentStep ? 'primary' : 'default'"
-                >
-                  <h5
-                    class="text-h5"
-                    :style="index === currentStep ? { color: '#fff' } : ''"
-                  >
-                    {{ index + 1 }}
-                  </h5>
-                </VAvatar>
-
-                <VAvatar
-                  v-else
-                  color="error"
-                  size="38"
-                  rounded
-                >
-                  <VIcon
-
-                    icon="tabler-alert-circle"
-                    size="22"
-                  />
-                </VAvatar>
-              </template>
-
-              <!-- 👉 step completed icon -->
-
-              <VAvatar
-                v-else
-                class="stepper-icon"
-                variant="tonal"
-                color="primary"
-                size="38"
-                rounded
-              >
-                <h5
-                  class="text-h5"
-                  style="color: rgb(var(--v-theme-primary));"
-                >
-                  {{ index + 1 }}
-                </h5>
-              </VAvatar>
-            </div>
-
-            <!-- 👉 title and subtitle -->
-            <div class="d-flex flex-column justify-center">
-              <div class="stepper-title font-weight-medium">
-                {{ item.title }}
-              </div>
-
-              <div
-                v-if="item.subtitle"
-                class="stepper-subtitle text-sm text-disabled"
-              >
-                {{ item.subtitle }}
-              </div>
-            </div>
-
-            <!-- 👉 stepper step icon -->
-            <div
-              v-if="isHorizontalAndNotLastStep(index)"
-              class="stepper-step-line stepper-chevron-indicator mx-6"
-            >
-              <VIcon
-                icon="tabler-chevron-right"
-                size="20"
-              />
-            </div>
-          </div>
-        </template>
-        <!-- !SECTION  -->
-      </div>
-    </VSlideGroupItem>
-  </VSlideGroup>
+        </VSlideGroupItem>
+    </VSlideGroup>
 </template>
 
 <style lang="scss">
-@use "@core-scss/template/mixins" as templateMixins;
-
 .app-stepper {
-  // 👉 stepper step with bg color
-  &.stepper-icon-step-bg {
-    .stepper-icon-step {
-      .step-wrapper {
-        flex-direction: row !important;
-      }
+    // 👉 stepper step with bg color
+    &.stepper-icon-step-bg {
+        .stepper-icon-step {
+            .step-wrapper {
+                flex-direction: row !important;
+            }
 
-      .stepper-icon {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 0.375rem;
-        background-color: rgba(var(--v-theme-on-surface), var(--v-selected-opacity));
-        block-size: 2.375rem;
-        color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity));
-        inline-size: 2.375rem;
-      }
-    }
+            .stepper-icon {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 0.3125rem;
+                background-color: rgba(var(--v-theme-on-surface), var(--v-selected-opacity));
+                block-size: 2.5rem;
+                color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity));
+                inline-size: 2.5rem;
+                margin-inline-end: 0.3rem;
+            }
 
-    .stepper-steps-active {
-      .stepper-icon-step {
-        .stepper-icon {
-          @include templateMixins.custom-elevation(var(--v-theme-primary), "sm");
+            .stepper-title,
+            .stepper-subtitle {
+                line-height: normal;
+            }
 
-          background-color: rgb(var(--v-theme-primary));
-          color: rgba(var(--v-theme-on-primary));
+            .stepper-title {
+                color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity));
+                font-size: 0.9375rem;
+                font-weight: 500 !important;
+            }
+
+            .stepper-subtitle {
+                color: rgba(var(--v-theme-on-surface), var(--v-disabled-opacity));
+                font-size: 0.875rem;
+            }
         }
-      }
-    }
 
-    .stepper-steps-completed {
-      .stepper-icon-step {
-        .stepper-icon {
-          background: rgba(var(--v-theme-primary), var(--v-activated-opacity));
-          color: rgba(var(--v-theme-primary));
+        .stepper-steps-active {
+            .stepper-icon-step {
+                .stepper-icon {
+                    background-color: rgb(var(--v-theme-primary));
+                    color: rgba(var(--v-theme-on-primary));
+                }
+            }
         }
-      }
-    }
-  }
 
-  &.app-stepper-icons:not(.stepper-icon-step-bg) {
-    /* stylelint-disable-next-line no-descending-specificity */
-    .stepper-icon {
-      line-height: 0;
-    }
-
-    .step-wrapper {
-      padding: 1.25rem;
-      gap: 0.5rem;
-      min-inline-size: 9.375rem;
+        .stepper-steps-completed {
+            .stepper-icon-step {
+                .stepper-icon {
+                    background: rgba(var(--v-theme-primary), 0.08);
+                    color: rgba(var(--v-theme-primary));
+                }
+            }
+        }
     }
 
-    .stepper-chevron-indicator {
-      margin-inline: 1rem !important;
-    }
-
-    .stepper-steps-completed,
-    .stepper-steps-active {
-      .stepper-icon-step,
-      .stepper-step-icon,
-      .stepper-title,
-      .stepper-subtitle {
-        color: rgb(var(--v-theme-primary)) !important;
-      }
-    }
-  }
-
-  // 👉 stepper step with icon and  default
-  .v-slide-group__content {
-    row-gap: 1rem;
-
-    /* stylelint-disable-next-line no-descending-specificity */
-    .stepper-title {
-      color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity));
-      font-size: 0.9375rem;
-      font-weight: 500 !important;
-    }
-
-    /* stylelint-disable-next-line no-descending-specificity */
-    .stepper-subtitle {
-      color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
-      font-size: 0.8125rem;
-      line-height: 1.25rem;
-    }
-
-    /* stylelint-disable-next-line no-descending-specificity */
-    .stepper-chevron-indicator {
-      color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
-    }
-
-    /* stylelint-disable-next-line no-descending-specificity */
-    .stepper-steps-completed {
-      /* stylelint-disable-next-line no-descending-specificity */
-      .stepper-title,
-      .stepper-subtitle {
-        color: rgba(var(--v-theme-on-surface), var(--v-disabled-opacity));
-      }
-
-      .stepper-chevron-indicator {
-        color: rgb(var(--v-theme-primary));
-      }
-    }
-
-    /* stylelint-disable-next-line no-descending-specificity */
-    .stepper-steps-active {
-      .v-avatar.bg-primary {
-        @include templateMixins.custom-elevation(var(--v-theme-primary), "sm");
-      }
-
-      .v-avatar.bg-error {
-        @include templateMixins.custom-elevation(var(--v-theme-error), "sm");
-      }
-    }
-
-    .stepper-steps-invalid.stepper-steps-active {
-      .stepper-icon-step,
-      .step-number,
-      .stepper-title,
-      .stepper-subtitle {
-        color: rgb(var(--v-theme-error)) !important;
-      }
-    }
-
-    .app-stepper-step {
-      &:not(.stepper-steps-active,.stepper-steps-completed) .v-avatar--variant-tonal {
-        --v-activated-opacity: 0.06;
-      }
-    }
-  }
-
-  // 👉 stepper alignment
-  &.app-stepper-center {
+    // 👉 stepper step with icon and  default
     .v-slide-group__content {
-      justify-content: center;
-    }
-  }
+        row-gap: 1.5rem;
 
-  &.app-stepper-start {
-    .v-slide-group__content {
-      justify-content: start;
-    }
-  }
+        .stepper-step-indicator {
+            block-size: 3rem;
+            opacity: var(--v-activated-opacity);
+        }
 
-  &.app-stepper-end {
-    .v-slide-group__content {
-      justify-content: end;
+        .stepper-step-line {
+            opacity: var(--v-activated-opacity);
+        }
+
+        .stepper-chevron-indicator {
+            color: rgba(var(--v-theme-on-surface), var(--v-disabled-opacity));
+        }
+
+        .stepper-steps-completed,
+        .stepper-steps-active {
+            .stepper-icon-step,
+            .stepper-step-icon {
+                color: rgb(var(--v-theme-primary)) !important;
+            }
+
+            .stepper-step-indicator {
+                opacity: 1;
+            }
+        }
+
+        .stepper-steps-completed {
+            .stepper-step-line {
+                opacity: 1;
+            }
+
+            .stepper-chevron-indicator {
+                color: rgb(var(--v-theme-primary));
+            }
+        }
+
+        .stepper-steps-invalid.stepper-steps-active {
+            .stepper-icon-step,
+            .step-number,
+            .step-title,
+            .step-subtitle {
+                color: rgb(var(--v-theme-error)) !important;
+            }
+        }
     }
-  }
+
+    // 👉 stepper alignment
+    &.app-stepper-center {
+        .v-slide-group__content {
+            justify-content: center;
+        }
+    }
+
+    &.app-stepper-start {
+        .v-slide-group__content {
+            justify-content: start;
+        }
+    }
+
+    &.app-stepper-end {
+        .v-slide-group__content {
+            justify-content: end;
+        }
+    }
 }
 </style>

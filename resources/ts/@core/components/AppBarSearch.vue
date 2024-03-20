@@ -10,7 +10,6 @@ interface Emit {
 interface Props {
   isDialogVisible: boolean
   searchResults: T[]
-  isLoading?: boolean
 }
 
 const props = defineProps<Props>()
@@ -73,7 +72,7 @@ watch(
   <VDialog
     max-width="600"
     :model-value="props.isDialogVisible"
-    :height="$vuetify.display.smAndUp ? '531' : '100%'"
+    :height="$vuetify.display.smAndUp ? '550' : '100%'"
     :fullscreen="$vuetify.display.width < 600"
     class="app-bar-search-dialog"
     @update:model-value="dialogModelValueUpdate"
@@ -84,18 +83,14 @@ watch(
       width="100%"
       class="position-relative"
     >
-      <VCardText
-        class="px-4"
-        style="padding-block: 1rem 1.2rem;"
-      >
+      <VCardText class="pt-2">
         <!-- 👉 Search Input -->
         <VTextField
           ref="refSearchInput"
           v-model="searchQueryLocal"
           autofocus
-          density="compact"
+          density="comfortable"
           variant="plain"
-          class="app-bar-search-input"
           @keyup.esc="clearSearchAndCloseDialog"
           @keydown="getFocusOnSearchList"
           @update:model-value="$emit('search', searchQueryLocal)"
@@ -104,8 +99,9 @@ watch(
           <template #prepend-inner>
             <div class="d-flex align-center text-high-emphasis me-1">
               <VIcon
-                size="24"
+                size="22"
                 icon="tabler-search"
+                style="opacity: 1;"
               />
             </div>
           </template>
@@ -114,17 +110,21 @@ watch(
           <template #append-inner>
             <div class="d-flex align-start">
               <div
-                class="text-base text-disabled cursor-pointer me-3"
+                class="text-base text-disabled cursor-pointer me-1"
                 @click="clearSearchAndCloseDialog"
               >
                 [esc]
               </div>
 
-              <VIcon
-                icon="tabler-x"
-                size="24"
+              <IconBtn
+                size="22"
                 @click="clearSearchAndCloseDialog"
-              />
+              >
+                <VIcon
+                  icon="tabler-x"
+                  size="20"
+                />
+              </IconBtn>
             </div>
           </template>
         </VTextField>
@@ -138,6 +138,29 @@ watch(
         :options="{ wheelPropagation: false, suppressScrollX: true }"
         class="h-100"
       >
+        <!-- 👉 Search List -->
+        <VList
+          v-show="searchQueryLocal.length && !!props.searchResults.length"
+          ref="refSearchList"
+          density="compact"
+          class="app-bar-search-list"
+        >
+          <!-- 👉 list Item /List Sub header -->
+          <template
+            v-for="item in props.searchResults"
+            :key="item"
+          >
+            <slot
+              name="searchResult"
+              :item="item"
+            >
+              <VListItem>
+                {{ item }}
+              </VListItem>
+            </slot>
+          </template>
+        </VList>
+
         <!-- 👉 Suggestions -->
         <div
           v-show="!!props.searchResults && !searchQueryLocal && $slots.suggestions"
@@ -146,62 +169,28 @@ watch(
           <slot name="suggestions" />
         </div>
 
-        <template v-if="!isLoading">
-          <!-- 👉 Search List -->
-          <VList
-            v-show="searchQueryLocal.length && !!props.searchResults.length"
-            ref="refSearchList"
-            density="compact"
-            class="app-bar-search-list py-0"
-          >
-            <!-- 👉 list Item /List Sub header -->
-            <template
-              v-for="item in props.searchResults"
-              :key="item"
-            >
-              <slot
-                name="searchResult"
-                :item="item"
-              >
-                <VListItem>
-                  {{ item }}
-                </VListItem>
-              </slot>
-            </template>
-          </VList>
-
-          <!-- 👉 No Data found -->
-          <div
-            v-show="!props.searchResults.length && searchQueryLocal.length"
-            class="h-100"
-          >
-            <slot name="noData">
-              <VCardText class="h-100">
-                <div class="app-bar-search-suggestions d-flex flex-column align-center justify-center text-high-emphasis pa-12">
-                  <VIcon
-                    size="64"
-                    icon="tabler-file-alert"
-                  />
-                  <div class="d-flex align-center flex-wrap justify-center gap-2 text-h5 mt-3">
-                    <span>No Result For </span>
-                    <span>"{{ searchQueryLocal }}"</span>
-                  </div>
-
-                  <slot name="noDataSuggestion" />
+        <!-- 👉 No Data found -->
+        <div
+          v-show="!props.searchResults.length && searchQueryLocal.length"
+          class="h-100"
+        >
+          <slot name="noData">
+            <VCardText class="h-100">
+              <div class="app-bar-search-suggestions d-flex flex-column align-center justify-center text-high-emphasis h-100">
+                <VIcon
+                  size="75"
+                  icon="tabler-file-x"
+                />
+                <div class="d-flex align-center flex-wrap justify-center gap-2 text-h6 my-3">
+                  <span>No Result For </span>
+                  <span>"{{ searchQueryLocal }}"</span>
                 </div>
-              </VCardText>
-            </slot>
-          </div>
-        </template>
 
-        <!-- 👉 Loading -->
-        <template v-if="isLoading">
-          <VSkeletonLoader
-            v-for="i in 3"
-            :key="i"
-            type="list-item-two-line"
-          />
-        </template>
+                <slot name="noDataSuggestion" />
+              </div>
+            </VCardText>
+          </slot>
+        </div>
       </PerfectScrollbar>
     </VCard>
   </VDialog>
@@ -217,9 +206,21 @@ watch(
 }
 
 .app-bar-search-dialog {
-  .app-bar-search-input {
-    .v-field__input {
-      padding-block-start: 0.2rem;
+  .v-overlay__scrim {
+    backdrop-filter: blur(4px);
+  }
+
+  .v-list-item-title {
+    font-size: 0.875rem !important;
+  }
+
+  .v-input{
+    .v-field{
+      .v-field__field{
+        input{
+          padding-block-start: 1rem !important;
+        }
+      }
     }
   }
 
@@ -227,14 +228,10 @@ watch(
     .v-list-item,
     .v-list-subheader {
       font-size: 0.75rem;
-      padding-inline: 1rem;
+      padding-inline: 1.5rem !important;
     }
 
     .v-list-item {
-      border-radius: 6px;
-      margin-block-end: 0.125rem;
-      margin-inline: 0.5rem;
-
       .v-list-item__append {
         .enter-icon {
           visibility: hidden;
@@ -255,17 +252,8 @@ watch(
     .v-list-subheader {
       line-height: 1;
       min-block-size: auto;
-      padding-block: 16px 8px;
-      padding-inline-start: 1rem;
+      padding-block: 0.6875rem 0.3125rem;
       text-transform: uppercase;
-    }
-  }
-}
-
-@supports selector(:focus-visible) {
-  .app-bar-search-dialog {
-    .v-list-item:focus-visible::after {
-      content: none;
     }
   }
 }

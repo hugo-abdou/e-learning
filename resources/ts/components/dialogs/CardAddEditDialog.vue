@@ -1,6 +1,6 @@
 <script setup lang="ts">
 interface Details {
-  number: string | number
+  number: string
   name: string
   expiry: string
   cvv: string
@@ -47,23 +47,21 @@ const dialogModelValueUpdate = (val: boolean) => {
 
 <template>
   <VDialog
-    :width="$vuetify.display.smAndDown ? 'auto' : 600"
+    :width="$vuetify.display.smAndDown ? 'auto' : 580"
     :model-value="props.isDialogVisible"
     @update:model-value="dialogModelValueUpdate"
   >
     <!-- Dialog close btn -->
     <DialogCloseBtn @click="dialogModelValueUpdate(false)" />
 
-    <VCard class="pa-2 pa-sm-10">
+    <VCard class="pa-5 pa-sm-8">
       <!-- 👉 Title -->
       <VCardItem class="text-center">
-        <VCardTitle>
-          <h4 class="text-h4 mb-2">
-            {{ props.cardDetails.name ? 'Edit Card' : 'Add New Card' }}
-          </h4>
+        <VCardTitle class="text-h3 font-weight-medium mb-3">
+          {{ props.cardDetails.name ? 'Edit Card' : 'Add New Card' }}
         </VCardTitle>
-        <p class="text-body-1 mb-0">
-          {{ props.cardDetails.name ? 'Edit your saved card details' : 'Add card for future billing' }}
+        <p class="mb-0">
+          {{ props.cardDetails.name ? 'Edit your saved card details' : 'Add your saved card details' }}
         </p>
       </VCardItem>
 
@@ -75,7 +73,7 @@ const dialogModelValueUpdate = (val: boolean) => {
               <AppTextField
                 v-model="cardDetails.number"
                 label="Card Number"
-                placeholder="1356 3215 6548 7898"
+                placeholder="1234 1234 1234 1234"
                 type="number"
               />
             </VCol>
@@ -94,7 +92,7 @@ const dialogModelValueUpdate = (val: boolean) => {
 
             <!-- 👉 Card Expiry -->
             <VCol
-              cols="12"
+              cols="6"
               md="3"
             >
               <AppTextField
@@ -106,14 +104,14 @@ const dialogModelValueUpdate = (val: boolean) => {
 
             <!-- 👉 Card CVV -->
             <VCol
-              cols="12"
+              cols="6"
               md="3"
             >
               <AppTextField
                 v-model="cardDetails.cvv"
                 type="number"
                 label="CVV Code"
-                placeholder="654"
+                placeholder="123"
               />
             </VCol>
 
@@ -121,7 +119,7 @@ const dialogModelValueUpdate = (val: boolean) => {
             <VCol cols="12">
               <VSwitch
                 v-model="cardDetails.isPrimary"
-                label="Save Card for future billing?"
+                label="Set as primary card"
               />
             </VCol>
 
@@ -131,7 +129,7 @@ const dialogModelValueUpdate = (val: boolean) => {
               class="text-center"
             >
               <VBtn
-                class="me-4"
+                class="me-3"
                 type="submit"
                 @click="formSubmit"
               >

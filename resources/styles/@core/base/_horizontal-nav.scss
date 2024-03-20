@@ -135,8 +135,8 @@
         }
       }
 
-      // ℹ️ Add space between popper wrapper & content
       > .popper-content {
+        // ℹ️ Add space between popper wrapper & content
         margin-block-start: variables.$horizontal-nav-popper-content-top !important;
       }
     }

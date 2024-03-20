@@ -1,1 +1,89 @@
 // Write your overrides
+.mx-auto {
+    margin-inline: auto;
+}
+
+.speed-dial-enter-active,
+.speed-dial-leave-active {
+    transition: opacity 0.3s, transform 0.35s;
+}
+
+.speed-dial-enter-from {
+    opacity: 0;
+    transform: translateY(0.6rem);
+}
+
+.speed-dial-leave-to {
+    opacity: 0;
+    transform: translateY(0.6rem);
+}
+
+.speed-dial-left-enter-active,
+.speed-dial-left-leave-active {
+    transition: opacity 0.3s, transform 0.35s;
+}
+
+.speed-dial-left-enter-from {
+    opacity: 0;
+    transform: translateX(0.6rem);
+}
+
+.speed-dial-left-leave-to {
+    opacity: 0;
+    transform: translateX(0.6rem);
+}
+
+.shadow {
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 62.3%), 0 1px 2px -1px rgb(0 0 0 / 10%);
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.blurred-background {
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+
+.v-toolbar.toolbar-actions {
+    background: rgb(0, 0, 0, 20%);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 62.3%), 0 1px 2px -1px rgb(0 0 0 / 10%);
+    inset-block-end: 0;
+    transform: translateY(50px);
+}
+
+.v-toolbar.toolbar-overlay {
+    background-color: transparent;
+    inset-block-start: 50%;
+    opacity: 0;
+    transform: translateY(-50%);
+    transition-property: opacity;
+}
+
+.media-card:hover .v-toolbar.toolbar-overlay {
+    opacity: 1;
+}
+
+.media-card:hover .v-toolbar.toolbar-actions {
+    transform: translateY(0);
+}
+
+.text-capitalize {
+    text-transform: capitalize;
+}
+
+[data-fill-palette-color="accent"],
+[data-fill-palette-color="primary"] {
+    fill: rgb(var(--v-theme-primary)) !important;
+}
+[data-fill-palette-color="secondary"] {
+    fill: rgb(var(--v-theme-secondary)) !important;
+}
+
+@media (max-width: 768px) {
+    .layout-navbar,
+    .layout-page-content {
+        padding-inline: 0.8rem !important;
+    }
+}

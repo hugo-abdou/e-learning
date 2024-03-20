@@ -1,24 +1,30 @@
 <script lang="ts" setup>
 interface Props {
-  menuList?: unknown[]
-  itemProps?: boolean
+  menuList?: any[];
+  itemProps?: boolean;
 }
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 </script>
 
 <template>
-  <IconBtn color="disabled">
+  <IconBtn
+    density="compact"
+    color="disabled"
+  >
     <VIcon icon="tabler-dots-vertical" />
 
     <VMenu
       v-if="props.menuList"
       activator="parent"
     >
-      <VList
-        :items="props.menuList"
-        :item-props="props.itemProps"
-      />
+      <VList :item-props="props.itemProps">
+        <VListItem
+          v-for="(item, i) in props.menuList"
+          :key="i"
+          v-bind="item"
+        />
+      </VList>
     </VMenu>
   </IconBtn>
 </template>
