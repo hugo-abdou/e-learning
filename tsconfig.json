@@ -14,68 +14,23 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "paths": {
-      "@/*": [
-        "./resources/ts/*"
-      ],
-      "@themeConfig": [
-        "./themeConfig.ts"
-      ],
-      "@layouts/*": [
-        "./resources/ts/@layouts/*"
-      ],
-      "@layouts": [
-        "./resources/ts/@layouts"
-      ],
-      "@core/*": [
-        "./resources/ts/@core/*"
-      ],
-      "@core": [
-        "./resources/ts/@core"
-      ],
-      "@images/*": [
-        "./resources/images/*"
-      ],
-      "@styles/*": [
-        "./resources/styles/*"
-      ],
-      "@validators": [
-        "./resources/ts/@core/utils/validators"
-      ],
-      "@db/*": [
-        "./resources/ts/plugins/fake-api/handlers/*"
-      ],
-      "@api-utils/*": [
-        "./resources/ts/plugins/fake-api/utils/*"
-      ],
-      "@core-scss/*": [
-        "resources/styles/@core/*"
-      ]
+      "@/*": ["./resources/ts/*"],
+      "@themeConfig": ["./themeConfig.ts"],
+      "@layouts/*": ["./resources/ts/@layouts/*"],
+      "@layouts": ["./resources/ts/@layouts"],
+      "@core/*": ["./resources/ts/@core/*"],
+      "@core": ["./resources/ts/@core"],
+      "@images/*": ["./resources/images/*"],
+      "@styles/*": ["./resources/styles/*"],
+      "@validators": ["./resources/ts/@core/utils/validators"],
+      "@db/*": ["./resources/ts/plugins/fake-api/handlers/*"],
+      "@api-utils/*": ["./resources/ts/plugins/fake-api/utils/*"],
+      "@core-scss/*": ["resources/styles/@core/*"]
     },
-    "lib": [
-      "esnext",
-      "dom",
-      "dom.iterable",
-      "scripthost"
-    ],
+    "lib": ["esnext", "dom", "dom.iterable", "scripthost"],
     "skipLibCheck": true,
-    "types": [
-      "vite/client",
-      "vite-plugin-vue-layouts/client"
-    ]
+    "types": ["vite/client", "vite-plugin-vue-layouts/client"]
   },
-  "include": [
-    "./typed-router.d.ts",
-    "./vite.config.*",
-    "./env.d.ts",
-    "./shims.d.ts",
-    "./resources/ts/**/*",
-    "./resources/ts/**/*.vue",
-    "./themeConfig.ts",
-    "./auto-imports.d.ts",
-    "./components.d.ts"
-  ],
-  "exclude": [
-    "./dist",
-    "./node_modules"
-  ]
+  "include": ["./typed-router.d.ts", "./vite.config.*", "./env.d.ts", "./shims.d.ts", "./resources/ts/**/*", "./resources/ts/**/*.vue", "./themeConfig.ts", "./auto-imports.d.ts", "./components.d.ts"],
+  "exclude": ["./dist", "./node_modules"]
 }
