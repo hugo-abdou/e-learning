@@ -1,14 +1,12 @@
 <script setup lang="ts">
-import ScrollToTop from "@core/components/ScrollToTop.vue";
 import initCore from "@core/initCore";
 import { initConfigStore, useConfigStore } from "@core/stores/config";
-import { hexToRgb } from "@layouts/utils";
 import { useTheme } from "vuetify";
-import ServerErrorLogger from "./ServerErrorLogger.vue";
 import { getAction, getName } from "./helpers";
 import { UserProperties } from "./types";
 import { UserAbility } from "./utils/casl/AppAbility";
 import { useAppAbility } from "./utils/casl/useAppAbility";
+import { hexToRgb } from "./@layouts/utils";
 
 const { global } = useTheme();
 // ℹ️ Sync current theme with initial loader theme
@@ -63,11 +61,11 @@ onMounted(() => {
         global.current.value.colors.primary
       )}`"
     >
-      <ServerErrorLogger />
       <RouterView />
       <ScrollToTop />
       <MediaPlayerDialog />
       <SnackBar />
+      <ServerErrorLogger />
     </VApp>
   </VLocaleProvider>
 </template>

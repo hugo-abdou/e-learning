@@ -67,7 +67,7 @@ export default class ResumableUppyPlugin extends BasePlugin {
     }
   }
 
-  async uploadVideo(file: File) {
+  async uploadVideo(file: any) {
     if (file.type?.includes("video/")) {
       const bunnyStreem = new BunnyStreem();
       try {

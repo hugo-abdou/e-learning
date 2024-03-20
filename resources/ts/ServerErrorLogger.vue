@@ -9,7 +9,9 @@ const iframe = ref<HTMLIFrameElement | null>(null);
 const theme = useTheme();
 const jsonResponse = ref(null);
 
+console.log("hugo");
 $api.onError((ctx) => {
+  console.log(ctx);
   if (ctx.response.status === 500) {
     isDialogVisible.value = true;
     nextTick(() => {
